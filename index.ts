@@ -1,13 +1,11 @@
-import { isObject } from "util";
 import prettier = require("prettier");
 
-interface Cfn {
-  Parameters?: Object;
-  resources?: Object;
+interface ObjectMap {
+  [key: string]: Object;
 }
-
-interface MapObject {
-  [key: string]: any;
+interface Cfn {
+  Parameters?: ObjectMap;
+  Resources?: ObjectMap;
 }
 
 // type JSONType = number | string | Array<JSONType>;
@@ -20,7 +18,7 @@ function firstLower(s: string): string {
   return s.charAt(0).toLowerCase() + s.substring(1);
 }
 
-function options(o: Object): string {
+function options(o: ObjectMap): string {
   let buffer = "";
   for (let key in o) {
     buffer += `${firstLower(key)}: ${JSON.stringify(o[key])},\n`;
@@ -31,8 +29,8 @@ function options(o: Object): string {
 export default class CfnToCDK {
   stackName: string;
   imports: Array<string>;
-  parameters: Object;
-  // resources: Array<string>;
+  parameters: ObjectMap;
+  resources: { [key: string]: string };
   // outputs: Array<string>;
 
   constructor(name: string, json: string) {
@@ -41,44 +39,69 @@ export default class CfnToCDK {
 
     this.imports = [];
     this.parameters = {};
-    if (cfn.Parameters && isObject(cfn.Parameters)) {
+    this.resources = {};
+
+    if (cfn.Parameters) {
       this.parameters = cfn.Parameters;
+    }
+    if (cfn.Resources) {
+      for (let name in cfn.Resources) {
+        this.addResource(name, cfn.Resources[name] as ObjectMap);
+      }
+    }
+  }
+
+  addResource(name: string, resource: ObjectMap) {
+    const splitType = (resource["Type"] as String).split("::", 3);
+    const module = splitType[1].toLowerCase();
+    const resourceType = splitType[2];
+
+    this.addImport(module);
+
+    this.resources[name] = `
+    new ${module}.cloudformation.${resourceType}Resource(this, "${name}", {
+    });
+
+    `;
+  }
+
+  addImport(name: string) {
+    if (this.imports.indexOf(name) === -1) {
+      this.imports.push(name);
     }
   }
 
   compileImports(): string {
     return (
       this.imports
-        .map(name => `import ${name} = require('@aws-cdk/aws-${name}');`)
+        .map(name => `import ${name} = require('@aws-cdk/aws-${name}');\n`)
         .join("") + "\n"
     );
   }
 
-  compileParameter(name: string, values: Object): string {
-    // const loggingBucket = new cdk.Parameter(this, "LoggingBucket", {
-    //   description: "The name of the bucket to send cloudtrail logs to",
-    //   type: "String"
-    // });
+  compileParameter(name: string, values: ObjectMap): string {
+    return `
+      const ${firstLower(name)} = new cdk.Parameter(this, "${name}", {
+        ${options(values)}
+      });
 
-    let buffer = `const ${firstLower(
-      name
-    )} = new cdk.Parameter(this, "${name}", {\n`;
-
-    buffer += options(values);
-
-    return buffer + `});\n\n`;
+    `;
   }
 
   compileParameters(): string {
     let buffer = "";
     for (let name in this.parameters) {
-      buffer += this.compileParameter(name, this.parameters[name]);
+      buffer += this.compileParameter(name, this.parameters[name] as ObjectMap);
     }
     return buffer;
   }
 
   compileResources(): string {
-    return "";
+    let buffer = "";
+    for (let name in this.resources) {
+      buffer += this.resources[name];
+    }
+    return buffer;
   }
 
   compileOutputs(): string {
@@ -86,25 +109,20 @@ export default class CfnToCDK {
   }
 
   compile(): string {
-    let buffer = "";
+    const buffer = `
+    import cdk = require('@aws-cdk/cdk');
+    ${this.compileImports()}
 
-    buffer += "import cdk = require('@aws-cdk/cdk');\n";
-    buffer += this.compileImports();
+    export class ${firstUpper(this.stackName)}Stack extends cdk.Stack {
+      constructor(parent: cdk.App, id: string, props?: cdk.StackProps) {
+        super(parent, id, props);
 
-    buffer += "\n";
-    buffer += `export class ${firstUpper(
-      this.stackName
-    )}Stack extends cdk.Stack {\n`;
-
-    buffer +=
-      "constructor(parent: cdk.App, id: string, props?: cdk.StackProps) {\n";
-    buffer += "super(parent, id, props);\n\n";
-
-    buffer += this.compileParameters();
-    buffer += this.compileResources();
-    buffer += this.compileOutputs();
-
-    buffer += "}}";
+        ${this.compileParameters()};
+        ${this.compileResources()};
+        ${this.compileOutputs()};
+      }
+    }
+    `;
 
     return prettier.format(buffer, { parser: "typescript" });
   }
