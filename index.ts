@@ -8,8 +8,6 @@ interface Cfn {
   Resources?: ObjectMap;
 }
 
-// type JSONType = number | string | Array<JSONType>;
-
 function firstUpper(s: string): string {
   return s.charAt(0).toUpperCase() + s.substring(1);
 }
@@ -21,7 +19,16 @@ function firstLower(s: string): string {
 function options(o: ObjectMap): string {
   let buffer = "";
   for (let key in o) {
-    buffer += `${firstLower(key)}: ${JSON.stringify(o[key])},\n`;
+    const val = o[key];
+    if (val instanceof Object) {
+      if (val.Ref) {
+        buffer += `${firstLower(key)}: ${firstLower(val.Ref)}.ref,\n`;
+      } else {
+        buffer += `${firstLower(key)}: { ${options(val as ObjectMap)} },\n`;
+      }
+    } else {
+      buffer += `${firstLower(key)}: ${JSON.stringify(o[key])},\n`;
+    }
   }
   return buffer;
 }
@@ -60,6 +67,7 @@ export default class CfnToCDK {
 
     this.resources[name] = `
     new ${module}.cloudformation.${resourceType}Resource(this, "${name}", {
+      ${options(resource.Properties)}
     });
 
     `;

@@ -15,7 +15,8 @@
     "typescript": "^3.0.1"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "testWatchAll": "jest --watchAll"
   },
   "author": "",
   "license": "MIT",
