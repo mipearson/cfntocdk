@@ -3,7 +3,9 @@
   "version": "0.0.1",
   "description": "",
   "main": "index.js",
-  "dependencies": {},
+  "dependencies": {
+    "@types/node": "^10.9.2"
+  },
   "devDependencies": {
     "@types/jest": "^23.3.1",
     "jest": "^23.5.0",

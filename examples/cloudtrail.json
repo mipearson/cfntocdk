@@ -1,0 +1,22 @@
+{
+  "Parameters": {
+    "LoggingBucket": {
+      "Description": "The name of the bucket to send cloudtrail logs to",
+      "Type": "String"
+    }
+  },
+  "Resources": {
+    "CloudTrail": {
+      "Type": "AWS::CloudTrail::Trail",
+      "Properties": {
+        "IsLogging": true,
+        "IsMultiRegionTrail": true,
+        "IncludeGlobalServiceEvents": true,
+        "S3BucketName": {
+          "Ref": "LoggingBucket"
+        },
+        "S3KeyPrefix": "cloudtrails"
+      }
+    }
+  }
+}
