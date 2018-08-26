@@ -3,12 +3,17 @@ import { JSONMap } from "./types";
 
 export default class Options {
   data: JSONMap;
+  references: Array<string>;
+  compiled: string;
+
   constructor(data: JSONMap | undefined) {
     this.data = data ? data : {};
+    this.references = [];
+    this.compiled = this.render(this.data);
   }
 
   compile(): string {
-    return this.render(this.data);
+    return this.compiled;
   }
 
   render(data: JSONMap): string {
@@ -18,6 +23,7 @@ export default class Options {
       if (val instanceof Object) {
         if (val.Ref) {
           buffer += `${firstLower(key)}: ${firstLower(val.Ref)}.ref,\n`;
+          this.references.push(val.Ref);
         } else {
           buffer += `${firstLower(key)}: { ${this.render(val as JSONMap)} },\n`;
         }
