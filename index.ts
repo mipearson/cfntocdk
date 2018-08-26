@@ -1,115 +1,68 @@
 import prettier = require("prettier");
+import Parameter from "./lib/parameter";
+import { JSONResource, JSONMap } from "./lib/types";
+import Resource from "./lib/resource";
+import { firstLower, firstUpper } from "./lib/util";
 
-interface ObjectMap {
-  [key: string]: Object;
-}
-interface Cfn {
-  Parameters?: ObjectMap;
-  Resources?: ObjectMap;
-}
-
-function firstUpper(s: string): string {
-  return s.charAt(0).toUpperCase() + s.substring(1);
-}
-
-function firstLower(s: string): string {
-  return s.charAt(0).toLowerCase() + s.substring(1);
-}
-
-function options(o: ObjectMap): string {
-  let buffer = "";
-  for (let key in o) {
-    const val = o[key];
-    if (val instanceof Object) {
-      if (val.Ref) {
-        buffer += `${firstLower(key)}: ${firstLower(val.Ref)}.ref,\n`;
-      } else {
-        buffer += `${firstLower(key)}: { ${options(val as ObjectMap)} },\n`;
-      }
-    } else {
-      buffer += `${firstLower(key)}: ${JSON.stringify(o[key])},\n`;
-    }
-  }
-  return buffer;
+interface JSONCfn {
+  Parameters?: { [key: string]: JSONMap };
+  Resources?: { [key: string]: JSONResource };
 }
 
 export default class CfnToCDK {
   stackName: string;
-  imports: Array<string>;
-  parameters: ObjectMap;
-  resources: { [key: string]: string };
+  parameters: Array<Parameter>;
+  resources: Array<Resource>;
   // outputs: Array<string>;
 
   constructor(name: string, json: string) {
     this.stackName = name;
-    const cfn = JSON.parse(json) as Cfn;
+    const cfn = JSON.parse(json) as JSONCfn;
 
-    this.imports = [];
-    this.parameters = {};
-    this.resources = {};
+    this.parameters = [];
+    this.resources = [];
 
     if (cfn.Parameters) {
-      this.parameters = cfn.Parameters;
+      for (let name in cfn.Parameters) {
+        this.parameters.push(new Parameter(name, cfn.Parameters[name]));
+      }
     }
     if (cfn.Resources) {
       for (let name in cfn.Resources) {
-        this.addResource(name, cfn.Resources[name] as ObjectMap);
+        this.resources.push(new Resource(name, cfn.Resources[name]));
       }
     }
   }
 
-  addResource(name: string, resource: ObjectMap) {
-    const splitType = (resource["Type"] as String).split("::", 3);
-    const module = splitType[1].toLowerCase();
-    const resourceType = splitType[2];
+  compileImports(): string {
+    const imports: { [key: string]: boolean } = {};
 
-    this.addImport(module);
-
-    this.resources[name] = `
-    new ${module}.cloudformation.${resourceType}Resource(this, "${name}", {
-      ${options(resource.Properties)}
+    this.resources.forEach(i => {
+      if (i.module) {
+        imports[firstLower(i.module)] = true;
+      }
     });
 
-    `;
-  }
-
-  addImport(name: string) {
-    if (this.imports.indexOf(name) === -1) {
-      this.imports.push(name);
+    let buffer = "";
+    for (let name in imports) {
+      buffer += `import ${name} = require('@aws-cdk/aws-${name}');\n`;
     }
-  }
-
-  compileImports(): string {
-    return (
-      this.imports
-        .map(name => `import ${name} = require('@aws-cdk/aws-${name}');\n`)
-        .join("") + "\n"
-    );
-  }
-
-  compileParameter(name: string, values: ObjectMap): string {
-    return `
-      const ${firstLower(name)} = new cdk.Parameter(this, "${name}", {
-        ${options(values)}
-      });
-
-    `;
+    return buffer;
   }
 
   compileParameters(): string {
-    let buffer = "";
-    for (let name in this.parameters) {
-      buffer += this.compileParameter(name, this.parameters[name] as ObjectMap);
-    }
-    return buffer;
+    return this.parameters
+      .map(
+        parameter =>
+          `const ${firstLower(parameter.name)} = ${parameter.compile()};\n\n`
+      )
+      .join("");
   }
 
   compileResources(): string {
-    let buffer = "";
-    for (let name in this.resources) {
-      buffer += this.resources[name];
-    }
-    return buffer;
+    return this.resources
+      .map(resources => `${resources.compile()};\n\n`)
+      .join("");
   }
 
   compileOutputs(): string {
