@@ -8,6 +8,8 @@
     "prettier": "^1.14.2"
   },
   "devDependencies": {
+    "@aws-cdk/aws-cloudtrail": "^0.8.2",
+    "@aws-cdk/cdk": "^0.8.2",
     "@types/jest": "^23.3.1",
     "@types/prettier": "^1.13.2",
     "jest": "^23.5.0",

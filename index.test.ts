@@ -1,17 +1,24 @@
 import CdkToCFN from "./index";
 import fs = require("fs");
+import { firstUpper } from "./lib/util";
 
-const integrationTests = ["cloudtrail"];
+const integrationExamples = ["cloudtrail"];
 
-// test("input equals output", () => {
-//   expect(new CdkToCFN().toCDK("input")).toBe("input");
-// });
+integrationExamples.forEach((stack: string) => {
+  test(`our TypeScript example for ${stack} produces output that matches our CFN source`, () => {
+    const cfn = JSON.parse(
+      fs.readFileSync(`examples/${stack}.json`).toString()
+    );
+    const cdkmodule = require(`./examples/${stack}`);
+    const cdkstack = new cdkmodule[`${firstUpper(stack)}Stack`]();
 
-integrationTests.forEach((stack: string) => {
-  test(`${stack}`, () => {
+    expect(cdkstack.toCloudFormation()).toEqual(cfn);
+  });
+
+  test(`CFN source for ${stack} compiles to our TypeScript example`, () => {
     const cfn = fs.readFileSync(`examples/${stack}.json`).toString();
     const cdk = fs.readFileSync(`examples/${stack}.ts`).toString();
 
-    expect(new CdkToCFN(stack, cfn).compile()).toBe(cdk);
+    expect(new CdkToCFN(stack, cfn).compile()).toEqual(cdk);
   });
 });
