@@ -6,3 +6,8 @@ export interface JSONResource {
   Type: string;
   Properties?: JSONMap;
 }
+
+export interface Construct {
+  name: string;
+  compile: () => string;
+}

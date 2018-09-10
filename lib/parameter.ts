@@ -1,7 +1,7 @@
-import { JSONMap } from "./types";
+import { JSONMap, Construct } from "./types";
 import Options from "./options";
 
-export default class Parameter {
+export default class Parameter implements Construct {
   data: JSONMap;
   name: string;
 

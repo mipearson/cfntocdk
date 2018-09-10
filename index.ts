@@ -1,6 +1,6 @@
 import prettier = require("prettier");
 import Parameter from "./lib/parameter";
-import { JSONResource, JSONMap } from "./lib/types";
+import { JSONResource, JSONMap, Construct } from "./lib/types";
 import Resource from "./lib/resource";
 import { firstLower, firstUpper } from "./lib/util";
 
@@ -51,18 +51,26 @@ export default class CfnToCDK {
   }
 
   compileParameters(): string {
-    return this.parameters
-      .map(
-        parameter =>
-          `const ${firstLower(parameter.name)} = ${parameter.compile()};\n\n`
-      )
-      .join("");
+    return this.parameters.map(this.withConstIfReferenced).join("");
+  }
+
+  withConstIfReferenced = (c: Construct): string => {
+    let buffer = c.compile() + "\n\n";
+    if (this.isReferenced(c.name)) {
+      buffer = `const ${firstLower(c.name)} = ${buffer}`;
+    }
+
+    return buffer;
+  };
+
+  isReferenced(name: string): boolean {
+    return (
+      this.resources.findIndex(r => r.references.indexOf(name) !== -1) !== -1
+    );
   }
 
   compileResources(): string {
-    return this.resources
-      .map(resources => `${resources.compile()};\n\n`)
-      .join("");
+    return this.resources.map(this.withConstIfReferenced).join("");
   }
 
   compileOutputs(): string {

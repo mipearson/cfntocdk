@@ -1,7 +1,7 @@
-import { JSONResource } from "./types";
+import { JSONResource, Construct } from "./types";
 import Options from "./options";
 
-export default class Resource {
+export default class Resource implements Construct {
   data: JSONResource;
   name: string;
   module: string;
