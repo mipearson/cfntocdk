@@ -3,6 +3,10 @@
     "LoggingBucket": {
       "Description": "The name of the bucket to send cloudtrail logs to",
       "Type": "String"
+    },
+    "Unused": {
+      "Description": "An unused parameter to test ref checks",
+      "Type": "String"
     }
   },
   "Resources": {

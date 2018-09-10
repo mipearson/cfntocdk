@@ -10,6 +10,11 @@ export class CloudtrailStack extends cdk.Stack {
       type: "String"
     });
 
+    new cdk.Parameter(this, "Unused", {
+      description: "An unused parameter to test ref checks",
+      type: "String"
+    });
+
     new cloudtrail.cloudformation.TrailResource(this, "CloudTrail", {
       isLogging: true,
       isMultiRegionTrail: true,
