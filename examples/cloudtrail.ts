@@ -15,7 +15,7 @@ export class CloudtrailStack extends cdk.Stack {
       type: "String"
     });
 
-    new cloudtrail.cloudformation.TrailResource(this, "CloudTrail", {
+    new cloudtrail.CfnTrail(this, "CloudTrail", {
       isLogging: true,
       isMultiRegionTrail: true,
       includeGlobalServiceEvents: true,

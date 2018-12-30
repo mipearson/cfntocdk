@@ -4,17 +4,17 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "@types/node": "^10.9.2",
-    "prettier": "^1.14.2"
+    "@types/node": "^10.12.18",
+    "prettier": "^1.15.3"
   },
   "devDependencies": {
-    "@aws-cdk/aws-cloudtrail": "^0.8.2",
-    "@aws-cdk/cdk": "^0.8.2",
-    "@types/jest": "^23.3.1",
-    "@types/prettier": "^1.13.2",
-    "jest": "^23.5.0",
-    "ts-jest": "^23.1.4",
-    "typescript": "^3.0.1"
+    "@aws-cdk/aws-cloudtrail": "^0.21.0",
+    "@aws-cdk/cdk": "^0.21.0",
+    "@types/jest": "^23.3.10",
+    "@types/prettier": "^1.15.2",
+    "jest": "^23.6.0",
+    "ts-jest": "^23.10.5",
+    "typescript": "^3.2.2"
   },
   "scripts": {
     "test": "jest",

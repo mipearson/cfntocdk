@@ -21,9 +21,7 @@ export default class Resource implements Construct {
   }
 
   compile(): string {
-    return `new ${this.module}.cloudformation.${this.type}Resource(this, "${
-      this.name
-    }", {
+    return `new ${this.module}.Cfn${this.type}(this, "${this.name}", {
       ${this.options.compile()}
     });`;
   }
