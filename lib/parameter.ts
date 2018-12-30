@@ -11,8 +11,8 @@ export default class Parameter implements Construct {
   }
 
   compile(): string {
-    return `new cdk.Parameter(this, "${this.name}", {
+    return `new cdk.Parameter(this, "${this.name}", 
       ${new Options(this.data).compile()}
-    });`;
+    );`;
   }
 }

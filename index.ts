@@ -2,7 +2,7 @@ import prettier = require("prettier");
 import Parameter from "./lib/parameter";
 import { JSONResource, JSONMap, Construct } from "./lib/types";
 import Resource from "./lib/resource";
-import { firstLower, firstUpper } from "./lib/util";
+import codemaker = require("codemaker");
 
 interface JSONCfn {
   Parameters?: { [key: string]: JSONMap };
@@ -39,7 +39,7 @@ export default class CfnToCDK {
 
     this.resources.forEach(i => {
       if (i.module) {
-        imports[firstLower(i.module)] = true;
+        imports[codemaker.toCamelCase(i.module)] = true;
       }
     });
 
@@ -57,7 +57,7 @@ export default class CfnToCDK {
   withConstIfReferenced = (c: Construct): string => {
     let buffer = c.compile() + "\n\n";
     if (this.isReferenced(c.name)) {
-      buffer = `const ${firstLower(c.name)} = ${buffer}`;
+      buffer = `const ${codemaker.toCamelCase(c.name)} = ${buffer}`;
     }
 
     return buffer;
@@ -82,7 +82,9 @@ export default class CfnToCDK {
     import cdk = require('@aws-cdk/cdk');
     ${this.compileImports()}
 
-    export class ${firstUpper(this.stackName)}Stack extends cdk.Stack {
+    export class ${codemaker.toPascalCase(
+      this.stackName
+    )}Stack extends cdk.Stack {
       constructor(parent: cdk.App, id: string, props?: cdk.StackProps) {
         super(parent, id, props);
 

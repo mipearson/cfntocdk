@@ -5,9 +5,11 @@
   "main": "index.js",
   "dependencies": {
     "@types/node": "^10.12.18",
+    "codemaker": "^0.7.12",
     "prettier": "^1.15.3"
   },
   "devDependencies": {
+    "@aws-cdk/aws-autoscaling": "^0.21.0",
     "@aws-cdk/aws-cloudtrail": "^0.21.0",
     "@aws-cdk/cdk": "^0.21.0",
     "@types/jest": "^23.3.10",
@@ -34,6 +36,9 @@
       "jsx",
       "json",
       "node"
+    ],
+    "watchPathIgnorePatterns": [
+      "test-compiled.ts"
     ]
   }
 }
