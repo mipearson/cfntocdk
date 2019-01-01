@@ -2,7 +2,9 @@ import CdkToCFN from "./index";
 import fs = require("fs");
 import codemaker = require("codemaker");
 
-const integrationExamples = ["cloudtrail", "buildkiteasg"];
+// const integrationExamples = ["aptly"];
+
+const integrationExamples = ["buildkite"];
 
 integrationExamples.forEach((stack: string) => {
   test(`our TypeScript example for ${stack} produces output that matches our CFN source`, () => {

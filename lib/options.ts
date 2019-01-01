@@ -1,4 +1,5 @@
 import { JSONMap } from "./types";
+import Parameter from "./parameter";
 import codemaker = require("codemaker");
 
 interface FoundKey {
@@ -6,14 +7,16 @@ interface FoundKey {
   value: any;
 }
 
+const DISABLE_CAMEL_FOR = ["AssumeRolePolicyDocument", "PolicyDocument"];
+
 export default class Options {
-  data: JSONMap;
+  data: JSONMap | string;
   references: Array<string>;
   compiled: string;
 
-  private insideFunction = false;
+  private noCamelCase = false;
 
-  constructor(data: JSONMap | undefined) {
+  constructor(data: JSONMap | string | undefined) {
     this.data = data ? data : {};
     this.references = [];
     this.compiled = this.render(this.data);
@@ -23,8 +26,8 @@ export default class Options {
     return this.compiled;
   }
 
-  render(data: JSONMap): string {
-    this.insideFunction = false;
+  render(data: JSONMap | string): string {
+    this.noCamelCase = false;
     return this.renderInner(data);
   }
 
@@ -42,6 +45,14 @@ export default class Options {
     };
   }
 
+  private noCamel(cb: () => string): string {
+    const oldCamel = this.noCamelCase;
+    this.noCamelCase = true;
+    const ret = cb();
+    this.noCamelCase = oldCamel;
+    return ret;
+  }
+
   private renderInner(data: any): string {
     if (data === null) {
       return "new cdk.AwsNoValue()";
@@ -54,11 +65,22 @@ export default class Options {
 
     if (data instanceof Object) {
       if (data.Ref) {
-        if (data.Ref === "AWS::NoValue") {
-          return "new cdk.AwsNoValue()";
+        if (data.Ref.startsWith("AWS::")) {
+          const func = data.Ref.replace("AWS::", "");
+          // return `(new cdk.Aws${func}()).toString()`;
+          return "`${" + `new cdk.Aws${func}()` + "}`";
+          // return `"!Ref `
         }
+        if (Parameter.isParameter(data.Ref)) {
+          return `${codemaker.toCamelCase(data.Ref)}.resolve()`;
+        }
+
         this.references.push(data.Ref);
+        // return `new cdk.Token(${codemaker.toCamelCase(data.Ref)}.ref)`;
         return `${codemaker.toCamelCase(data.Ref)}.ref`;
+      }
+      if (Object.keys(data).length === 1 && data.Condition) {
+        return `new cdk.Fn("Condition", ${JSON.stringify(data.Condition)})`;
       }
 
       const fnKey = this.findFnKey(data);
@@ -67,19 +89,22 @@ export default class Options {
         const value =
           fnKey.value instanceof Array ? fnKey.value : [fnKey.value];
 
-        this.insideFunction = true;
-        const items = value.map(i => this.renderInner(i)).join(", ");
-        this.insideFunction = false;
+        const items = this.noCamel(() =>
+          value.map(i => this.renderInner(i)).join(", ")
+        );
 
         return `new cdk.Fn${fnKey.name}(${items})`;
       }
 
-      const items = Object.keys(data).map(
-        k =>
-          `${
-            this.insideFunction ? k : codemaker.toCamelCase(k)
-          }: ${this.renderInner(data[k])}`
-      );
+      const items = Object.keys(data).map(k => {
+        const key = this.noCamelCase ? k : codemaker.toCamelCase(k);
+
+        const val =
+          k.endsWith("PolicyDocument") || k === "Variables"
+            ? this.noCamel(() => this.renderInner(data[k]))
+            : this.renderInner(data[k]);
+        return `${key}: ${val}`;
+      });
       return `{ ${items.join(",\n")} }`;
     }
 

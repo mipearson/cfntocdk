@@ -5,8 +5,10 @@
   "main": "index.js",
   "dependencies": {
     "@types/node": "^10.12.18",
+    "@types/toposort": "^2.0.1",
     "codemaker": "^0.7.12",
-    "prettier": "^1.15.3"
+    "prettier": "^1.15.3",
+    "toposort": "^2.0.2"
   },
   "devDependencies": {
     "@aws-cdk/aws-autoscaling": "^0.21.0",
@@ -39,6 +41,13 @@
     ],
     "watchPathIgnorePatterns": [
       "test-compiled.ts"
-    ]
+    ],
+    "globals": {
+      "ts-jest": {
+        "diagnostics": {
+          "warnOnly": true
+        }
+      }
+    }
   }
 }

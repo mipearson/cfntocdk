@@ -5,6 +5,11 @@ export interface JSONMap {
 export interface JSONResource {
   Type: string;
   Properties?: JSONMap;
+  CreationPolicy?: JSONMap | string;
+  UpdatePolicy?: JSONMap | string;
+  DeletionPolicy?: JSONMap | string;
+  Condition?: string;
+  DependsOn?: string | Array<string>;
 }
 
 export interface Construct {
