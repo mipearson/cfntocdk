@@ -1,10 +1,9 @@
 import CdkToCFN from "./index";
 import fs = require("fs");
 import codemaker = require("codemaker");
+import testUtil = require("@aws-cdk/core/test/util");
 
-// const integrationExamples = ["aptly"];
-
-const integrationExamples = ["buildkite"];
+const integrationExamples = ["Wordpress_Chef"];
 
 integrationExamples.forEach((stack: string) => {
   test(`our TypeScript example for ${stack} produces output that matches our CFN source`, () => {
@@ -14,7 +13,7 @@ integrationExamples.forEach((stack: string) => {
     const cdkmodule = require(`./examples/${stack}`);
     const cdkstack = new cdkmodule[`${codemaker.toPascalCase(stack)}Stack`]();
 
-    expect(cdkstack.toCloudFormation()).toEqual(cfn);
+    expect(testUtil.toCloudFormation(cdkstack)).toEqual(cfn);
   });
 
   test(`CFN source for ${stack} compiles to our TypeScript example`, () => {

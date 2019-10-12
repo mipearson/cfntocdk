@@ -1,25 +1,112 @@
-import cdk = require("@aws-cdk/cdk");
-import ec2 = require("@aws-cdk/aws-ec2");
-import iam = require("@aws-cdk/aws-iam");
-import s3 = require("@aws-cdk/aws-s3");
-import autoscaling = require("@aws-cdk/aws-autoscaling");
-import sns = require("@aws-cdk/aws-sns");
-import cloudwatch = require("@aws-cdk/aws-cloudwatch");
-import lambda = require("@aws-cdk/aws-lambda");
-import events = require("@aws-cdk/aws-events");
+import * as cdk from "@aws-cdk/core";
+import * as ec2 from "@aws-cdk/aws-ec2";
+import * as iam from "@aws-cdk/aws-iam";
+import * as s3 from "@aws-cdk/aws-s3";
+import * as autoscaling from "@aws-cdk/aws-autoscaling";
+import * as sns from "@aws-cdk/aws-sns";
+import * as cloudwatch from "@aws-cdk/aws-cloudwatch";
+import * as lambda from "@aws-cdk/aws-lambda";
+import * as events from "@aws-cdk/aws-events";
 
 export class BuildkiteStack extends cdk.Stack {
   constructor(parent: cdk.App, id: string, props?: cdk.StackProps) {
     super(parent, id, props);
 
-    const keyName = new cdk.Parameter(this, "KeyName", {
+    this.templateOptions.templateFormatVersion = "2010-09-09";
+    this.templateOptions.description = "Buildkite stack v4.0.2";
+    this.templateOptions.metadata = {
+      "AWS::CloudFormation::Interface": {
+        ParameterGroups: [
+          {
+            Label: { default: "Buildkite Configuration" },
+            Parameters: ["BuildkiteAgentToken", "BuildkiteQueue"]
+          },
+          {
+            Label: { default: "Advanced Buildkite Configuration" },
+            Parameters: [
+              "BuildkiteAgentRelease",
+              "BuildkiteAgentTags",
+              "BuildkiteAgentTimestampLines",
+              "BuildkiteAgentExperiments"
+            ]
+          },
+          {
+            Label: { default: "Network Configuration" },
+            Parameters: [
+              "VpcId",
+              "Subnets",
+              "AvailabilityZones",
+              "SecurityGroupId",
+              "AssociatePublicIpAddress"
+            ]
+          },
+          {
+            Label: { default: "Instance Configuration" },
+            Parameters: [
+              "ImageId",
+              "InstanceType",
+              "AgentsPerInstance",
+              "KeyName",
+              "SpotPrice",
+              "SecretsBucket",
+              "ArtifactsBucket",
+              "AuthorizedUsersUrl",
+              "BootstrapScriptUrl",
+              "RootVolumeSize",
+              "ManagedPolicyARN",
+              "InstanceRoleName"
+            ]
+          },
+          {
+            Label: { default: "Auto-scaling Configuration" },
+            Parameters: [
+              "MinSize",
+              "MaxSize",
+              "ScaleUpAdjustment",
+              "ScaleDownAdjustment",
+              "ScaleDownPeriod",
+              "InstanceCreationTimeout"
+            ]
+          },
+          {
+            Label: { default: "Cost Allocation Configuration" },
+            Parameters: [
+              "EnableCostAllocationTags",
+              "CostAllocationTagName",
+              "CostAllocationTagValue"
+            ]
+          },
+          {
+            Label: { default: "Docker Daemon Configuration" },
+            Parameters: [
+              "EnableDockerUserNamespaceRemap",
+              "EnableDockerExperimental"
+            ]
+          },
+          {
+            Label: { default: "Docker Registry Configuration" },
+            Parameters: ["ECRAccessPolicy"]
+          },
+          {
+            Label: { default: "Plugin Configuration" },
+            Parameters: [
+              "EnableSecretsPlugin",
+              "EnableECRPlugin",
+              "EnableDockerLoginPlugin"
+            ]
+          }
+        ]
+      }
+    };
+
+    const keyName = new cdk.CfnParameter(this, "KeyName", {
       description:
         "Optional - SSH keypair used to access the buildkite instances, setting this will enable SSH ingress",
       type: "String",
       default: ""
     });
 
-    const buildkiteAgentRelease = new cdk.Parameter(
+    const buildkiteAgentRelease = new cdk.CfnParameter(
       this,
       "BuildkiteAgentRelease",
       {
@@ -29,21 +116,29 @@ export class BuildkiteStack extends cdk.Stack {
       }
     );
 
-    const buildkiteAgentToken = new cdk.Parameter(this, "BuildkiteAgentToken", {
-      description: "Buildkite agent registration token",
-      type: "String",
-      noEcho: true,
-      minLength: 1
-    });
+    const buildkiteAgentToken = new cdk.CfnParameter(
+      this,
+      "BuildkiteAgentToken",
+      {
+        description: "Buildkite agent registration token",
+        type: "String",
+        noEcho: true,
+        minLength: 1
+      }
+    );
 
-    const buildkiteAgentTags = new cdk.Parameter(this, "BuildkiteAgentTags", {
-      description:
-        "Additional tags seperated by commas to provide to the agent. E.g os=linux,llamas=always",
-      type: "String",
-      default: ""
-    });
+    const buildkiteAgentTags = new cdk.CfnParameter(
+      this,
+      "BuildkiteAgentTags",
+      {
+        description:
+          "Additional tags seperated by commas to provide to the agent. E.g os=linux,llamas=always",
+        type: "String",
+        default: ""
+      }
+    );
 
-    const buildkiteAgentTimestampLines = new cdk.Parameter(
+    const buildkiteAgentTimestampLines = new cdk.CfnParameter(
       this,
       "BuildkiteAgentTimestampLines",
       {
@@ -55,7 +150,7 @@ export class BuildkiteStack extends cdk.Stack {
       }
     );
 
-    const buildkiteAgentExperiments = new cdk.Parameter(
+    const buildkiteAgentExperiments = new cdk.CfnParameter(
       this,
       "BuildkiteAgentExperiments",
       {
@@ -66,7 +161,7 @@ export class BuildkiteStack extends cdk.Stack {
       }
     );
 
-    const buildkiteQueue = new cdk.Parameter(this, "BuildkiteQueue", {
+    const buildkiteQueue = new cdk.CfnParameter(this, "BuildkiteQueue", {
       description:
         'Queue name that agents will use, targeted in pipeline steps using "queue={value}"',
       type: "String",
@@ -74,90 +169,98 @@ export class BuildkiteStack extends cdk.Stack {
       minLength: 1
     });
 
-    const agentsPerInstance = new cdk.Parameter(this, "AgentsPerInstance", {
+    const agentsPerInstance = new cdk.CfnParameter(this, "AgentsPerInstance", {
       description: "Number of Buildkite agents to run on each instance",
       type: "Number",
       default: 1,
       minValue: 1
     });
 
-    const secretsBucket = new cdk.Parameter(this, "SecretsBucket", {
+    const secretsBucket = new cdk.CfnParameter(this, "SecretsBucket", {
       description:
         "Optional - Name of an existing S3 bucket containing pipeline secrets (Created if left blank)",
       type: "String",
       default: ""
     });
 
-    const artifactsBucket = new cdk.Parameter(this, "ArtifactsBucket", {
+    const artifactsBucket = new cdk.CfnParameter(this, "ArtifactsBucket", {
       description:
         "Optional - Name of an existing S3 bucket for build artifact storage",
       type: "String",
       default: ""
     });
 
-    const bootstrapScriptUrl = new cdk.Parameter(this, "BootstrapScriptUrl", {
-      description:
-        "Optional - HTTPS or S3 URL to run on each instance during boot",
-      type: "String",
-      default: ""
-    });
+    const bootstrapScriptUrl = new cdk.CfnParameter(
+      this,
+      "BootstrapScriptUrl",
+      {
+        description:
+          "Optional - HTTPS or S3 URL to run on each instance during boot",
+        type: "String",
+        default: ""
+      }
+    );
 
-    const authorizedUsersUrl = new cdk.Parameter(this, "AuthorizedUsersUrl", {
-      description:
-        "Optional - HTTPS or S3 URL to periodically download ssh authorized_keys from, setting this will enable SSH ingress",
-      type: "String",
-      default: ""
-    });
+    const authorizedUsersUrl = new cdk.CfnParameter(
+      this,
+      "AuthorizedUsersUrl",
+      {
+        description:
+          "Optional - HTTPS or S3 URL to periodically download ssh authorized_keys from, setting this will enable SSH ingress",
+        type: "String",
+        default: ""
+      }
+    );
 
-    const vpcId = new cdk.Parameter(this, "VpcId", {
+    const vpcId = new cdk.CfnParameter(this, "VpcId", {
       type: "String",
       description:
         "Optional - Id of an existing VPC to launch instances into. Leave blank to have a new VPC created",
       default: ""
     });
 
-    const subnets = new cdk.Parameter(this, "Subnets", {
+    const subnets = new cdk.CfnParameter(this, "Subnets", {
       type: "CommaDelimitedList",
       description:
         "Optional - Comma separated list of two existing VPC subnet ids where EC2 instances will run. Required if setting VpcId.",
       default: ""
     });
 
-    const availabilityZones = new cdk.Parameter(this, "AvailabilityZones", {
+    const availabilityZones = new cdk.CfnParameter(this, "AvailabilityZones", {
       type: "CommaDelimitedList",
       description:
         "Optional - Comma separated list of AZs that subnets are created in (if Subnets parameter is not specified)",
       default: ""
     });
 
-    const instanceType = new cdk.Parameter(this, "InstanceType", {
+    const instanceType = new cdk.CfnParameter(this, "InstanceType", {
       description: "Instance type",
       type: "String",
       default: "t2.nano",
       minLength: 1
     });
 
-    const spotPrice = new cdk.Parameter(this, "SpotPrice", {
+    const spotPrice = new cdk.CfnParameter(this, "SpotPrice", {
       description:
         "Spot bid price to use for the instances. 0 means normal (non-spot) instances",
       type: "String",
       default: 0
     });
 
-    const maxSize = new cdk.Parameter(this, "MaxSize", {
+    const maxSize = new cdk.CfnParameter(this, "MaxSize", {
       description: "Maximum number of instances",
       type: "Number",
       default: 10,
       minValue: 1
     });
 
-    const minSize = new cdk.Parameter(this, "MinSize", {
+    const minSize = new cdk.CfnParameter(this, "MinSize", {
       description: "Minimum number of instances",
       type: "Number",
       default: 0
     });
 
-    const scaleUpAdjustment = new cdk.Parameter(this, "ScaleUpAdjustment", {
+    const scaleUpAdjustment = new cdk.CfnParameter(this, "ScaleUpAdjustment", {
       description:
         "Number of instances to add on scale up events (ScheduledJobsCount > 0 for 1 min)",
       type: "Number",
@@ -165,22 +268,26 @@ export class BuildkiteStack extends cdk.Stack {
       minValue: 0
     });
 
-    const scaleDownAdjustment = new cdk.Parameter(this, "ScaleDownAdjustment", {
-      description:
-        "Number of instances to remove on scale down events (UnfinishedJobs == 0 for ScaleDownPeriod)",
-      type: "Number",
-      default: -1,
-      maxValue: 0
-    });
+    const scaleDownAdjustment = new cdk.CfnParameter(
+      this,
+      "ScaleDownAdjustment",
+      {
+        description:
+          "Number of instances to remove on scale down events (UnfinishedJobs == 0 for ScaleDownPeriod)",
+        type: "Number",
+        default: -1,
+        maxValue: 0
+      }
+    );
 
-    const scaleDownPeriod = new cdk.Parameter(this, "ScaleDownPeriod", {
+    const scaleDownPeriod = new cdk.CfnParameter(this, "ScaleDownPeriod", {
       description:
         "Number of seconds UnfinishedJobs must equal 0 before scale down",
       type: "Number",
       default: 1800
     });
 
-    const instanceCreationTimeout = new cdk.Parameter(
+    const instanceCreationTimeout = new cdk.CfnParameter(
       this,
       "InstanceCreationTimeout",
       {
@@ -190,48 +297,48 @@ export class BuildkiteStack extends cdk.Stack {
       }
     );
 
-    const rootVolumeSize = new cdk.Parameter(this, "RootVolumeSize", {
+    const rootVolumeSize = new cdk.CfnParameter(this, "RootVolumeSize", {
       description: "Size of each instance's root EBS volume (in GB)",
       type: "Number",
       default: 250,
       minValue: 10
     });
 
-    const securityGroupId = new cdk.Parameter(this, "SecurityGroupId", {
+    const securityGroupId = new cdk.CfnParameter(this, "SecurityGroupId", {
       type: "String",
       description: "Optional - Security group id to assign to instances",
       default: ""
     });
 
-    const imageId = new cdk.Parameter(this, "ImageId", {
+    const imageId = new cdk.CfnParameter(this, "ImageId", {
       type: "String",
       description:
         "Optional - Custom AMI to use for instances (must be based on the stack's AMI)",
       default: ""
     });
 
-    const managedPolicyArn = new cdk.Parameter(this, "ManagedPolicyARN", {
+    const managedPolicyArn = new cdk.CfnParameter(this, "ManagedPolicyARN", {
       type: "CommaDelimitedList",
       description:
         "Optional - Comma separated list of managed IAM policy ARNs to attach to the instance role",
       default: ""
     });
 
-    const instanceRoleName = new cdk.Parameter(this, "InstanceRoleName", {
+    const instanceRoleName = new cdk.CfnParameter(this, "InstanceRoleName", {
       type: "String",
       description:
         "Optional - A name for the IAM Role attached to the Instance Profile",
       default: ""
     });
 
-    const ecrAccessPolicy = new cdk.Parameter(this, "ECRAccessPolicy", {
+    const ecrAccessPolicy = new cdk.CfnParameter(this, "ECRAccessPolicy", {
       type: "String",
       description: "ECR access policy to give container instances",
       allowedValues: ["none", "readonly", "poweruser", "full"],
       default: "none"
     });
 
-    const associatePublicIpAddress = new cdk.Parameter(
+    const associatePublicIpAddress = new cdk.CfnParameter(
       this,
       "AssociatePublicIpAddress",
       {
@@ -242,21 +349,25 @@ export class BuildkiteStack extends cdk.Stack {
       }
     );
 
-    const enableSecretsPlugin = new cdk.Parameter(this, "EnableSecretsPlugin", {
-      type: "String",
-      description: "Enables s3-secrets plugin for all pipelines",
-      allowedValues: ["true", "false"],
-      default: "true"
-    });
+    const enableSecretsPlugin = new cdk.CfnParameter(
+      this,
+      "EnableSecretsPlugin",
+      {
+        type: "String",
+        description: "Enables s3-secrets plugin for all pipelines",
+        allowedValues: ["true", "false"],
+        default: "true"
+      }
+    );
 
-    const enableEcrPlugin = new cdk.Parameter(this, "EnableECRPlugin", {
+    const enableEcrPlugin = new cdk.CfnParameter(this, "EnableECRPlugin", {
       type: "String",
       description: "Enables ecr plugin for all pipelines",
       allowedValues: ["true", "false"],
       default: "true"
     });
 
-    const enableDockerLoginPlugin = new cdk.Parameter(
+    const enableDockerLoginPlugin = new cdk.CfnParameter(
       this,
       "EnableDockerLoginPlugin",
       {
@@ -267,7 +378,7 @@ export class BuildkiteStack extends cdk.Stack {
       }
     );
 
-    const enableDockerUserNamespaceRemap = new cdk.Parameter(
+    const enableDockerUserNamespaceRemap = new cdk.CfnParameter(
       this,
       "EnableDockerUserNamespaceRemap",
       {
@@ -279,7 +390,7 @@ export class BuildkiteStack extends cdk.Stack {
       }
     );
 
-    const enableDockerExperimental = new cdk.Parameter(
+    const enableDockerExperimental = new cdk.CfnParameter(
       this,
       "EnableDockerExperimental",
       {
@@ -290,7 +401,7 @@ export class BuildkiteStack extends cdk.Stack {
       }
     );
 
-    const enableCostAllocationTags = new cdk.Parameter(
+    const enableCostAllocationTags = new cdk.CfnParameter(
       this,
       "EnableCostAllocationTags",
       {
@@ -302,7 +413,7 @@ export class BuildkiteStack extends cdk.Stack {
       }
     );
 
-    const costAllocationTagName = new cdk.Parameter(
+    const costAllocationTagName = new cdk.CfnParameter(
       this,
       "CostAllocationTagName",
       {
@@ -313,7 +424,7 @@ export class BuildkiteStack extends cdk.Stack {
       }
     );
 
-    const costAllocationTagValue = new cdk.Parameter(
+    const costAllocationTagValue = new cdk.CfnParameter(
       this,
       "CostAllocationTagValue",
       {
@@ -324,7 +435,7 @@ export class BuildkiteStack extends cdk.Stack {
       }
     );
 
-    new cdk.Mapping(this, "ECRManagedPolicy", {
+    new cdk.CfnMapping(this, "ECRManagedPolicy", {
       mapping: {
         none: { Policy: "" },
         readonly: {
@@ -339,7 +450,7 @@ export class BuildkiteStack extends cdk.Stack {
       }
     });
 
-    new cdk.Mapping(this, "MetricsLambdaBucket", {
+    new cdk.CfnMapping(this, "MetricsLambdaBucket", {
       mapping: {
         "us-east-1": { Bucket: "buildkite-metrics" },
         "us-east-2": { Bucket: "buildkite-metrics-us-east-2" },
@@ -357,7 +468,7 @@ export class BuildkiteStack extends cdk.Stack {
       }
     });
 
-    new cdk.Mapping(this, "AWSRegion2AMI", {
+    new cdk.CfnMapping(this, "AWSRegion2AMI", {
       mapping: {
         "us-east-1": { AMI: "ami-08361b08a1bdc52ce" },
         "us-east-2": { AMI: "ami-0de84efc5bd5d8f45" },
@@ -375,104 +486,153 @@ export class BuildkiteStack extends cdk.Stack {
       }
     });
 
-    const useSpotInstances = new cdk.Condition(this, "UseSpotInstances", {
-      expression: new cdk.FnNot(new cdk.FnEquals(spotPrice.resolve(), 0))
+    const useSpotInstances = new cdk.CfnCondition(this, "UseSpotInstances", {
+      expression: cdk.Fn.conditionNot(cdk.Fn.conditionEquals(
+        spotPrice.value as any,
+        0
+      ) as any) as any
     });
 
-    const createVpcResources = new cdk.Condition(this, "CreateVpcResources", {
-      expression: new cdk.FnEquals(vpcId.resolve(), "")
-    });
+    const createVpcResources = new cdk.CfnCondition(
+      this,
+      "CreateVpcResources",
+      { expression: cdk.Fn.conditionEquals(vpcId.value as any, "") as any }
+    );
 
-    const createSecurityGroup = new cdk.Condition(this, "CreateSecurityGroup", {
-      expression: new cdk.FnEquals(securityGroupId.resolve(), "")
-    });
+    const createSecurityGroup = new cdk.CfnCondition(
+      this,
+      "CreateSecurityGroup",
+      {
+        expression: cdk.Fn.conditionEquals(
+          securityGroupId.value as any,
+          ""
+        ) as any
+      }
+    );
 
-    const createSecretsBucket = new cdk.Condition(this, "CreateSecretsBucket", {
-      expression: new cdk.FnEquals(secretsBucket.resolve(), "")
-    });
+    const createSecretsBucket = new cdk.CfnCondition(
+      this,
+      "CreateSecretsBucket",
+      {
+        expression: cdk.Fn.conditionEquals(
+          secretsBucket.value as any,
+          ""
+        ) as any
+      }
+    );
 
-    const setInstanceRoleName = new cdk.Condition(this, "SetInstanceRoleName", {
-      expression: new cdk.FnNot(
-        new cdk.FnEquals(instanceRoleName.resolve(), "")
-      )
-    });
+    const setInstanceRoleName = new cdk.CfnCondition(
+      this,
+      "SetInstanceRoleName",
+      {
+        expression: cdk.Fn.conditionNot(cdk.Fn.conditionEquals(
+          instanceRoleName.value as any,
+          ""
+        ) as any) as any
+      }
+    );
 
-    const useSpecifiedSecretsBucket = new cdk.Condition(
+    const useSpecifiedSecretsBucket = new cdk.CfnCondition(
       this,
       "UseSpecifiedSecretsBucket",
       {
-        expression: new cdk.FnNot(new cdk.FnEquals(secretsBucket.resolve(), ""))
+        expression: cdk.Fn.conditionNot(cdk.Fn.conditionEquals(
+          secretsBucket.value as any,
+          ""
+        ) as any) as any
       }
     );
 
-    const useSpecifiedAvailabilityZones = new cdk.Condition(
+    const useSpecifiedAvailabilityZones = new cdk.CfnCondition(
       this,
       "UseSpecifiedAvailabilityZones",
       {
-        expression: new cdk.FnNot(
-          new cdk.FnEquals(new cdk.FnJoin("", availabilityZones.resolve()), "")
-        )
+        expression: cdk.Fn.conditionNot(cdk.Fn.conditionEquals(
+          cdk.Fn.join("", availabilityZones.value as any) as any,
+          ""
+        ) as any) as any
       }
     );
 
-    const useArtifactsBucket = new cdk.Condition(this, "UseArtifactsBucket", {
-      expression: new cdk.FnNot(new cdk.FnEquals(artifactsBucket.resolve(), ""))
+    const useArtifactsBucket = new cdk.CfnCondition(
+      this,
+      "UseArtifactsBucket",
+      {
+        expression: cdk.Fn.conditionNot(cdk.Fn.conditionEquals(
+          artifactsBucket.value as any,
+          ""
+        ) as any) as any
+      }
+    );
+
+    const useDefaultAmi = new cdk.CfnCondition(this, "UseDefaultAMI", {
+      expression: cdk.Fn.conditionEquals(imageId.value as any, "") as any
     });
 
-    const useDefaultAmi = new cdk.Condition(this, "UseDefaultAMI", {
-      expression: new cdk.FnEquals(imageId.resolve(), "")
+    const useManagedPolicyArn = new cdk.CfnCondition(
+      this,
+      "UseManagedPolicyARN",
+      {
+        expression: cdk.Fn.conditionNot(cdk.Fn.conditionEquals(
+          cdk.Fn.join("", managedPolicyArn.value as any) as any,
+          ""
+        ) as any) as any
+      }
+    );
+
+    const useEcr = new cdk.CfnCondition(this, "UseECR", {
+      expression: cdk.Fn.conditionNot(cdk.Fn.conditionEquals(
+        ecrAccessPolicy.value as any,
+        "none"
+      ) as any) as any
     });
 
-    const useManagedPolicyArn = new cdk.Condition(this, "UseManagedPolicyARN", {
-      expression: new cdk.FnNot(
-        new cdk.FnEquals(new cdk.FnJoin("", managedPolicyArn.resolve()), "")
-      )
+    const useAutoscaling = new cdk.CfnCondition(this, "UseAutoscaling", {
+      expression: cdk.Fn.conditionNot(cdk.Fn.conditionEquals(
+        maxSize.value as any,
+        minSize.value as any
+      ) as any) as any
     });
 
-    const useEcr = new cdk.Condition(this, "UseECR", {
-      expression: new cdk.FnNot(
-        new cdk.FnEquals(ecrAccessPolicy.resolve(), "none")
-      )
-    });
+    const createMetricsStack = new cdk.CfnCondition(
+      this,
+      "CreateMetricsStack",
+      { expression: useAutoscaling }
+    );
 
-    const useAutoscaling = new cdk.Condition(this, "UseAutoscaling", {
-      expression: new cdk.FnNot(
-        new cdk.FnEquals(maxSize.resolve(), minSize.resolve())
-      )
-    });
-
-    const createMetricsStack = new cdk.Condition(this, "CreateMetricsStack", {
-      expression: new cdk.Fn("Condition", "UseAutoscaling")
-    });
-
-    const useCostAllocationTags = new cdk.Condition(
+    const useCostAllocationTags = new cdk.CfnCondition(
       this,
       "UseCostAllocationTags",
       {
-        expression: new cdk.FnEquals(enableCostAllocationTags.resolve(), "true")
+        expression: cdk.Fn.conditionEquals(
+          enableCostAllocationTags.value as any,
+          "true"
+        ) as any
       }
     );
 
-    const hasKeyName = new cdk.Condition(this, "HasKeyName", {
-      expression: new cdk.FnNot(new cdk.FnEquals(keyName.resolve(), ""))
+    const hasKeyName = new cdk.CfnCondition(this, "HasKeyName", {
+      expression: cdk.Fn.conditionNot(cdk.Fn.conditionEquals(
+        keyName.value as any,
+        ""
+      ) as any) as any
     });
 
-    const enableSshIngress = new cdk.Condition(this, "EnableSshIngress", {
-      expression: new cdk.FnAnd(
-        new cdk.Fn("Condition", "CreateSecurityGroup"),
-        new cdk.FnOr(
-          new cdk.Fn("Condition", "HasKeyName"),
-          new cdk.FnNot(new cdk.FnEquals(authorizedUsersUrl.resolve(), ""))
-        )
-      )
+    const enableSshIngress = new cdk.CfnCondition(this, "EnableSshIngress", {
+      expression: cdk.Fn.conditionAnd(createSecurityGroup, cdk.Fn.conditionOr(
+        hasKeyName,
+        cdk.Fn.conditionNot(cdk.Fn.conditionEquals(
+          authorizedUsersUrl.value as any,
+          ""
+        ) as any) as any
+      ) as any) as any
     });
 
-    const hasManagedPolicies = new cdk.Condition(this, "HasManagedPolicies", {
-      expression: new cdk.FnOr(
-        new cdk.Fn("Condition", "UseManagedPolicyARN"),
-        new cdk.Fn("Condition", "UseECR")
-      )
-    });
+    const hasManagedPolicies = new cdk.CfnCondition(
+      this,
+      "HasManagedPolicies",
+      { expression: cdk.Fn.conditionOr(useManagedPolicyArn, useEcr) as any }
+    );
 
     const lambdaExecutionRole = new iam.CfnRole(this, "LambdaExecutionRole", {
       assumeRolePolicyDocument: {
@@ -487,7 +647,7 @@ export class BuildkiteStack extends cdk.Stack {
       },
       path: "/"
     });
-    lambdaExecutionRole.options.condition = createMetricsStack;
+    lambdaExecutionRole.cfnOptions.condition = createMetricsStack;
 
     const lambdaExecutionPolicy = new iam.CfnPolicy(
       this,
@@ -512,38 +672,51 @@ export class BuildkiteStack extends cdk.Stack {
         }
       }
     );
-    lambdaExecutionPolicy.options.condition = createMetricsStack;
+    lambdaExecutionPolicy.cfnOptions.condition = createMetricsStack;
 
     const buildkiteMetricsFunction = new lambda.CfnFunction(
       this,
       "BuildkiteMetricsFunction",
       {
         code: {
-          s3Bucket: new cdk.FnFindInMap(
+          s3Bucket: cdk.Fn.findInMap(
             "MetricsLambdaBucket",
-            `${new cdk.AwsRegion()}`,
+            cdk.Aws.REGION,
             "Bucket"
-          ),
+          ) as any,
           s3Key: "buildkite-metrics-v3.0.0-lambda.zip"
         },
-        role: new cdk.FnGetAtt("LambdaExecutionRole", "Arn"),
+        role: lambdaExecutionRole.attrArn,
         timeout: 120,
         handler: "handler.handle",
         runtime: "python2.7",
         memorySize: 128,
         environment: {
           variables: {
-            BUILDKITE_AGENT_TOKEN: buildkiteAgentToken.resolve(),
-            BUILDKITE_QUEUE: buildkiteQueue.resolve(),
-            AWS_STACK_ID: `${new cdk.AwsStackId()}`,
-            AWS_STACK_NAME: `${new cdk.AwsStackName()}`,
-            AWS_ACCOUNT_ID: `${new cdk.AwsAccountId()}`
+            BUILDKITE_AGENT_TOKEN: buildkiteAgentToken.value as any,
+            BUILDKITE_QUEUE: buildkiteQueue.value as any,
+            AWS_STACK_ID: cdk.Aws.STACK_ID,
+            AWS_STACK_NAME: cdk.Aws.STACK_NAME,
+            AWS_ACCOUNT_ID: cdk.Aws.ACCOUNT_ID
           }
         }
       }
     );
-    buildkiteMetricsFunction.options.condition = createMetricsStack;
-    buildkiteMetricsFunction.addDependency(lambdaExecutionPolicy);
+    buildkiteMetricsFunction.cfnOptions.condition = createMetricsStack;
+    buildkiteMetricsFunction.addDependsOn(lambdaExecutionPolicy);
+
+    const scheduledRule = new events.CfnRule(this, "ScheduledRule", {
+      description: "ScheduledRule",
+      scheduleExpression: "rate(1 minute)",
+      state: "ENABLED",
+      targets: [
+        {
+          arn: buildkiteMetricsFunction.attrArn,
+          id: "TargetBuildkiteMetricsFunction"
+        }
+      ]
+    });
+    scheduledRule.cfnOptions.condition = createMetricsStack;
 
     const permissionForEventsToInvokeLambda = new lambda.CfnPermission(
       this,
@@ -552,32 +725,19 @@ export class BuildkiteStack extends cdk.Stack {
         functionName: buildkiteMetricsFunction.ref,
         action: "lambda:InvokeFunction",
         principal: "events.amazonaws.com",
-        sourceArn: new cdk.FnGetAtt("ScheduledRule", "Arn")
+        sourceArn: scheduledRule.attrArn
       }
     );
-    permissionForEventsToInvokeLambda.options.condition = createMetricsStack;
-
-    const scheduledRule = new events.CfnRule(this, "ScheduledRule", {
-      description: "ScheduledRule",
-      scheduleExpression: "rate(1 minute)",
-      state: "ENABLED",
-      targets: [
-        {
-          arn: new cdk.FnGetAtt("BuildkiteMetricsFunction", "Arn"),
-          id: "TargetBuildkiteMetricsFunction"
-        }
-      ]
-    });
-    scheduledRule.options.condition = createMetricsStack;
+    permissionForEventsToInvokeLambda.cfnOptions.condition = createMetricsStack;
 
     const managedSecretsLoggingBucket = new s3.CfnBucket(
       this,
       "ManagedSecretsLoggingBucket",
       { accessControl: "LogDeliveryWrite" }
     );
-    managedSecretsLoggingBucket.options.deletionPolicy =
-      cdk.DeletionPolicy.Retain;
-    managedSecretsLoggingBucket.options.condition = createSecretsBucket;
+    managedSecretsLoggingBucket.cfnOptions.deletionPolicy =
+      cdk.CfnDeletionPolicy.RETAIN;
+    managedSecretsLoggingBucket.cfnOptions.condition = createSecretsBucket;
 
     const managedSecretsBucket = new s3.CfnBucket(
       this,
@@ -589,38 +749,36 @@ export class BuildkiteStack extends cdk.Stack {
         versioningConfiguration: { status: "Enabled" }
       }
     );
-    managedSecretsBucket.options.deletionPolicy = cdk.DeletionPolicy.Retain;
-    managedSecretsBucket.options.condition = createSecretsBucket;
+    managedSecretsBucket.cfnOptions.deletionPolicy =
+      cdk.CfnDeletionPolicy.RETAIN;
+    managedSecretsBucket.cfnOptions.condition = createSecretsBucket;
 
     const iamRole = new iam.CfnRole(this, "IAMRole", {
-      roleName: new cdk.FnIf(
+      roleName: cdk.Fn.conditionIf(
         "SetInstanceRoleName",
-        instanceRoleName.resolve(),
-        new cdk.FnSub("${AWS::StackName}-Role")
-      ),
-      managedPolicyArns: new cdk.FnIf(
+        instanceRoleName.value as any,
+        cdk.Fn.sub("${AWS::StackName}-Role") as any
+      ) as any,
+      managedPolicyArns: cdk.Fn.conditionIf(
         "HasManagedPolicies",
-        new cdk.FnSplit(
-          ",",
-          new cdk.FnJoin(",", [
-            new cdk.FnIf(
-              "UseECR",
-              new cdk.FnFindInMap(
-                "ECRManagedPolicy",
-                ecrAccessPolicy.resolve(),
-                "Policy"
-              ),
-              `${new cdk.AwsNoValue()}`
-            ),
-            new cdk.FnIf(
-              "UseManagedPolicyARN",
-              new cdk.FnJoin(",", managedPolicyArn.resolve()),
-              `${new cdk.AwsNoValue()}`
-            )
-          ])
-        ),
-        `${new cdk.AwsNoValue()}`
-      ),
+        cdk.Fn.split(",", cdk.Fn.join(",", [
+          cdk.Fn.conditionIf(
+            "UseECR",
+            cdk.Fn.findInMap(
+              "ECRManagedPolicy",
+              ecrAccessPolicy.value as any,
+              "Policy"
+            ) as any,
+            cdk.Aws.NO_VALUE
+          ) as any,
+          cdk.Fn.conditionIf(
+            "UseManagedPolicyARN",
+            cdk.Fn.join(",", managedPolicyArn.value as any) as any,
+            cdk.Aws.NO_VALUE
+          ) as any
+        ]) as any) as any,
+        cdk.Aws.NO_VALUE
+      ) as any,
       assumeRolePolicyDocument: {
         Statement: [
           {
@@ -644,103 +802,105 @@ export class BuildkiteStack extends cdk.Stack {
     const vpc = new ec2.CfnVPC(this, "Vpc", {
       cidrBlock: "10.0.0.0/16",
       instanceTenancy: "default",
-      tags: [{ key: "Name", value: `${new cdk.AwsStackName()}` }]
+      tags: [{ key: "Name", value: cdk.Aws.STACK_NAME }]
     });
-    vpc.options.condition = createVpcResources;
+    vpc.cfnOptions.condition = createVpcResources;
 
     const securityGroup = new ec2.CfnSecurityGroup(this, "SecurityGroup", {
       groupDescription: "Enable access to agents",
-      vpcId: new cdk.FnIf("CreateVpcResources", vpc.ref, vpcId.resolve()),
-      tags: [{ key: "Name", value: `${new cdk.AwsStackName()}` }]
+      vpcId: cdk.Fn.conditionIf(
+        "CreateVpcResources",
+        vpc.ref,
+        vpcId.value as any
+      ) as any,
+      tags: [{ key: "Name", value: cdk.Aws.STACK_NAME }]
     });
-    securityGroup.options.condition = createSecurityGroup;
+    securityGroup.cfnOptions.condition = createSecurityGroup;
 
     const agentLaunchConfiguration = new autoscaling.CfnLaunchConfiguration(
       this,
       "AgentLaunchConfiguration",
       {
-        associatePublicIpAddress: associatePublicIpAddress.resolve(),
+        associatePublicIpAddress: associatePublicIpAddress.value as any,
         securityGroups: [
-          new cdk.FnIf(
+          cdk.Fn.conditionIf(
             "CreateSecurityGroup",
             securityGroup.ref,
-            securityGroupId.resolve()
-          )
+            securityGroupId.value as any
+          ) as any
         ],
-        keyName: new cdk.FnIf(
+        keyName: cdk.Fn.conditionIf(
           "HasKeyName",
-          keyName.resolve(),
-          `${new cdk.AwsNoValue()}`
-        ),
+          keyName.value as any,
+          cdk.Aws.NO_VALUE
+        ) as any,
         iamInstanceProfile: iamInstanceProfile.ref,
-        instanceType: instanceType.resolve(),
-        spotPrice: new cdk.FnIf(
+        instanceType: instanceType.value as any,
+        spotPrice: cdk.Fn.conditionIf(
           "UseSpotInstances",
-          spotPrice.resolve(),
-          `${new cdk.AwsNoValue()}`
-        ),
-        imageId: new cdk.FnIf(
+          spotPrice.value as any,
+          cdk.Aws.NO_VALUE
+        ) as any,
+        imageId: cdk.Fn.conditionIf(
           "UseDefaultAMI",
-          new cdk.FnFindInMap("AWSRegion2AMI", `${new cdk.AwsRegion()}`, "AMI"),
-          imageId.resolve()
-        ),
+          cdk.Fn.findInMap("AWSRegion2AMI", cdk.Aws.REGION, "AMI") as any,
+          imageId.value as any
+        ) as any,
         blockDeviceMappings: [
           {
             deviceName: "/dev/xvda",
-            ebs: { volumeSize: rootVolumeSize.resolve(), volumeType: "gp2" }
+            ebs: { volumeSize: rootVolumeSize.value as any, volumeType: "gp2" }
           }
         ],
-        userData: new cdk.FnBase64(
-          new cdk.FnSub(
-            'Content-Type: multipart/mixed; boundary="==BOUNDARY=="\nMIME-Version: 1.0\n--==BOUNDARY==\nContent-Type: text/cloud-boothook; charset="us-ascii"\nDOCKER_USERNS_REMAP=${EnableDockerUserNamespaceRemap} \\\nDOCKER_EXPERIMENTAL=${EnableDockerExperimental} \\\n  /usr/local/bin/bk-configure-docker.sh\n\n--==BOUNDARY==\nContent-Type: text/x-shellscript; charset="us-ascii"\n#!/bin/bash -xv\nBUILDKITE_STACK_NAME="${AWS::StackName}" \\\nBUILDKITE_STACK_VERSION=v4.0.2 \\\nBUILDKITE_SECRETS_BUCKET="${LocalSecretsBucket}" \\\nBUILDKITE_AGENT_TOKEN="${BuildkiteAgentToken}" \\\nBUILDKITE_AGENTS_PER_INSTANCE="${AgentsPerInstance}" \\\nBUILDKITE_AGENT_TAGS="${BuildkiteAgentTags}" \\\nBUILDKITE_AGENT_TIMESTAMP_LINES="${BuildkiteAgentTimestampLines}" \\\nBUILDKITE_AGENT_EXPERIMENTS="${BuildkiteAgentExperiments}" \\\nBUILDKITE_AGENT_RELEASE="${BuildkiteAgentRelease}" \\\nBUILDKITE_QUEUE="${BuildkiteQueue}" \\\nBUILDKITE_ELASTIC_BOOTSTRAP_SCRIPT="${BootstrapScriptUrl}" \\\nBUILDKITE_AUTHORIZED_USERS_URL="${AuthorizedUsersUrl}" \\\nBUILDKITE_ECR_POLICY=${ECRAccessPolicy} \\\nBUILDKITE_LIFECYCLE_TOPIC=${AgentLifecycleTopic} \\\nAWS_DEFAULT_REGION=${AWS::Region} \\\nSECRETS_PLUGIN_ENABLED=${EnableSecretsPlugin} \\\nECR_PLUGIN_ENABLED=${EnableECRPlugin} \\\nDOCKER_LOGIN_PLUGIN_ENABLED=${EnableDockerLoginPlugin} \\\nAWS_REGION=${AWS::Region} \\\n  /usr/local/bin/bk-install-elastic-stack.sh\n--==BOUNDARY==--\n',
-            {
-              LocalSecretsBucket: new cdk.FnIf(
-                "CreateSecretsBucket",
-                managedSecretsBucket.ref,
-                secretsBucket.resolve()
-              )
-            }
-          )
-        )
+        userData: cdk.Fn.base64(cdk.Fn.sub(
+          'Content-Type: multipart/mixed; boundary="==BOUNDARY=="\nMIME-Version: 1.0\n--==BOUNDARY==\nContent-Type: text/cloud-boothook; charset="us-ascii"\nDOCKER_USERNS_REMAP=${EnableDockerUserNamespaceRemap} \\\nDOCKER_EXPERIMENTAL=${EnableDockerExperimental} \\\n  /usr/local/bin/bk-configure-docker.sh\n\n--==BOUNDARY==\nContent-Type: text/x-shellscript; charset="us-ascii"\n#!/bin/bash -xv\nBUILDKITE_STACK_NAME="${AWS::StackName}" \\\nBUILDKITE_STACK_VERSION=v4.0.2 \\\nBUILDKITE_SECRETS_BUCKET="${LocalSecretsBucket}" \\\nBUILDKITE_AGENT_TOKEN="${BuildkiteAgentToken}" \\\nBUILDKITE_AGENTS_PER_INSTANCE="${AgentsPerInstance}" \\\nBUILDKITE_AGENT_TAGS="${BuildkiteAgentTags}" \\\nBUILDKITE_AGENT_TIMESTAMP_LINES="${BuildkiteAgentTimestampLines}" \\\nBUILDKITE_AGENT_EXPERIMENTS="${BuildkiteAgentExperiments}" \\\nBUILDKITE_AGENT_RELEASE="${BuildkiteAgentRelease}" \\\nBUILDKITE_QUEUE="${BuildkiteQueue}" \\\nBUILDKITE_ELASTIC_BOOTSTRAP_SCRIPT="${BootstrapScriptUrl}" \\\nBUILDKITE_AUTHORIZED_USERS_URL="${AuthorizedUsersUrl}" \\\nBUILDKITE_ECR_POLICY=${ECRAccessPolicy} \\\nBUILDKITE_LIFECYCLE_TOPIC=${AgentLifecycleTopic} \\\nAWS_DEFAULT_REGION=${AWS::Region} \\\nSECRETS_PLUGIN_ENABLED=${EnableSecretsPlugin} \\\nECR_PLUGIN_ENABLED=${EnableECRPlugin} \\\nDOCKER_LOGIN_PLUGIN_ENABLED=${EnableDockerLoginPlugin} \\\nAWS_REGION=${AWS::Region} \\\n  /usr/local/bin/bk-install-elastic-stack.sh\n--==BOUNDARY==--\n',
+          {
+            LocalSecretsBucket: cdk.Fn.conditionIf(
+              "CreateSecretsBucket",
+              managedSecretsBucket.ref,
+              secretsBucket.value as any
+            ) as any
+          }
+        ) as any) as any
       }
     );
 
     const subnet1 = new ec2.CfnSubnet(this, "Subnet1", {
-      availabilityZone: new cdk.FnIf(
+      availabilityZone: cdk.Fn.conditionIf(
         "UseSpecifiedAvailabilityZones",
-        new cdk.FnSelect(1, availabilityZones.resolve()),
-        new cdk.FnSelect(1, new cdk.FnGetAZs(""))
-      ),
+        cdk.Fn.select(1, availabilityZones.value as any) as any,
+        cdk.Fn.select(1, cdk.Fn.getAzs("") as any) as any
+      ) as any,
       cidrBlock: "10.0.2.0/24",
       vpcId: vpc.ref,
-      tags: [{ key: "Name", value: `${new cdk.AwsStackName()}` }]
+      tags: [{ key: "Name", value: cdk.Aws.STACK_NAME }]
     });
-    subnet1.options.condition = createVpcResources;
+    subnet1.cfnOptions.condition = createVpcResources;
 
     const subnet0 = new ec2.CfnSubnet(this, "Subnet0", {
-      availabilityZone: new cdk.FnIf(
+      availabilityZone: cdk.Fn.conditionIf(
         "UseSpecifiedAvailabilityZones",
-        new cdk.FnSelect(0, availabilityZones.resolve()),
-        new cdk.FnSelect(0, new cdk.FnGetAZs(""))
-      ),
+        cdk.Fn.select(0, availabilityZones.value as any) as any,
+        cdk.Fn.select(0, cdk.Fn.getAzs("") as any) as any
+      ) as any,
       cidrBlock: "10.0.1.0/24",
       vpcId: vpc.ref,
-      tags: [{ key: "Name", value: `${new cdk.AwsStackName()}` }]
+      tags: [{ key: "Name", value: cdk.Aws.STACK_NAME }]
     });
-    subnet0.options.condition = createVpcResources;
+    subnet0.cfnOptions.condition = createVpcResources;
 
     const agentAutoScaleGroup = new autoscaling.CfnAutoScalingGroup(
       this,
       "AgentAutoScaleGroup",
       {
-        vpcZoneIdentifier: new cdk.FnIf(
+        vpcZoneIdentifier: cdk.Fn.conditionIf(
           "CreateVpcResources",
           [subnet0.ref, subnet1.ref],
-          subnets.resolve()
-        ),
+          subnets.value as any
+        ) as any,
         launchConfigurationName: agentLaunchConfiguration.ref,
-        minSize: minSize.resolve(),
-        maxSize: maxSize.resolve(),
+        minSize: minSize.value as any,
+        maxSize: maxSize.value as any,
         metricsCollection: [
           {
             granularity: "1Minute",
@@ -762,33 +922,24 @@ export class BuildkiteStack extends cdk.Stack {
           { key: "Name", value: "buildkite-agent", propagateAtLaunch: true },
           {
             key: "BuildkiteAgentRelease",
-            value: buildkiteAgentRelease.resolve(),
+            value: buildkiteAgentRelease.value as any,
             propagateAtLaunch: true
           },
           {
             key: "BuildkiteQueue",
-            value: buildkiteQueue.resolve(),
+            value: buildkiteQueue.value as any,
             propagateAtLaunch: true
-          },
-          new cdk.FnIf(
-            "UseCostAllocationTags",
-            {
-              Key: costAllocationTagName.resolve(),
-              Value: costAllocationTagValue.resolve(),
-              PropagateAtLaunch: true
-            },
-            `${new cdk.AwsNoValue()}`
-          )
+          }
         ]
       }
     );
-    agentAutoScaleGroup.options.creationPolicy = {
+    agentAutoScaleGroup.cfnOptions.creationPolicy = {
       resourceSignal: {
-        timeout: instanceCreationTimeout.resolve(),
-        count: minSize.resolve()
+        timeout: instanceCreationTimeout.value as any,
+        count: minSize.value as any
       }
     };
-    agentAutoScaleGroup.options.updatePolicy = {
+    agentAutoScaleGroup.cfnOptions.updatePolicy = {
       autoScalingReplacingUpdate: { willReplace: true }
     };
 
@@ -799,10 +950,10 @@ export class BuildkiteStack extends cdk.Stack {
         adjustmentType: "ChangeInCapacity",
         autoScalingGroupName: agentAutoScaleGroup.ref,
         cooldown: "300",
-        scalingAdjustment: scaleDownAdjustment.resolve()
+        scalingAdjustment: scaleDownAdjustment.value as any
       }
     );
-    agentScaleDownPolicy.options.condition = useAutoscaling;
+    agentScaleDownPolicy.cfnOptions.condition = useAutoscaling;
 
     const agentUtilizationAlarmLow = new cloudwatch.CfnAlarm(
       this,
@@ -812,15 +963,15 @@ export class BuildkiteStack extends cdk.Stack {
         metricName: "UnfinishedJobsCount",
         namespace: "Buildkite",
         statistic: "Maximum",
-        period: scaleDownPeriod.resolve(),
+        period: scaleDownPeriod.value as any,
         evaluationPeriods: 1,
         threshold: 0,
         alarmActions: [agentScaleDownPolicy.ref],
-        dimensions: [{ name: "Queue", value: buildkiteQueue.resolve() }],
+        dimensions: [{ name: "Queue", value: buildkiteQueue.value as any }],
         comparisonOperator: "LessThanOrEqualToThreshold"
       }
     );
-    agentUtilizationAlarmLow.options.condition = useAutoscaling;
+    agentUtilizationAlarmLow.cfnOptions.condition = useAutoscaling;
 
     const agentScaleUpPolicy = new autoscaling.CfnScalingPolicy(
       this,
@@ -829,10 +980,10 @@ export class BuildkiteStack extends cdk.Stack {
         adjustmentType: "ChangeInCapacity",
         autoScalingGroupName: agentAutoScaleGroup.ref,
         cooldown: "300",
-        scalingAdjustment: scaleUpAdjustment.resolve()
+        scalingAdjustment: scaleUpAdjustment.value as any
       }
     );
-    agentScaleUpPolicy.options.condition = useAutoscaling;
+    agentScaleUpPolicy.cfnOptions.condition = useAutoscaling;
 
     const agentUtilizationAlarmHigh = new cloudwatch.CfnAlarm(
       this,
@@ -846,42 +997,29 @@ export class BuildkiteStack extends cdk.Stack {
         evaluationPeriods: 1,
         threshold: 0,
         alarmActions: [agentScaleUpPolicy.ref],
-        dimensions: [{ name: "Queue", value: buildkiteQueue.resolve() }],
+        dimensions: [{ name: "Queue", value: buildkiteQueue.value as any }],
         comparisonOperator: "GreaterThanThreshold"
       }
     );
-    agentUtilizationAlarmHigh.options.condition = useAutoscaling;
+    agentUtilizationAlarmHigh.cfnOptions.condition = useAutoscaling;
 
     const securityGroupSshIngress = new ec2.CfnSecurityGroupIngress(
       this,
       "SecurityGroupSshIngress",
       {
-        groupId: new cdk.FnGetAtt("SecurityGroup", "GroupId"),
+        groupId: securityGroup.attrGroupId,
         ipProtocol: "tcp",
         fromPort: 22,
         toPort: 22,
         cidrIp: "0.0.0.0/0"
       }
     );
-    securityGroupSshIngress.options.condition = enableSshIngress;
+    securityGroupSshIngress.cfnOptions.condition = enableSshIngress;
 
     const agentLifecycleTopic = new sns.CfnTopic(
       this,
       "AgentLifecycleTopic",
       {}
-    );
-
-    const agentLifecycleHook = new autoscaling.CfnLifecycleHook(
-      this,
-      "AgentLifecycleHook",
-      {
-        autoScalingGroupName: agentAutoScaleGroup.ref,
-        lifecycleTransition: "autoscaling:EC2_INSTANCE_TERMINATING",
-        defaultResult: "CONTINUE",
-        heartbeatTimeout: 120,
-        notificationTargetArn: agentLifecycleTopic.ref,
-        roleArn: new cdk.FnGetAtt("AgentLifecycleHookRole", "Arn")
-      }
     );
 
     const agentLifecycleHookRole = new iam.CfnRole(
@@ -915,6 +1053,19 @@ export class BuildkiteStack extends cdk.Stack {
       }
     );
 
+    const agentLifecycleHook = new autoscaling.CfnLifecycleHook(
+      this,
+      "AgentLifecycleHook",
+      {
+        autoScalingGroupName: agentAutoScaleGroup.ref,
+        lifecycleTransition: "autoscaling:EC2_INSTANCE_TERMINATING",
+        defaultResult: "CONTINUE",
+        heartbeatTimeout: 120,
+        notificationTargetArn: agentLifecycleTopic.ref,
+        roleArn: agentLifecycleHookRole.attrArn
+      }
+    );
+
     const artifactsBucketPolicies = new iam.CfnPolicy(
       this,
       "ArtifactsBucketPolicies",
@@ -926,8 +1077,8 @@ export class BuildkiteStack extends cdk.Stack {
               Effect: "Allow",
               Action: ["s3:Put*", "s3:List*", "s3:Get*"],
               Resource: [
-                new cdk.FnSub("arn:aws:s3:::${ArtifactsBucket}/*"),
-                new cdk.FnSub("arn:aws:s3:::${ArtifactsBucket}")
+                cdk.Fn.sub("arn:aws:s3:::${ArtifactsBucket}/*") as any,
+                cdk.Fn.sub("arn:aws:s3:::${ArtifactsBucket}") as any
               ]
             }
           ]
@@ -935,7 +1086,7 @@ export class BuildkiteStack extends cdk.Stack {
         roles: [iamRole.ref]
       }
     );
-    artifactsBucketPolicies.options.condition = useArtifactsBucket;
+    artifactsBucketPolicies.cfnOptions.condition = useArtifactsBucket;
 
     const unmanagedSecretsBucketPolicy = new iam.CfnPolicy(
       this,
@@ -948,8 +1099,8 @@ export class BuildkiteStack extends cdk.Stack {
               Effect: "Allow",
               Action: ["s3:Get*", "s3:Get", "s3:List*"],
               Resource: [
-                new cdk.FnSub("arn:aws:s3:::${SecretsBucket}/*"),
-                new cdk.FnSub("arn:aws:s3:::${SecretsBucket}")
+                cdk.Fn.sub("arn:aws:s3:::${SecretsBucket}/*") as any,
+                cdk.Fn.sub("arn:aws:s3:::${SecretsBucket}") as any
               ]
             }
           ]
@@ -957,7 +1108,7 @@ export class BuildkiteStack extends cdk.Stack {
         roles: [iamRole.ref]
       }
     );
-    unmanagedSecretsBucketPolicy.options.condition = useSpecifiedSecretsBucket;
+    unmanagedSecretsBucketPolicy.cfnOptions.condition = useSpecifiedSecretsBucket;
 
     const managedSecretsBucketPolicy = new iam.CfnPolicy(
       this,
@@ -970,8 +1121,8 @@ export class BuildkiteStack extends cdk.Stack {
               Effect: "Allow",
               Action: ["s3:Get*", "s3:Get", "s3:List*"],
               Resource: [
-                new cdk.FnSub("arn:aws:s3:::${ManagedSecretsBucket}/*"),
-                new cdk.FnSub("arn:aws:s3:::${ManagedSecretsBucket}")
+                cdk.Fn.sub("arn:aws:s3:::${ManagedSecretsBucket}/*") as any,
+                cdk.Fn.sub("arn:aws:s3:::${ManagedSecretsBucket}") as any
               ]
             }
           ]
@@ -979,7 +1130,7 @@ export class BuildkiteStack extends cdk.Stack {
         roles: [iamRole.ref]
       }
     );
-    managedSecretsBucketPolicy.options.condition = createSecretsBucket;
+    managedSecretsBucketPolicy.cfnOptions.condition = createSecretsBucket;
 
     const iamPolicies = new iam.CfnPolicy(this, "IAMPolicies", {
       policyName: "InstancePolicy",
@@ -1021,42 +1172,64 @@ export class BuildkiteStack extends cdk.Stack {
 
     const routes = new ec2.CfnRouteTable(this, "Routes", {
       vpcId: vpc.ref,
-      tags: [{ key: "Name", value: `${new cdk.AwsStackName()}` }]
+      tags: [{ key: "Name", value: cdk.Aws.STACK_NAME }]
     });
-    routes.options.condition = createVpcResources;
+    routes.cfnOptions.condition = createVpcResources;
 
     const subnet1Routes = new ec2.CfnSubnetRouteTableAssociation(
       this,
       "Subnet1Routes",
       { subnetId: subnet1.ref, routeTableId: routes.ref }
     );
-    subnet1Routes.options.condition = createVpcResources;
+    subnet1Routes.cfnOptions.condition = createVpcResources;
 
     const subnet0Routes = new ec2.CfnSubnetRouteTableAssociation(
       this,
       "Subnet0Routes",
       { subnetId: subnet0.ref, routeTableId: routes.ref }
     );
-    subnet0Routes.options.condition = createVpcResources;
+    subnet0Routes.cfnOptions.condition = createVpcResources;
 
     const gateway = new ec2.CfnInternetGateway(this, "Gateway", {
-      tags: [{ key: "Name", value: `${new cdk.AwsStackName()}` }]
+      tags: [{ key: "Name", value: cdk.Aws.STACK_NAME }]
     });
-    gateway.options.condition = createVpcResources;
+    gateway.cfnOptions.condition = createVpcResources;
 
     const gatewayAttachment = new ec2.CfnVPCGatewayAttachment(
       this,
       "GatewayAttachment",
       { internetGatewayId: gateway.ref, vpcId: vpc.ref }
     );
-    gatewayAttachment.options.condition = createVpcResources;
+    gatewayAttachment.cfnOptions.condition = createVpcResources;
 
     const routeDefault = new ec2.CfnRoute(this, "RouteDefault", {
       destinationCidrBlock: "0.0.0.0/0",
       gatewayId: gateway.ref,
       routeTableId: routes.ref
     });
-    routeDefault.options.condition = createVpcResources;
-    routeDefault.addDependency(gatewayAttachment);
+    routeDefault.cfnOptions.condition = createVpcResources;
+    routeDefault.addDependsOn(gatewayAttachment);
+
+    new cdk.CfnOutput(this, "ManagedSecretsBucketOutput", {
+      value: cdk.Fn.conditionIf(
+        "CreateSecretsBucket",
+        managedSecretsBucket.ref,
+        ""
+      ) as any
+    });
+
+    new cdk.CfnOutput(this, "ManagedSecretsLoggingBucketOutput", {
+      value: cdk.Fn.conditionIf(
+        "CreateSecretsBucket",
+        managedSecretsLoggingBucket.ref,
+        ""
+      ) as any
+    });
+
+    new cdk.CfnOutput(this, "AutoScalingGroupNameOutput", {
+      value: agentAutoScaleGroup.ref
+    });
+
+    new cdk.CfnOutput(this, "InstanceRoleNameOutput", { value: iamRole.ref });
   }
 }

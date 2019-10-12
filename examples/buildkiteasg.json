@@ -36,6 +36,11 @@
       "Type": "String",
       "Description": "The value of the Cost Allocation Tag used for billing purposes",
       "Default": "buildkite-elastic-ci-stack-for-aws"
+    },
+    "InstanceCreationTimeout": {
+      "Description": "Timeout period for Autoscaling Group Creation Policy",
+      "Type": "String",
+      "Default": "PT5M"
     }
   },
   "Resources": {
@@ -103,23 +108,6 @@
               "Ref": "BuildkiteQueue"
             },
             "PropagateAtLaunch": true
-          },
-          {
-            "Fn::If": [
-              "UseCostAllocationTags",
-              {
-                "Key": {
-                  "Ref": "CostAllocationTagName"
-                },
-                "Value": {
-                  "Ref": "CostAllocationTagValue"
-                },
-                "PropagateAtLaunch": true
-              },
-              {
-                "Ref": "AWS::NoValue"
-              }
-            ]
           }
         ]
       },

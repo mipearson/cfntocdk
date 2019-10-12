@@ -25,7 +25,7 @@ export default class Resource implements Construct {
 
     this.compiled = `const ${this.varName} = new ${this.module}.Cfn${
       this.type
-    }(this, "${this.name}", 
+    }(this, "${this.name}",
       ${this.properties.compile()}
     );`;
 
@@ -41,10 +41,13 @@ export default class Resource implements Construct {
         new Options(this.data.UpdatePolicy).compile()
       );
     }
+
     if (this.data.DeletionPolicy) {
       const policy =
         typeof this.data.DeletionPolicy === "string"
-          ? `cdk.DeletionPolicy.${this.data.DeletionPolicy}`
+          ? `cdk.CfnDeletionPolicy.${codemaker
+              .toSnakeCase(this.data.DeletionPolicy)
+              .toUpperCase()}`
           : new Options(this.data.DeletionPolicy).compile();
 
       this.addOption("deletionPolicy", policy);
@@ -59,7 +62,7 @@ export default class Resource implements Construct {
       val.forEach(v => {
         this.compiled += `\n${
           this.varName
-        }.addDependency(${codemaker.toCamelCase(v)});`;
+        }.addDependsOn(${codemaker.toCamelCase(v)});`;
         this.references.push(v);
       });
     }
@@ -72,6 +75,6 @@ export default class Resource implements Construct {
   }
 
   private addOption(name: string, value: string) {
-    this.compiled += `\n${this.varName}.options.${name} = ${value};`;
+    this.compiled += `\n${this.varName}.cfnOptions.${name} = ${value};`;
   }
 }

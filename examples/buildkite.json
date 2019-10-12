@@ -786,7 +786,7 @@
     "RouteDefault": {
       "Type": "AWS::EC2::Route",
       "Condition": "CreateVpcResources",
-      "DependsOn": "GatewayAttachment",
+      "DependsOn": ["GatewayAttachment"],
       "Properties": {
         "DestinationCidrBlock": "0.0.0.0/0",
         "GatewayId": {
@@ -1282,23 +1282,6 @@
               "Ref": "BuildkiteQueue"
             },
             "PropagateAtLaunch": true
-          },
-          {
-            "Fn::If": [
-              "UseCostAllocationTags",
-              {
-                "Key": {
-                  "Ref": "CostAllocationTagName"
-                },
-                "Value": {
-                  "Ref": "CostAllocationTagValue"
-                },
-                "PropagateAtLaunch": true
-              },
-              {
-                "Ref": "AWS::NoValue"
-              }
-            ]
           }
         ]
       },

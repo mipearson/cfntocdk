@@ -28,7 +28,7 @@ export default class Options {
 
   render(data: JSONMap | string): string {
     this.noCamelCase = false;
-    return this.renderInner(data);
+    return this.renderInner(data, true);
   }
 
   private findFnKey(data: any): FoundKey | null {
@@ -53,7 +53,7 @@ export default class Options {
     return ret;
   }
 
-  private renderInner(data: any): string {
+  private renderInner(data: any, scalarNeeded = false): string {
     if (data === null) {
       return "new cdk.AwsNoValue()";
     }
@@ -67,33 +67,55 @@ export default class Options {
       if (data.Ref) {
         if (data.Ref.startsWith("AWS::")) {
           const func = data.Ref.replace("AWS::", "");
-          // return `(new cdk.Aws${func}()).toString()`;
-          return "`${" + `new cdk.Aws${func}()` + "}`";
-          // return `"!Ref `
+          return `cdk.Aws.${codemaker.toSnakeCase(func).toUpperCase()}`;
         }
         if (Parameter.isParameter(data.Ref)) {
-          return `${codemaker.toCamelCase(data.Ref)}.resolve()`;
+          // TODO: Remember the type of parameter we received so that
+          // we can use the correct .value method here
+          return `(${codemaker.toCamelCase(data.Ref)}.value as any)`;
+          // return `${codemaker.toCamelCase(data.Ref)}.value`;
         }
 
         this.references.push(data.Ref);
-        // return `new cdk.Token(${codemaker.toCamelCase(data.Ref)}.ref)`;
         return `${codemaker.toCamelCase(data.Ref)}.ref`;
       }
-      if (Object.keys(data).length === 1 && data.Condition) {
-        return `new cdk.Fn("Condition", ${JSON.stringify(data.Condition)})`;
+
+      if (data.Condition) {
+        return codemaker.toCamelCase(data.Condition);
       }
 
       const fnKey = this.findFnKey(data);
 
       if (fnKey) {
+        let name = fnKey.name;
+        if (
+          [
+            "If",
+            "EachMemberEquals",
+            "EachMemberIn",
+            "Equals",
+            "Not",
+            "And",
+            "Or"
+          ].includes(name)
+        ) {
+          name = `condition${name}`;
+        } else if (name == "GetAZs") {
+          name = "getAzs";
+        } else if (name == "GetAtt") {
+          const [ref, att] = fnKey.value;
+          this.references.push(ref);
+          return `${codemaker.toCamelCase(ref)}.attr${att}`;
+        } else {
+          name = codemaker.toCamelCase(name);
+        }
         const value =
           fnKey.value instanceof Array ? fnKey.value : [fnKey.value];
 
         const items = this.noCamel(() =>
           value.map(i => this.renderInner(i)).join(", ")
         );
-
-        return `new cdk.Fn${fnKey.name}(${items})`;
+        return `cdk.Fn.${name}(${items})`;
       }
 
       const items = Object.keys(data).map(k => {

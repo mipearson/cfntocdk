@@ -1,16 +1,16 @@
-import cdk = require("@aws-cdk/cdk");
-import cloudtrail = require("@aws-cdk/aws-cloudtrail");
+import * as cdk from "@aws-cdk/core";
+import * as cloudtrail from "@aws-cdk/aws-cloudtrail";
 
 export class CloudtrailStack extends cdk.Stack {
   constructor(parent: cdk.App, id: string, props?: cdk.StackProps) {
     super(parent, id, props);
 
-    const loggingBucket = new cdk.Parameter(this, "LoggingBucket", {
+    const loggingBucket = new cdk.CfnParameter(this, "LoggingBucket", {
       description: "The name of the bucket to send cloudtrail logs to",
       type: "String"
     });
 
-    const unused = new cdk.Parameter(this, "Unused", {
+    const unused = new cdk.CfnParameter(this, "Unused", {
       description: "An unused parameter to test ref checks",
       type: "String"
     });
@@ -19,7 +19,7 @@ export class CloudtrailStack extends cdk.Stack {
       isLogging: true,
       isMultiRegionTrail: true,
       includeGlobalServiceEvents: true,
-      s3BucketName: loggingBucket.ref,
+      s3BucketName: loggingBucket.value as any,
       s3KeyPrefix: "cloudtrails"
     });
   }

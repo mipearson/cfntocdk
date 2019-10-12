@@ -1,6 +1,7 @@
 import prettier = require("prettier");
 import Parameter from "./lib/parameter";
 import Condition from "./lib/condition";
+import Output from "./lib/output";
 import { JSONResource, JSONMap, Construct } from "./lib/types";
 import Resource from "./lib/resource";
 import codemaker = require("codemaker");
@@ -8,9 +9,16 @@ import toposort = require("toposort");
 
 interface JSONCfn {
   Parameters?: { [key: string]: JSONMap };
+  Outputs?: { [key: string]: JSONMap };
   Conditions?: { [key: string]: JSONMap };
   Resources?: { [key: string]: JSONResource };
   Mappings?: JSONMap;
+  [key: string]: unknown;
+}
+
+interface Option {
+  name: string;
+  value: string;
 }
 
 export default class CfnToCDK {
@@ -18,7 +26,9 @@ export default class CfnToCDK {
   parameters: Array<Parameter>;
   resources: Array<Resource>;
   conditions: Array<Condition>;
+  outputs: Array<Output>;
   cfn: JSONCfn;
+
   // outputs: Array<string>;
 
   constructor(name: string, json: string) {
@@ -44,6 +54,9 @@ export default class CfnToCDK {
         this.resources.push(new Resource(name, this.cfn.Resources[name]));
       }
     }
+    this.outputs = Object.entries(this.cfn.Outputs || []).map(
+      ([name, data]) => new Output(name, data)
+    );
   }
 
   compileImports(): string {
@@ -57,7 +70,7 @@ export default class CfnToCDK {
 
     let buffer = "";
     for (let name in imports) {
-      buffer += `import ${name} = require('@aws-cdk/aws-${name}');\n`;
+      buffer += `import * as ${name} from '@aws-cdk/aws-${name}';\n`;
     }
     return buffer;
   }
@@ -77,7 +90,7 @@ export default class CfnToCDK {
 
     return Object.keys(mappings)
       .map(
-        k => `new cdk.Mapping(this, ${JSON.stringify(
+        k => `new cdk.CfnMapping(this, ${JSON.stringify(
           k
         )}, {mapping: ${JSON.stringify(mappings[k])}});
 
@@ -126,12 +139,27 @@ export default class CfnToCDK {
   }
 
   compileOutputs(): string {
-    return "";
+    return this.outputs.map(a => a.compile()).join("");
+  }
+
+  compileOptions(): string {
+    const mappings = {
+      templateFormatVersion: this.cfn.AWSTemplateFormatVersion,
+      description: this.cfn.Description,
+      metadata: this.cfn.Metadata
+    };
+
+    return Object.entries(mappings)
+      .map(([k, v]) =>
+        v ? `this.templateOptions.${k} = ${JSON.stringify(v)};` : undefined
+      )
+      .filter(v => v)
+      .join("\n");
   }
 
   compile(): string {
     const buffer = `
-    import cdk = require('@aws-cdk/cdk');
+    import * as cdk from '@aws-cdk/core';
     ${this.compileImports()}
 
     export class ${codemaker.toPascalCase(
@@ -139,6 +167,8 @@ export default class CfnToCDK {
     )}Stack extends cdk.Stack {
       constructor(parent: cdk.App, id: string, props?: cdk.StackProps) {
         super(parent, id, props);
+
+        ${this.compileOptions()};
 
         ${this.compileParameters()};
         ${this.compileMappings()};

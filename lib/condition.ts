@@ -14,10 +14,10 @@ export default class Condition implements Construct {
   compile(): string {
     return `const ${codemaker.toCamelCase(
       this.name
-    )} = new cdk.Condition(this, "${this.name}", 
+    )} = new cdk.CfnCondition(this, "${this.name}",
       ${new Options({ expression: this.data }).compile()}
     );
-    
+
     `;
   }
 }
