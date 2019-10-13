@@ -24,7 +24,7 @@
   },
   "scripts": {
     "test": "jest",
-    "testWatchAll": "jest --watchAll"
+    "test-watch": "jest --watch"
   },
   "author": "",
   "license": "MIT",
