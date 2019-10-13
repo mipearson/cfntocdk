@@ -1,10 +1,11 @@
-import Stack from "./lib/stack";
+import Stack from "../lib/stack";
 import fs = require("fs");
 import testUtil = require("@aws-cdk/core/test/util");
 import * as ts from "typescript";
-import { toPascal } from "./lib/util";
+import { toPascal } from "../lib/util";
+import path = require("path");
 
-const integrationExamples = ["buildkite", "WordPress_Multi_AZ"];
+const integrationExamples = ["WordPress_Multi_AZ", "buildkite"];
 
 for (let stack of integrationExamples) {
   const cfnSrc = `./__fixtures__/${stack}.json`;
@@ -38,7 +39,7 @@ for (let stack of integrationExamples) {
     fs.writeFileSync(jsOutput, js.outputText);
 
     // Load our JS, then synthesise a stack
-    const cdkmodule = require(jsOutput);
+    const cdkmodule = require(path.join(process.cwd(), jsOutput));
     const cdkstack = new cdkmodule[`${toPascal(stack)}Stack`]();
     const output = testUtil.toCloudFormation(cdkstack);
     fs.writeFileSync(jsonOutput, JSON.stringify(output, null, 2));

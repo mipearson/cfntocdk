@@ -2,7 +2,7 @@
   "name": "cfntocdk",
   "version": "0.0.1",
   "description": "",
-  "main": "bin/cfntocdk.ts",
+  "main": "lib/cfntocdk.js",
   "dependencies": {
     "lodash.camelcase": "^4.3.0",
     "lodash.snakecase": "^4.1.1",
@@ -26,8 +26,12 @@
     "typescript": "^3.6.4"
   },
   "scripts": {
+    "build": "tsc",
     "test": "jest",
     "test-watch": "jest --watch"
+  },
+  "bin": {
+    "cfntocdk": "bin/cfntocdk.js"
   },
   "author": "",
   "license": "MIT",
@@ -39,15 +43,15 @@
     "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
     "moduleFileExtensions": [
       "ts",
-      "tsx",
       "js",
-      "jsx",
-      "json",
-      "node"
+      "json"
     ],
     "watchPathIgnorePatterns": [
       "tmp",
-      "__snapshots__"
+      "__snapshots__",
+      "\\.js$",
+      "\\.js.map$",
+      "\\.d.ts$"
     ],
     "globals": {
       "ts-jest": {
