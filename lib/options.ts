@@ -117,7 +117,7 @@ export default class Options {
           k.endsWith("PolicyDocument") || k === "Variables"
             ? this.noCamel(() => this.renderInner(data[k]))
             : this.renderInner(data[k]);
-        return `${key}: ${val}`;
+        return `${JSON.stringify(key)}: ${val}`;
       });
       return `{ ${items.join(",\n")} }`;
     }
