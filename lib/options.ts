@@ -13,8 +13,8 @@ const CONDITIONALS = [
 ];
 
 export default class Options {
-  data: JSONNode;
-  references: Array<string>;
+  private readonly data: JSONNode;
+  public readonly references: Array<string>;
 
   private noCamelCase = false;
 

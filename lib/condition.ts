@@ -3,8 +3,8 @@ import Options from "./options";
 import { toCamel } from "./util";
 
 export default class Condition implements Construct {
-  data: JSONMap;
-  name: string;
+  private readonly data: JSONMap;
+  public readonly name: string;
 
   constructor(name: string, data: JSONMap) {
     this.data = data;

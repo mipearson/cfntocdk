@@ -17,12 +17,12 @@ interface CfnSource {
 }
 
 export default class CfnToCDK {
-  stackName: string;
-  parameters: Array<Parameter>;
-  resources: Array<Resource>;
-  conditions: Array<Condition>;
-  outputs: Array<Output>;
-  cfn: CfnSource;
+  public stackName: string;
+  private parameters: Array<Parameter>;
+  private resources: Array<Resource>;
+  private conditions: Array<Condition>;
+  private outputs: Array<Output>;
+  private cfn: CfnSource;
 
   constructor(name: string, json: string) {
     this.stackName = name;
@@ -32,21 +32,15 @@ export default class CfnToCDK {
     this.conditions = [];
     this.resources = [];
 
-    if (this.cfn.Parameters) {
-      for (let name in this.cfn.Parameters) {
-        this.parameters.push(new Parameter(name, this.cfn.Parameters[name]));
-      }
-    }
-    if (this.cfn.Conditions) {
-      for (let name in this.cfn.Conditions) {
-        this.conditions.push(new Condition(name, this.cfn.Conditions[name]));
-      }
-    }
-    if (this.cfn.Resources) {
-      for (let name in this.cfn.Resources) {
-        this.resources.push(new Resource(name, this.cfn.Resources[name]));
-      }
-    }
+    this.parameters = Object.entries(this.cfn.Parameters || []).map(
+      ([name, data]) => new Parameter(name, data)
+    );
+    this.conditions = Object.entries(this.cfn.Conditions || []).map(
+      ([name, data]) => new Condition(name, data)
+    );
+    this.resources = Object.entries(this.cfn.Resources || []).map(
+      ([name, data]) => new Resource(name, data)
+    );
     this.outputs = Object.entries(this.cfn.Outputs || []).map(
       ([name, data]) => new Output(name, data)
     );
@@ -92,23 +86,13 @@ export default class CfnToCDK {
       .join("");
   }
 
-  // withConstIfReferenced = (c: Construct): string => {
-  //   let buffer = c.compile() + "\n\n";
-  //   if (this.isReferenced(c.name)) {
-  //     buffer = `const ${codemaker.toCamelCase(c.name)} = ${buffer}`;
-  //   }
-
-  //   return buffer;
-  // };
-
-  // isReferenced(name: string): boolean {
-  //   return (
-  //     this.resources.findIndex(r => r.references.indexOf(name) !== -1) !== -1
-  //   );
-  // }
-
   compileResources(): string {
     const graph: Array<[string, string]> = [];
+
+    const compiledResources: { [k: string]: string } = {};
+    this.resources.forEach(r => {
+      compiledResources[r.name] = r.compile();
+    });
 
     this.resources.forEach(r => {
       r.references.forEach(ref => {
@@ -119,16 +103,11 @@ export default class CfnToCDK {
 
     const ordered = toposort(graph) as Array<string>;
 
-    let buffer = "";
-
-    ordered.reverse().forEach(name => {
-      const resource = this.resources.find(r => r.name === name);
-      if (resource) {
-        buffer += resource.compile();
-      }
-    });
-
-    return buffer;
+    return ordered
+      .reverse()
+      .map(name => compiledResources[name])
+      .filter(s => s)
+      .join("");
   }
 
   compileOutputs(): string {

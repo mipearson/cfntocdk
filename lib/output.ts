@@ -2,17 +2,15 @@ import { JSONMap, Construct } from "./types";
 import Options from "./options";
 
 export default class Output implements Construct {
-  data: JSONMap;
-  name: string;
+  private readonly data: JSONMap;
+  public readonly name: string;
 
-  static known: Array<string> = [];
-
-  constructor(name: string, data: JSONMap) {
+  public constructor(name: string, data: JSONMap) {
     this.data = data;
     this.name = name;
   }
 
-  compile(): string {
+  public compile(): string {
     return `new cdk.CfnOutput(this, "${this.name}",
       ${new Options(this.data).compile()}
     );

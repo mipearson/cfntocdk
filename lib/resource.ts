@@ -3,45 +3,31 @@ import Options from "./options";
 import { toCamel, toConstant } from "./util";
 
 export default class Resource implements Construct {
-  public readonly data: JSONResource;
   public readonly name: string;
   public readonly module: string;
-  public readonly type: string;
-  public readonly references: string[];
-  public readonly properties: Options;
-  private readonly dependsOn: string[];
+  public readonly references: string[] = [];
+  private readonly type: string;
+  private readonly data: JSONResource;
   private readonly varName: string;
 
   public constructor(name: string, data: JSONResource) {
     this.data = data;
     this.name = name;
-    this.properties = new Options(data.Properties);
-    this.references = [...this.properties.references];
     this.varName = toCamel(this.name);
 
     const splitType = data.Type.split("::", 3);
     this.module = splitType[1].toLowerCase();
     this.type = splitType[2];
-
-    if (this.data.Condition) {
-      this.references.push(this.data.Condition);
-    }
-    this.dependsOn = [];
-    if (this.data.DependsOn) {
-      this.dependsOn =
-        this.data.DependsOn instanceof Array
-          ? this.data.DependsOn
-          : [this.data.DependsOn];
-      this.references.push(...this.dependsOn);
-    }
   }
 
   public compile(): string {
+    const properties = new Options(this.data.Properties);
     let buffer = `const ${this.varName} = new ${this.module}.Cfn${
       this.type
     }(this, "${this.name}",
-      ${this.properties.compile()}
+      ${properties.compile()}
     );`;
+    this.references.push(...properties.references);
 
     if (this.data.CreationPolicy) {
       buffer += this.option(
@@ -65,12 +51,18 @@ export default class Resource implements Construct {
       buffer += this.option("deletionPolicy", policy);
     }
     if (this.data.Condition) {
+      this.references.push(this.data.Condition);
       buffer += this.option("condition", toCamel(this.data.Condition));
     }
-    if (this.dependsOn) {
-      this.dependsOn.forEach(v => {
+    if (this.data.DependsOn) {
+      const dependsOn =
+        this.data.DependsOn instanceof Array
+          ? this.data.DependsOn
+          : [this.data.DependsOn];
+      dependsOn.forEach(v => {
         buffer += `\n${this.varName}.addDependsOn(${toCamel(v)});`;
       });
+      this.references.push(...dependsOn);
     }
     if (this.data.Metadata) {
       buffer += this.option("metadata", JSON.stringify(this.data.Metadata));
