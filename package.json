@@ -29,6 +29,7 @@
   "author": "",
   "license": "MIT",
   "jest": {
+    "testEnvironment": "node",
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     },
@@ -42,7 +43,7 @@
       "node"
     ],
     "watchPathIgnorePatterns": [
-      "test-compiled.ts"
+      "examples/tmp"
     ],
     "globals": {
       "ts-jest": {

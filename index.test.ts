@@ -2,30 +2,51 @@ import CdkToCFN from "./index";
 import fs = require("fs");
 import codemaker = require("codemaker");
 import testUtil = require("@aws-cdk/core/test/util");
+import * as ts from "typescript";
 
-const integrationExamples = ["Wordpress_Chef"];
+const integrationExamples = ["buildkite", "cloudtrail", "buildkiteasg"];
 
-integrationExamples.forEach((stack: string) => {
-  test(`our TypeScript example for ${stack} produces output that matches our CFN source`, () => {
-    const cfn = JSON.parse(
-      fs.readFileSync(`examples/${stack}.json`).toString()
-    );
-    const cdkmodule = require(`./examples/${stack}`);
+for (let stack of integrationExamples) {
+  const cfnSrc = `./examples/${stack}.json`;
+  const tsOutput = `./examples/tmp/${stack}.ts`;
+  const jsOutput = `./examples/tmp/${stack}.js`;
+  const jsonOutput = `./examples/tmp/${stack}.json`;
+
+  test(`Stack ${cfnSrc} compiles to ${tsOutput}`, () => {
+    const cfn = fs.readFileSync(cfnSrc).toString();
+    if (fs.existsSync(tsOutput)) fs.unlinkSync(tsOutput);
+
+    const cdk = new CdkToCFN(stack, cfn).compile();
+    fs.writeFileSync(tsOutput, cdk);
+
+    expect(fs.readFileSync(tsOutput).toString()).toMatchSnapshot();
+  });
+
+  test(`CDK TS ${tsOutput} transpiles to CDK JS ${jsOutput}`, () => {
+    if (!fs.existsSync(tsOutput)) return;
+    const cdk = fs.readFileSync(tsOutput).toString();
+    if (fs.existsSync(jsOutput)) fs.unlinkSync(jsOutput);
+
+    const js = ts.transpileModule(cdk, {
+      reportDiagnostics: true,
+      fileName: `${stack}.ts`,
+      compilerOptions: {
+        target: ts.ScriptTarget.ES2015,
+        module: ts.ModuleKind.CommonJS,
+        strict: true,
+        sourceMap: false
+      }
+    });
+    fs.writeFileSync(jsOutput, js.outputText);
+  });
+
+  test(`CDK JS ${jsOutput} renders to CFN ${jsonOutput}`, () => {
+    if (!fs.existsSync(jsOutput)) return;
+    const cdkmodule = require(jsOutput);
     const cdkstack = new cdkmodule[`${codemaker.toPascalCase(stack)}Stack`]();
+    const output = testUtil.toCloudFormation(cdkstack);
 
-    expect(testUtil.toCloudFormation(cdkstack)).toEqual(cfn);
+    fs.writeFileSync(jsonOutput, JSON.stringify(output, null, 2));
+    expect(output).toMatchSnapshot();
   });
-
-  test(`CFN source for ${stack} compiles to our TypeScript example`, () => {
-    const cfn = fs.readFileSync(`examples/${stack}.json`).toString();
-    const cdk = fs.readFileSync(`examples/${stack}.ts`).toString();
-
-    const compiled = new CdkToCFN(stack, cfn).compile();
-
-    if (compiled !== cdk) {
-      fs.writeFileSync("test-compiled.ts", compiled);
-    }
-
-    expect(compiled).toEqual(cdk);
-  });
-});
+}
