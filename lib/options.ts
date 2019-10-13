@@ -72,8 +72,7 @@ export default class Options {
         if (Parameter.isParameter(data.Ref)) {
           // TODO: Remember the type of parameter we received so that
           // we can use the correct .value method here
-          return `(${codemaker.toCamelCase(data.Ref)}.value as any)`;
-          // return `${codemaker.toCamelCase(data.Ref)}.value`;
+          return `(${codemaker.toCamelCase(data.Ref)}.value)`;
         }
 
         this.references.push(data.Ref);
@@ -115,6 +114,7 @@ export default class Options {
         const items = this.noCamel(() =>
           value.map(i => this.renderInner(i)).join(", ")
         );
+
         return `cdk.Fn.${name}(${items})`;
       }
 

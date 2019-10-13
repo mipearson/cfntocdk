@@ -43,7 +43,8 @@
       "node"
     ],
     "watchPathIgnorePatterns": [
-      "examples/tmp"
+      "tmp",
+      "__snapshots__"
     ],
     "globals": {
       "ts-jest": {

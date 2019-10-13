@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`CDK JS ./examples/tmp/WordPress_Multi_AZ.js renders to CFN ./examples/tmp/WordPress_Multi_AZ.json and matches original stack ./examples/WordPress_Multi_AZ.json 1`] = `
+exports[`CDK JS ./tmp/WordPress_Multi_AZ.js renders to CFN ./tmp/WordPress_Multi_AZ.json and matches original stack ./__fixtures__/WordPress_Multi_AZ.json 1`] = `
 Object {
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": "AWS CloudFormation Sample Template WordPress_Multi_AZ: WordPress is web software you can use to create a beautiful website or blog. This template installs a highly-available, scalable WordPress deployment using a multi-az Amazon RDS database instance for storage. It demonstrates using the AWS CloudFormation bootstrap scripts to deploy WordPress. **WARNING** This template creates an Amazon EC2 instance, an Application Load Balancer and an Amazon RDS database instance. You will be billed for the AWS resources used if you create a stack from this template.",
@@ -992,9 +992,491 @@ yum update -y aws-cfn-bootstrap
 }
 `;
 
-exports[`CDK JS ./examples/tmp/buildkiteasg.js renders to CFN ./examples/tmp/buildkiteasg.json and matches original stack ./examples/buildkiteasg.json 1`] = `
+exports[`CDK JS ./tmp/buildkite.js renders to CFN ./tmp/buildkite.json and matches original stack ./__fixtures__/buildkite.json 1`] = `
 Object {
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Conditions": Object {
+    "CreateMetricsStack": Object {
+      "Condition": "UseAutoscaling",
+    },
+    "CreateSecretsBucket": Object {
+      "Fn::Equals": Array [
+        Object {
+          "Ref": "SecretsBucket",
+        },
+        "",
+      ],
+    },
+    "CreateSecurityGroup": Object {
+      "Fn::Equals": Array [
+        Object {
+          "Ref": "SecurityGroupId",
+        },
+        "",
+      ],
+    },
+    "CreateVpcResources": Object {
+      "Fn::Equals": Array [
+        Object {
+          "Ref": "VpcId",
+        },
+        "",
+      ],
+    },
+    "EnableSshIngress": Object {
+      "Fn::And": Array [
+        Object {
+          "Condition": "CreateSecurityGroup",
+        },
+        Object {
+          "Fn::Or": Array [
+            Object {
+              "Condition": "HasKeyName",
+            },
+            Object {
+              "Fn::Not": Array [
+                Object {
+                  "Fn::Equals": Array [
+                    Object {
+                      "Ref": "AuthorizedUsersUrl",
+                    },
+                    "",
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    "HasKeyName": Object {
+      "Fn::Not": Array [
+        Object {
+          "Fn::Equals": Array [
+            Object {
+              "Ref": "KeyName",
+            },
+            "",
+          ],
+        },
+      ],
+    },
+    "HasManagedPolicies": Object {
+      "Fn::Or": Array [
+        Object {
+          "Condition": "UseManagedPolicyARN",
+        },
+        Object {
+          "Condition": "UseECR",
+        },
+      ],
+    },
+    "SetInstanceRoleName": Object {
+      "Fn::Not": Array [
+        Object {
+          "Fn::Equals": Array [
+            Object {
+              "Ref": "InstanceRoleName",
+            },
+            "",
+          ],
+        },
+      ],
+    },
+    "UseArtifactsBucket": Object {
+      "Fn::Not": Array [
+        Object {
+          "Fn::Equals": Array [
+            Object {
+              "Ref": "ArtifactsBucket",
+            },
+            "",
+          ],
+        },
+      ],
+    },
+    "UseAutoscaling": Object {
+      "Fn::Not": Array [
+        Object {
+          "Fn::Equals": Array [
+            Object {
+              "Ref": "MaxSize",
+            },
+            Object {
+              "Ref": "MinSize",
+            },
+          ],
+        },
+      ],
+    },
+    "UseCostAllocationTags": Object {
+      "Fn::Equals": Array [
+        Object {
+          "Ref": "EnableCostAllocationTags",
+        },
+        "true",
+      ],
+    },
+    "UseDefaultAMI": Object {
+      "Fn::Equals": Array [
+        Object {
+          "Ref": "ImageId",
+        },
+        "",
+      ],
+    },
+    "UseECR": Object {
+      "Fn::Not": Array [
+        Object {
+          "Fn::Equals": Array [
+            Object {
+              "Ref": "ECRAccessPolicy",
+            },
+            "none",
+          ],
+        },
+      ],
+    },
+    "UseManagedPolicyARN": Object {
+      "Fn::Not": Array [
+        Object {
+          "Fn::Equals": Array [
+            Object {
+              "Fn::Join": Array [
+                "",
+                Object {
+                  "Ref": "ManagedPolicyARN",
+                },
+              ],
+            },
+            "",
+          ],
+        },
+      ],
+    },
+    "UseSpecifiedAvailabilityZones": Object {
+      "Fn::Not": Array [
+        Object {
+          "Fn::Equals": Array [
+            Object {
+              "Fn::Join": Array [
+                "",
+                Object {
+                  "Ref": "AvailabilityZones",
+                },
+              ],
+            },
+            "",
+          ],
+        },
+      ],
+    },
+    "UseSpecifiedSecretsBucket": Object {
+      "Fn::Not": Array [
+        Object {
+          "Fn::Equals": Array [
+            Object {
+              "Ref": "SecretsBucket",
+            },
+            "",
+          ],
+        },
+      ],
+    },
+    "UseSpotInstances": Object {
+      "Fn::Not": Array [
+        Object {
+          "Fn::Equals": Array [
+            Object {
+              "Ref": "SpotPrice",
+            },
+            0,
+          ],
+        },
+      ],
+    },
+  },
+  "Description": "Buildkite stack v4.0.2",
+  "Mappings": Object {
+    "AWSRegion2AMI": Object {
+      "ap-northeast-1": Object {
+        "AMI": "ami-07e9586052fa7e87b",
+      },
+      "ap-northeast-2": Object {
+        "AMI": "ami-0846198638b500217",
+      },
+      "ap-south-1": Object {
+        "AMI": "ami-0283d0ab170de1f81",
+      },
+      "ap-southeast-1": Object {
+        "AMI": "ami-0a298ef89b00a97b9",
+      },
+      "ap-southeast-2": Object {
+        "AMI": "ami-0a541d0604bff3890",
+      },
+      "eu-central-1": Object {
+        "AMI": "ami-03889b1fc23df65d7",
+      },
+      "eu-west-1": Object {
+        "AMI": "ami-081315bd246893405",
+      },
+      "eu-west-2": Object {
+        "AMI": "ami-0d8ad4c20a873b867",
+      },
+      "sa-east-1": Object {
+        "AMI": "ami-06e329498e6ae405b",
+      },
+      "us-east-1": Object {
+        "AMI": "ami-08361b08a1bdc52ce",
+      },
+      "us-east-2": Object {
+        "AMI": "ami-0de84efc5bd5d8f45",
+      },
+      "us-west-1": Object {
+        "AMI": "ami-0d7b8f53098f0832e",
+      },
+      "us-west-2": Object {
+        "AMI": "ami-024906a3f49a723c0",
+      },
+    },
+    "ECRManagedPolicy": Object {
+      "full": Object {
+        "Policy": "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess",
+      },
+      "none": Object {
+        "Policy": "",
+      },
+      "poweruser": Object {
+        "Policy": "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser",
+      },
+      "readonly": Object {
+        "Policy": "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+      },
+    },
+    "MetricsLambdaBucket": Object {
+      "ap-northeast-1": Object {
+        "Bucket": "buildkite-metrics-ap-northeast-1",
+      },
+      "ap-northeast-2": Object {
+        "Bucket": "buildkite-metrics-ap-northeast-2",
+      },
+      "ap-south-1": Object {
+        "Bucket": "buildkite-metrics-ap-south-1",
+      },
+      "ap-southeast-1": Object {
+        "Bucket": "buildkite-metrics-ap-southeast-1",
+      },
+      "ap-southeast-2": Object {
+        "Bucket": "buildkite-metrics-ap-southeast-2",
+      },
+      "eu-central-1": Object {
+        "Bucket": "buildkite-metrics-eu-central-1",
+      },
+      "eu-west-1": Object {
+        "Bucket": "buildkite-metrics-eu-west-1",
+      },
+      "eu-west-2": Object {
+        "Bucket": "buildkite-metrics-eu-west-2",
+      },
+      "sa-east-1": Object {
+        "Bucket": "buildkite-metrics-sa-east-1",
+      },
+      "us-east-1": Object {
+        "Bucket": "buildkite-metrics",
+      },
+      "us-east-2": Object {
+        "Bucket": "buildkite-metrics-us-east-2",
+      },
+      "us-west-1": Object {
+        "Bucket": "buildkite-metrics-us-west-1",
+      },
+      "us-west-2": Object {
+        "Bucket": "buildkite-metrics-us-west-2",
+      },
+    },
+  },
+  "Metadata": Object {
+    "AWS::CloudFormation::Interface": Object {
+      "ParameterGroups": Array [
+        Object {
+          "Label": Object {
+            "default": "Buildkite Configuration",
+          },
+          "Parameters": Array [
+            "BuildkiteAgentToken",
+            "BuildkiteQueue",
+          ],
+        },
+        Object {
+          "Label": Object {
+            "default": "Advanced Buildkite Configuration",
+          },
+          "Parameters": Array [
+            "BuildkiteAgentRelease",
+            "BuildkiteAgentTags",
+            "BuildkiteAgentTimestampLines",
+            "BuildkiteAgentExperiments",
+          ],
+        },
+        Object {
+          "Label": Object {
+            "default": "Network Configuration",
+          },
+          "Parameters": Array [
+            "VpcId",
+            "Subnets",
+            "AvailabilityZones",
+            "SecurityGroupId",
+            "AssociatePublicIpAddress",
+          ],
+        },
+        Object {
+          "Label": Object {
+            "default": "Instance Configuration",
+          },
+          "Parameters": Array [
+            "ImageId",
+            "InstanceType",
+            "AgentsPerInstance",
+            "KeyName",
+            "SpotPrice",
+            "SecretsBucket",
+            "ArtifactsBucket",
+            "AuthorizedUsersUrl",
+            "BootstrapScriptUrl",
+            "RootVolumeSize",
+            "ManagedPolicyARN",
+            "InstanceRoleName",
+          ],
+        },
+        Object {
+          "Label": Object {
+            "default": "Auto-scaling Configuration",
+          },
+          "Parameters": Array [
+            "MinSize",
+            "MaxSize",
+            "ScaleUpAdjustment",
+            "ScaleDownAdjustment",
+            "ScaleDownPeriod",
+            "InstanceCreationTimeout",
+          ],
+        },
+        Object {
+          "Label": Object {
+            "default": "Cost Allocation Configuration",
+          },
+          "Parameters": Array [
+            "EnableCostAllocationTags",
+            "CostAllocationTagName",
+            "CostAllocationTagValue",
+          ],
+        },
+        Object {
+          "Label": Object {
+            "default": "Docker Daemon Configuration",
+          },
+          "Parameters": Array [
+            "EnableDockerUserNamespaceRemap",
+            "EnableDockerExperimental",
+          ],
+        },
+        Object {
+          "Label": Object {
+            "default": "Docker Registry Configuration",
+          },
+          "Parameters": Array [
+            "ECRAccessPolicy",
+          ],
+        },
+        Object {
+          "Label": Object {
+            "default": "Plugin Configuration",
+          },
+          "Parameters": Array [
+            "EnableSecretsPlugin",
+            "EnableECRPlugin",
+            "EnableDockerLoginPlugin",
+          ],
+        },
+      ],
+    },
+  },
+  "Outputs": Object {
+    "AutoScalingGroupName": Object {
+      "Value": Object {
+        "Ref": "AgentAutoScaleGroup",
+      },
+    },
+    "InstanceRoleNameOutput": Object {
+      "Value": Object {
+        "Ref": "IAMRole",
+      },
+    },
+    "ManagedSecretsBucketName": Object {
+      "Value": Object {
+        "Fn::If": Array [
+          "CreateSecretsBucket",
+          Object {
+            "Ref": "ManagedSecretsBucket",
+          },
+          "",
+        ],
+      },
+    },
+    "ManagedSecretsLoggingBucketName": Object {
+      "Value": Object {
+        "Fn::If": Array [
+          "CreateSecretsBucket",
+          Object {
+            "Ref": "ManagedSecretsLoggingBucket",
+          },
+          "",
+        ],
+      },
+    },
+  },
   "Parameters": Object {
+    "AgentsPerInstance": Object {
+      "Default": 1,
+      "Description": "Number of Buildkite agents to run on each instance",
+      "MinValue": 1,
+      "Type": "Number",
+    },
+    "ArtifactsBucket": Object {
+      "Default": "",
+      "Description": "Optional - Name of an existing S3 bucket for build artifact storage",
+      "Type": "String",
+    },
+    "AssociatePublicIpAddress": Object {
+      "AllowedValues": Array [
+        "true",
+        "false",
+      ],
+      "Default": "true",
+      "Description": "Associate instances with public IP addresses",
+      "Type": "String",
+    },
+    "AuthorizedUsersUrl": Object {
+      "Default": "",
+      "Description": "Optional - HTTPS or S3 URL to periodically download ssh authorized_keys from, setting this will enable SSH ingress",
+      "Type": "String",
+    },
+    "AvailabilityZones": Object {
+      "Default": "",
+      "Description": "Optional - Comma separated list of AZs that subnets are created in (if Subnets parameter is not specified)",
+      "Type": "CommaDelimitedList",
+    },
+    "BootstrapScriptUrl": Object {
+      "Default": "",
+      "Description": "Optional - HTTPS or S3 URL to run on each instance during boot",
+      "Type": "String",
+    },
+    "BuildkiteAgentExperiments": Object {
+      "Default": "",
+      "Description": "Agent experiments to enable, comma delimited. See https://github.com/buildkite/agent/blob/master/EXPERIMENTS.md.",
+      "Type": "String",
+    },
     "BuildkiteAgentRelease": Object {
       "AllowedValues": Array [
         "stable",
@@ -1002,6 +1484,26 @@ Object {
         "edge",
       ],
       "Default": "stable",
+      "Type": "String",
+    },
+    "BuildkiteAgentTags": Object {
+      "Default": "",
+      "Description": "Additional tags seperated by commas to provide to the agent. E.g os=linux,llamas=always",
+      "Type": "String",
+    },
+    "BuildkiteAgentTimestampLines": Object {
+      "AllowedValues": Array [
+        "true",
+        "false",
+      ],
+      "Default": "false",
+      "Description": "Set to true to prepend timestamps to every line of output",
+      "Type": "String",
+    },
+    "BuildkiteAgentToken": Object {
+      "Description": "Buildkite agent registration token",
+      "MinLength": 1,
+      "NoEcho": true,
       "Type": "String",
     },
     "BuildkiteQueue": Object {
@@ -1020,10 +1522,101 @@ Object {
       "Description": "The value of the Cost Allocation Tag used for billing purposes",
       "Type": "String",
     },
+    "ECRAccessPolicy": Object {
+      "AllowedValues": Array [
+        "none",
+        "readonly",
+        "poweruser",
+        "full",
+      ],
+      "Default": "none",
+      "Description": "ECR access policy to give container instances",
+      "Type": "String",
+    },
+    "EnableCostAllocationTags": Object {
+      "AllowedValues": Array [
+        "true",
+        "false",
+      ],
+      "Default": "false",
+      "Description": "Enables AWS Cost Allocation tags for all resources in the stack. See https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/cost-alloc-tags.html",
+      "Type": "String",
+    },
+    "EnableDockerExperimental": Object {
+      "AllowedValues": Array [
+        "true",
+        "false",
+      ],
+      "Default": "false",
+      "Description": "Enables Docker experimental features",
+      "Type": "String",
+    },
+    "EnableDockerLoginPlugin": Object {
+      "AllowedValues": Array [
+        "true",
+        "false",
+      ],
+      "Default": "true",
+      "Description": "Enables docker-login plugin for all pipelines",
+      "Type": "String",
+    },
+    "EnableDockerUserNamespaceRemap": Object {
+      "AllowedValues": Array [
+        "true",
+        "false",
+      ],
+      "Default": "true",
+      "Description": "Enables Docker user namespace remapping so docker runs as buildkite-agent",
+      "Type": "String",
+    },
+    "EnableECRPlugin": Object {
+      "AllowedValues": Array [
+        "true",
+        "false",
+      ],
+      "Default": "true",
+      "Description": "Enables ecr plugin for all pipelines",
+      "Type": "String",
+    },
+    "EnableSecretsPlugin": Object {
+      "AllowedValues": Array [
+        "true",
+        "false",
+      ],
+      "Default": "true",
+      "Description": "Enables s3-secrets plugin for all pipelines",
+      "Type": "String",
+    },
+    "ImageId": Object {
+      "Default": "",
+      "Description": "Optional - Custom AMI to use for instances (must be based on the stack's AMI)",
+      "Type": "String",
+    },
     "InstanceCreationTimeout": Object {
       "Default": "PT5M",
       "Description": "Timeout period for Autoscaling Group Creation Policy",
       "Type": "String",
+    },
+    "InstanceRoleName": Object {
+      "Default": "",
+      "Description": "Optional - A name for the IAM Role attached to the Instance Profile",
+      "Type": "String",
+    },
+    "InstanceType": Object {
+      "Default": "t2.nano",
+      "Description": "Instance type",
+      "MinLength": 1,
+      "Type": "String",
+    },
+    "KeyName": Object {
+      "Default": "",
+      "Description": "Optional - SSH keypair used to access the buildkite instances, setting this will enable SSH ingress",
+      "Type": "String",
+    },
+    "ManagedPolicyARN": Object {
+      "Default": "",
+      "Description": "Optional - Comma separated list of managed IAM policy ARNs to attach to the instance role",
+      "Type": "CommaDelimitedList",
     },
     "MaxSize": Object {
       "Default": 10,
@@ -1036,10 +1629,53 @@ Object {
       "Description": "Minimum number of instances",
       "Type": "Number",
     },
+    "RootVolumeSize": Object {
+      "Default": 250,
+      "Description": "Size of each instance's root EBS volume (in GB)",
+      "MinValue": 10,
+      "Type": "Number",
+    },
+    "ScaleDownAdjustment": Object {
+      "Default": -1,
+      "Description": "Number of instances to remove on scale down events (UnfinishedJobs == 0 for ScaleDownPeriod)",
+      "MaxValue": 0,
+      "Type": "Number",
+    },
+    "ScaleDownPeriod": Object {
+      "Default": 1800,
+      "Description": "Number of seconds UnfinishedJobs must equal 0 before scale down",
+      "Type": "Number",
+    },
+    "ScaleUpAdjustment": Object {
+      "Default": 5,
+      "Description": "Number of instances to add on scale up events (ScheduledJobsCount > 0 for 1 min)",
+      "MinValue": 0,
+      "Type": "Number",
+    },
+    "SecretsBucket": Object {
+      "Default": "",
+      "Description": "Optional - Name of an existing S3 bucket containing pipeline secrets (Created if left blank)",
+      "Type": "String",
+    },
+    "SecurityGroupId": Object {
+      "Default": "",
+      "Description": "Optional - Security group id to assign to instances",
+      "Type": "String",
+    },
+    "SpotPrice": Object {
+      "Default": 0,
+      "Description": "Spot bid price to use for the instances. 0 means normal (non-spot) instances",
+      "Type": "String",
+    },
     "Subnets": Object {
       "Default": "",
       "Description": "Optional - Comma separated list of two existing VPC subnet ids where EC2 instances will run. Required if setting VpcId.",
       "Type": "CommaDelimitedList",
+    },
+    "VpcId": Object {
+      "Default": "",
+      "Description": "Optional - Id of an existing VPC to launch instances into. Leave blank to have a new VPC created",
+      "Type": "String",
     },
   },
   "Resources": Object {
@@ -1106,11 +1742,22 @@ Object {
           "OldestLaunchConfiguration",
           "ClosestToNextInstanceHour",
         ],
-        "VPCZoneIdentifier": Array [
-          Object {
-            "Ref": "Subnets",
-          },
-        ],
+        "VPCZoneIdentifier": Object {
+          "Fn::If": Array [
+            "CreateVpcResources",
+            Array [
+              Object {
+                "Ref": "Subnet0",
+              },
+              Object {
+                "Ref": "Subnet1",
+              },
+            ],
+            Object {
+              "Ref": "Subnets",
+            },
+          ],
+        },
       },
       "Type": "AWS::AutoScaling::AutoScalingGroup",
       "UpdatePolicy": Object {
@@ -1121,45 +1768,902 @@ Object {
     },
     "AgentLaunchConfiguration": Object {
       "Properties": Object {
-        "ImageId": "ami-fff",
-        "InstanceType": "m4.large",
+        "AssociatePublicIpAddress": Object {
+          "Ref": "AssociatePublicIpAddress",
+        },
+        "BlockDeviceMappings": Array [
+          Object {
+            "DeviceName": "/dev/xvda",
+            "Ebs": Object {
+              "VolumeSize": Object {
+                "Ref": "RootVolumeSize",
+              },
+              "VolumeType": "gp2",
+            },
+          },
+        ],
+        "IamInstanceProfile": Object {
+          "Ref": "IAMInstanceProfile",
+        },
+        "ImageId": Object {
+          "Fn::If": Array [
+            "UseDefaultAMI",
+            Object {
+              "Fn::FindInMap": Array [
+                "AWSRegion2AMI",
+                Object {
+                  "Ref": "AWS::Region",
+                },
+                "AMI",
+              ],
+            },
+            Object {
+              "Ref": "ImageId",
+            },
+          ],
+        },
+        "InstanceType": Object {
+          "Ref": "InstanceType",
+        },
+        "KeyName": Object {
+          "Fn::If": Array [
+            "HasKeyName",
+            Object {
+              "Ref": "KeyName",
+            },
+            Object {
+              "Ref": "AWS::NoValue",
+            },
+          ],
+        },
+        "SecurityGroups": Array [
+          Object {
+            "Fn::If": Array [
+              "CreateSecurityGroup",
+              Object {
+                "Ref": "SecurityGroup",
+              },
+              Object {
+                "Ref": "SecurityGroupId",
+              },
+            ],
+          },
+        ],
+        "SpotPrice": Object {
+          "Fn::If": Array [
+            "UseSpotInstances",
+            Object {
+              "Ref": "SpotPrice",
+            },
+            Object {
+              "Ref": "AWS::NoValue",
+            },
+          ],
+        },
+        "UserData": Object {
+          "Fn::Base64": Object {
+            "Fn::Sub": Array [
+              "Content-Type: multipart/mixed; boundary=\\"==BOUNDARY==\\"
+MIME-Version: 1.0
+--==BOUNDARY==
+Content-Type: text/cloud-boothook; charset=\\"us-ascii\\"
+DOCKER_USERNS_REMAP=\${EnableDockerUserNamespaceRemap} \\\\
+DOCKER_EXPERIMENTAL=\${EnableDockerExperimental} \\\\
+  /usr/local/bin/bk-configure-docker.sh
+
+--==BOUNDARY==
+Content-Type: text/x-shellscript; charset=\\"us-ascii\\"
+#!/bin/bash -xv
+BUILDKITE_STACK_NAME=\\"\${AWS::StackName}\\" \\\\
+BUILDKITE_STACK_VERSION=v4.0.2 \\\\
+BUILDKITE_SECRETS_BUCKET=\\"\${LocalSecretsBucket}\\" \\\\
+BUILDKITE_AGENT_TOKEN=\\"\${BuildkiteAgentToken}\\" \\\\
+BUILDKITE_AGENTS_PER_INSTANCE=\\"\${AgentsPerInstance}\\" \\\\
+BUILDKITE_AGENT_TAGS=\\"\${BuildkiteAgentTags}\\" \\\\
+BUILDKITE_AGENT_TIMESTAMP_LINES=\\"\${BuildkiteAgentTimestampLines}\\" \\\\
+BUILDKITE_AGENT_EXPERIMENTS=\\"\${BuildkiteAgentExperiments}\\" \\\\
+BUILDKITE_AGENT_RELEASE=\\"\${BuildkiteAgentRelease}\\" \\\\
+BUILDKITE_QUEUE=\\"\${BuildkiteQueue}\\" \\\\
+BUILDKITE_ELASTIC_BOOTSTRAP_SCRIPT=\\"\${BootstrapScriptUrl}\\" \\\\
+BUILDKITE_AUTHORIZED_USERS_URL=\\"\${AuthorizedUsersUrl}\\" \\\\
+BUILDKITE_ECR_POLICY=\${ECRAccessPolicy} \\\\
+BUILDKITE_LIFECYCLE_TOPIC=\${AgentLifecycleTopic} \\\\
+AWS_DEFAULT_REGION=\${AWS::Region} \\\\
+SECRETS_PLUGIN_ENABLED=\${EnableSecretsPlugin} \\\\
+ECR_PLUGIN_ENABLED=\${EnableECRPlugin} \\\\
+DOCKER_LOGIN_PLUGIN_ENABLED=\${EnableDockerLoginPlugin} \\\\
+AWS_REGION=\${AWS::Region} \\\\
+  /usr/local/bin/bk-install-elastic-stack.sh
+--==BOUNDARY==--
+",
+              Object {
+                "LocalSecretsBucket": Object {
+                  "Fn::If": Array [
+                    "CreateSecretsBucket",
+                    Object {
+                      "Ref": "ManagedSecretsBucket",
+                    },
+                    Object {
+                      "Ref": "SecretsBucket",
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        },
       },
       "Type": "AWS::AutoScaling::LaunchConfiguration",
     },
-  },
-}
-`;
-
-exports[`CDK JS ./examples/tmp/cloudtrail.js renders to CFN ./examples/tmp/cloudtrail.json and matches original stack ./examples/cloudtrail.json 1`] = `
-Object {
-  "Parameters": Object {
-    "LoggingBucket": Object {
-      "Description": "The name of the bucket to send cloudtrail logs to",
-      "Type": "String",
-    },
-    "Unused": Object {
-      "Description": "An unused parameter to test ref checks",
-      "Type": "String",
-    },
-  },
-  "Resources": Object {
-    "CloudTrail": Object {
+    "AgentLifecycleHook": Object {
       "Properties": Object {
-        "IncludeGlobalServiceEvents": true,
-        "IsLogging": true,
-        "IsMultiRegionTrail": true,
-        "S3BucketName": Object {
-          "Ref": "LoggingBucket",
+        "AutoScalingGroupName": Object {
+          "Ref": "AgentAutoScaleGroup",
         },
-        "S3KeyPrefix": "cloudtrails",
+        "DefaultResult": "CONTINUE",
+        "HeartbeatTimeout": 120,
+        "LifecycleTransition": "autoscaling:EC2_INSTANCE_TERMINATING",
+        "NotificationTargetARN": Object {
+          "Ref": "AgentLifecycleTopic",
+        },
+        "RoleARN": Object {
+          "Fn::GetAtt": Array [
+            "AgentLifecycleHookRole",
+            "Arn",
+          ],
+        },
       },
-      "Type": "AWS::CloudTrail::Trail",
+      "Type": "AWS::AutoScaling::LifecycleHook",
+    },
+    "AgentLifecycleHookRole": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": Array [
+                  "autoscaling.amazonaws.com",
+                ],
+              },
+            },
+          ],
+        },
+        "Path": "/",
+        "Policies": Array [
+          Object {
+            "PolicyDocument": Object {
+              "Statement": Array [
+                Object {
+                  "Action": Array [
+                    "sns:Publish",
+                  ],
+                  "Effect": "Allow",
+                  "Resource": Object {
+                    "Ref": "AgentLifecycleTopic",
+                  },
+                },
+              ],
+            },
+            "PolicyName": "AgentLifecyclePolicy",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "AgentLifecycleTopic": Object {
+      "Type": "AWS::SNS::Topic",
+    },
+    "AgentScaleDownPolicy": Object {
+      "Condition": "UseAutoscaling",
+      "Properties": Object {
+        "AdjustmentType": "ChangeInCapacity",
+        "AutoScalingGroupName": Object {
+          "Ref": "AgentAutoScaleGroup",
+        },
+        "Cooldown": "300",
+        "ScalingAdjustment": Object {
+          "Ref": "ScaleDownAdjustment",
+        },
+      },
+      "Type": "AWS::AutoScaling::ScalingPolicy",
+    },
+    "AgentScaleUpPolicy": Object {
+      "Condition": "UseAutoscaling",
+      "Properties": Object {
+        "AdjustmentType": "ChangeInCapacity",
+        "AutoScalingGroupName": Object {
+          "Ref": "AgentAutoScaleGroup",
+        },
+        "Cooldown": "300",
+        "ScalingAdjustment": Object {
+          "Ref": "ScaleUpAdjustment",
+        },
+      },
+      "Type": "AWS::AutoScaling::ScalingPolicy",
+    },
+    "AgentUtilizationAlarmHigh": Object {
+      "Condition": "UseAutoscaling",
+      "Properties": Object {
+        "AlarmActions": Array [
+          Object {
+            "Ref": "AgentScaleUpPolicy",
+          },
+        ],
+        "AlarmDescription": "Scale-up if ScheduledJobs > 0 for 1 minute",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "Dimensions": Array [
+          Object {
+            "Name": "Queue",
+            "Value": Object {
+              "Ref": "BuildkiteQueue",
+            },
+          },
+        ],
+        "EvaluationPeriods": 1,
+        "MetricName": "ScheduledJobsCount",
+        "Namespace": "Buildkite",
+        "Period": 60,
+        "Statistic": "Minimum",
+        "Threshold": 0,
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "AgentUtilizationAlarmLow": Object {
+      "Condition": "UseAutoscaling",
+      "Properties": Object {
+        "AlarmActions": Array [
+          Object {
+            "Ref": "AgentScaleDownPolicy",
+          },
+        ],
+        "AlarmDescription": "Scale-down if UnfinishedJobs == 0 for N minutes",
+        "ComparisonOperator": "LessThanOrEqualToThreshold",
+        "Dimensions": Array [
+          Object {
+            "Name": "Queue",
+            "Value": Object {
+              "Ref": "BuildkiteQueue",
+            },
+          },
+        ],
+        "EvaluationPeriods": 1,
+        "MetricName": "UnfinishedJobsCount",
+        "Namespace": "Buildkite",
+        "Period": Object {
+          "Ref": "ScaleDownPeriod",
+        },
+        "Statistic": "Maximum",
+        "Threshold": 0,
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ArtifactsBucketPolicies": Object {
+      "Condition": "UseArtifactsBucket",
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:Put*",
+                "s3:List*",
+                "s3:Get*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::Sub": "arn:aws:s3:::\${ArtifactsBucket}/*",
+                },
+                Object {
+                  "Fn::Sub": "arn:aws:s3:::\${ArtifactsBucket}",
+                },
+              ],
+            },
+          ],
+        },
+        "PolicyName": "ArtifactsBucketPolicy",
+        "Roles": Array [
+          Object {
+            "Ref": "IAMRole",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "BuildkiteMetricsFunction": Object {
+      "Condition": "CreateMetricsStack",
+      "DependsOn": Array [
+        "LambdaExecutionPolicy",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Fn::FindInMap": Array [
+              "MetricsLambdaBucket",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "Bucket",
+            ],
+          },
+          "S3Key": "buildkite-metrics-v3.0.0-lambda.zip",
+        },
+        "Environment": Object {
+          "Variables": Object {
+            "AWS_ACCOUNT_ID": Object {
+              "Ref": "AWS::AccountId",
+            },
+            "AWS_STACK_ID": Object {
+              "Ref": "AWS::StackId",
+            },
+            "AWS_STACK_NAME": Object {
+              "Ref": "AWS::StackName",
+            },
+            "BUILDKITE_AGENT_TOKEN": Object {
+              "Ref": "BuildkiteAgentToken",
+            },
+            "BUILDKITE_QUEUE": Object {
+              "Ref": "BuildkiteQueue",
+            },
+          },
+        },
+        "Handler": "handler.handle",
+        "MemorySize": 128,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "LambdaExecutionRole",
+            "Arn",
+          ],
+        },
+        "Runtime": "python2.7",
+        "Timeout": 120,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "Gateway": Object {
+      "Condition": "CreateVpcResources",
+      "Properties": Object {
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": Object {
+              "Ref": "AWS::StackName",
+            },
+          },
+        ],
+      },
+      "Type": "AWS::EC2::InternetGateway",
+    },
+    "GatewayAttachment": Object {
+      "Condition": "CreateVpcResources",
+      "Properties": Object {
+        "InternetGatewayId": Object {
+          "Ref": "Gateway",
+        },
+        "VpcId": Object {
+          "Ref": "Vpc",
+        },
+      },
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+    },
+    "IAMInstanceProfile": Object {
+      "Properties": Object {
+        "Path": "/",
+        "Roles": Array [
+          Object {
+            "Ref": "IAMRole",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::InstanceProfile",
+    },
+    "IAMPolicies": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "cloudwatch:PutMetricData",
+                "cloudformation:DescribeStackResource",
+                "ec2:DescribeTags",
+                "autoscaling:DescribeAutoScalingInstances",
+                "autoscaling:DescribeLifecycleHooks",
+                "autoscaling:RecordLifecycleActionHeartbeat",
+                "autoscaling:CompleteLifecycleAction",
+                "autoscaling:SetInstanceHealth",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+                "logs:DescribeLogStreams",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "sqs:*",
+                "sns:Unsubscribe",
+                "sns:Subscribe",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+        },
+        "PolicyName": "InstancePolicy",
+        "Roles": Array [
+          Object {
+            "Ref": "IAMRole",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "IAMRole": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": Array [
+                  "autoscaling.amazonaws.com",
+                  "ec2.amazonaws.com",
+                ],
+              },
+            },
+          ],
+        },
+        "ManagedPolicyArns": Object {
+          "Fn::If": Array [
+            "HasManagedPolicies",
+            Object {
+              "Fn::Split": Array [
+                ",",
+                Object {
+                  "Fn::Join": Array [
+                    ",",
+                    Array [
+                      Object {
+                        "Fn::If": Array [
+                          "UseECR",
+                          Object {
+                            "Fn::FindInMap": Array [
+                              "ECRManagedPolicy",
+                              Object {
+                                "Ref": "ECRAccessPolicy",
+                              },
+                              "Policy",
+                            ],
+                          },
+                          Object {
+                            "Ref": "AWS::NoValue",
+                          },
+                        ],
+                      },
+                      Object {
+                        "Fn::If": Array [
+                          "UseManagedPolicyARN",
+                          Object {
+                            "Fn::Join": Array [
+                              ",",
+                              Object {
+                                "Ref": "ManagedPolicyARN",
+                              },
+                            ],
+                          },
+                          Object {
+                            "Ref": "AWS::NoValue",
+                          },
+                        ],
+                      },
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Ref": "AWS::NoValue",
+            },
+          ],
+        },
+        "Path": "/",
+        "RoleName": Object {
+          "Fn::If": Array [
+            "SetInstanceRoleName",
+            Object {
+              "Ref": "InstanceRoleName",
+            },
+            Object {
+              "Fn::Sub": "\${AWS::StackName}-Role",
+            },
+          ],
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "LambdaExecutionPolicy": Object {
+      "Condition": "CreateMetricsStack",
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+                "cloudwatch:PutMetricData",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                "*",
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "AccessToCloudwatchForBuildkiteMetrics",
+        "Roles": Array [
+          Object {
+            "Ref": "LambdaExecutionRole",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "LambdaExecutionRole": Object {
+      "Condition": "CreateMetricsStack",
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "sts:AssumeRole",
+              ],
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": Array [
+                  "lambda.amazonaws.com",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Path": "/",
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ManagedSecretsBucket": Object {
+      "Condition": "CreateSecretsBucket",
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "LoggingConfiguration": Object {
+          "DestinationBucketName": Object {
+            "Ref": "ManagedSecretsLoggingBucket",
+          },
+        },
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+    },
+    "ManagedSecretsBucketPolicy": Object {
+      "Condition": "CreateSecretsBucket",
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:Get*",
+                "s3:Get",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::Sub": "arn:aws:s3:::\${ManagedSecretsBucket}/*",
+                },
+                Object {
+                  "Fn::Sub": "arn:aws:s3:::\${ManagedSecretsBucket}",
+                },
+              ],
+            },
+          ],
+        },
+        "PolicyName": "SecretsBucketPolicy",
+        "Roles": Array [
+          Object {
+            "Ref": "IAMRole",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ManagedSecretsLoggingBucket": Object {
+      "Condition": "CreateSecretsBucket",
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "AccessControl": "LogDeliveryWrite",
+      },
+      "Type": "AWS::S3::Bucket",
+    },
+    "PermissionForEventsToInvokeLambda": Object {
+      "Condition": "CreateMetricsStack",
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Ref": "BuildkiteMetricsFunction",
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::GetAtt": Array [
+            "ScheduledRule",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "RouteDefault": Object {
+      "Condition": "CreateVpcResources",
+      "DependsOn": Array [
+        "GatewayAttachment",
+      ],
+      "Properties": Object {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": Object {
+          "Ref": "Gateway",
+        },
+        "RouteTableId": Object {
+          "Ref": "Routes",
+        },
+      },
+      "Type": "AWS::EC2::Route",
+    },
+    "Routes": Object {
+      "Condition": "CreateVpcResources",
+      "Properties": Object {
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": Object {
+              "Ref": "AWS::StackName",
+            },
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "Vpc",
+        },
+      },
+      "Type": "AWS::EC2::RouteTable",
+    },
+    "ScheduledRule": Object {
+      "Condition": "CreateMetricsStack",
+      "Properties": Object {
+        "Description": "ScheduledRule",
+        "ScheduleExpression": "rate(1 minute)",
+        "State": "ENABLED",
+        "Targets": Array [
+          Object {
+            "Arn": Object {
+              "Fn::GetAtt": Array [
+                "BuildkiteMetricsFunction",
+                "Arn",
+              ],
+            },
+            "Id": "TargetBuildkiteMetricsFunction",
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "SecurityGroup": Object {
+      "Condition": "CreateSecurityGroup",
+      "Properties": Object {
+        "GroupDescription": "Enable access to agents",
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": Object {
+              "Ref": "AWS::StackName",
+            },
+          },
+        ],
+        "VpcId": Object {
+          "Fn::If": Array [
+            "CreateVpcResources",
+            Object {
+              "Ref": "Vpc",
+            },
+            Object {
+              "Ref": "VpcId",
+            },
+          ],
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "SecurityGroupSshIngress": Object {
+      "Condition": "EnableSshIngress",
+      "Properties": Object {
+        "CidrIp": "0.0.0.0/0",
+        "FromPort": 22,
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "SecurityGroup",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 22,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "Subnet0": Object {
+      "Condition": "CreateVpcResources",
+      "Properties": Object {
+        "AvailabilityZone": Object {
+          "Fn::If": Array [
+            "UseSpecifiedAvailabilityZones",
+            Object {
+              "Fn::Select": Array [
+                0,
+                Object {
+                  "Ref": "AvailabilityZones",
+                },
+              ],
+            },
+            Object {
+              "Fn::Select": Array [
+                0,
+                Object {
+                  "Fn::GetAZs": "",
+                },
+              ],
+            },
+          ],
+        },
+        "CidrBlock": "10.0.1.0/24",
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": Object {
+              "Ref": "AWS::StackName",
+            },
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "Vpc",
+        },
+      },
+      "Type": "AWS::EC2::Subnet",
+    },
+    "Subnet0Routes": Object {
+      "Condition": "CreateVpcResources",
+      "Properties": Object {
+        "RouteTableId": Object {
+          "Ref": "Routes",
+        },
+        "SubnetId": Object {
+          "Ref": "Subnet0",
+        },
+      },
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+    },
+    "Subnet1": Object {
+      "Condition": "CreateVpcResources",
+      "Properties": Object {
+        "AvailabilityZone": Object {
+          "Fn::If": Array [
+            "UseSpecifiedAvailabilityZones",
+            Object {
+              "Fn::Select": Array [
+                1,
+                Object {
+                  "Ref": "AvailabilityZones",
+                },
+              ],
+            },
+            Object {
+              "Fn::Select": Array [
+                1,
+                Object {
+                  "Fn::GetAZs": "",
+                },
+              ],
+            },
+          ],
+        },
+        "CidrBlock": "10.0.2.0/24",
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": Object {
+              "Ref": "AWS::StackName",
+            },
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "Vpc",
+        },
+      },
+      "Type": "AWS::EC2::Subnet",
+    },
+    "Subnet1Routes": Object {
+      "Condition": "CreateVpcResources",
+      "Properties": Object {
+        "RouteTableId": Object {
+          "Ref": "Routes",
+        },
+        "SubnetId": Object {
+          "Ref": "Subnet1",
+        },
+      },
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+    },
+    "UnmanagedSecretsBucketPolicy": Object {
+      "Condition": "UseSpecifiedSecretsBucket",
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:Get*",
+                "s3:Get",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::Sub": "arn:aws:s3:::\${SecretsBucket}/*",
+                },
+                Object {
+                  "Fn::Sub": "arn:aws:s3:::\${SecretsBucket}",
+                },
+              ],
+            },
+          ],
+        },
+        "PolicyName": "SecretsBucketPolicy",
+        "Roles": Array [
+          Object {
+            "Ref": "IAMRole",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "Vpc": Object {
+      "Condition": "CreateVpcResources",
+      "Properties": Object {
+        "CidrBlock": "10.0.0.0/16",
+        "InstanceTenancy": "default",
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": Object {
+              "Ref": "AWS::StackName",
+            },
+          },
+        ],
+      },
+      "Type": "AWS::EC2::VPC",
     },
   },
 }
 `;
 
-exports[`Stack ./examples/WordPress_Multi_AZ.json compiles to ./examples/tmp/WordPress_Multi_AZ.ts 1`] = `
+exports[`Stack ./__fixtures__/WordPress_Multi_AZ.json compiles to ./tmp/WordPress_Multi_AZ.ts 1`] = `
 "import * as cdk from \\"@aws-cdk/core\\";
 import * as elasticloadbalancingv2 from \\"@aws-cdk/aws-elasticloadbalancingv2\\";
 import * as ec2 from \\"@aws-cdk/aws-ec2\\";
@@ -1557,7 +3061,7 @@ export class WordPressMultiAzStack extends cdk.Stack {
     const applicationLoadBalancer = new elasticloadbalancingv2.CfnLoadBalancer(
       this,
       \\"ApplicationLoadBalancer\\",
-      { subnets: subnets.value as any }
+      { subnets: subnets.value }
     );
 
     const webServerSecurityGroup = new ec2.CfnSecurityGroup(
@@ -1580,10 +3084,10 @@ export class WordPressMultiAzStack extends cdk.Stack {
             ipProtocol: \\"tcp\\",
             fromPort: 22,
             toPort: 22,
-            cidrIp: sshLocation.value as any
+            cidrIp: sshLocation.value
           }
         ],
-        vpcId: vpcId.value as any
+        vpcId: vpcId.value
       }
     );
 
@@ -1600,18 +3104,18 @@ export class WordPressMultiAzStack extends cdk.Stack {
             sourceSecurityGroupId: webServerSecurityGroup.ref
           }
         ],
-        vpcId: vpcId.value as any
+        vpcId: vpcId.value
       }
     );
 
     const dbInstance = new rds.CfnDBInstance(this, \\"DBInstance\\", {
-      dbName: dbName.value as any,
+      dbName: dbName.value,
       engine: \\"MySQL\\",
-      multiAz: multiAzDatabase.value as any,
-      masterUsername: dbUser.value as any,
-      masterUserPassword: dbPassword.value as any,
-      dbInstanceClass: dbClass.value as any,
-      allocatedStorage: dbAllocatedStorage.value as any,
+      multiAz: multiAzDatabase.value,
+      masterUsername: dbUser.value,
+      masterUserPassword: dbPassword.value,
+      dbInstanceClass: dbClass.value,
+      allocatedStorage: dbAllocatedStorage.value,
       vpcSecurityGroups: [dbec2SecurityGroup.attrGroupId]
     });
 
@@ -1622,15 +3126,11 @@ export class WordPressMultiAzStack extends cdk.Stack {
         imageId: cdk.Fn.findInMap(
           \\"AWSRegionArch2AMI\\",
           cdk.Aws.REGION,
-          cdk.Fn.findInMap(
-            \\"AWSInstanceType2Arch\\",
-            instanceType.value as any,
-            \\"Arch\\"
-          )
+          cdk.Fn.findInMap(\\"AWSInstanceType2Arch\\", instanceType.value, \\"Arch\\")
         ),
-        instanceType: instanceType.value as any,
+        instanceType: instanceType.value,
         securityGroups: [webServerSecurityGroup.ref],
-        keyName: keyName.value as any,
+        keyName: keyName.value,
         userData: cdk.Fn.base64(
           cdk.Fn.join(\\"\\", [
             \\"#!/bin/bash -xe\\\\n\\",
@@ -1770,7 +3270,7 @@ export class WordPressMultiAzStack extends cdk.Stack {
         port: 80,
         protocol: \\"HTTP\\",
         unhealthyThresholdCount: 5,
-        vpcId: vpcId.value as any,
+        vpcId: vpcId.value,
         targetGroupAttributes: [
           { key: \\"stickiness.enabled\\", value: \\"true\\" },
           { key: \\"stickiness.type\\", value: \\"lb_cookie\\" },
@@ -1783,11 +3283,11 @@ export class WordPressMultiAzStack extends cdk.Stack {
       this,
       \\"WebServerGroup\\",
       {
-        vpcZoneIdentifier: subnets.value as any,
+        vpcZoneIdentifier: subnets.value,
         launchConfigurationName: launchConfig.ref,
         minSize: \\"1\\",
         maxSize: \\"5\\",
-        desiredCapacity: webServerCapacity.value as any,
+        desiredCapacity: webServerCapacity.value,
         targetGroupArNs: [albTargetGroup.ref]
       }
     );
@@ -1829,7 +3329,7 @@ export class WordPressMultiAzStack extends cdk.Stack {
 "
 `;
 
-exports[`Stack ./examples/buildkite.json compiles to ./examples/tmp/buildkite.ts 1`] = `
+exports[`Stack ./__fixtures__/buildkite.json compiles to ./tmp/buildkite.ts 1`] = `
 "import * as cdk from \\"@aws-cdk/core\\";
 import * as ec2 from \\"@aws-cdk/aws-ec2\\";
 import * as iam from \\"@aws-cdk/aws-iam\\";
@@ -2320,26 +3820,26 @@ export class BuildkiteStack extends cdk.Stack {
 
     const useSpotInstances = new cdk.CfnCondition(this, \\"UseSpotInstances\\", {
       expression: cdk.Fn.conditionNot(
-        cdk.Fn.conditionEquals(spotPrice.value as any, 0)
+        cdk.Fn.conditionEquals(spotPrice.value, 0)
       )
     });
 
     const createVpcResources = new cdk.CfnCondition(
       this,
       \\"CreateVpcResources\\",
-      { expression: cdk.Fn.conditionEquals(vpcId.value as any, \\"\\") }
+      { expression: cdk.Fn.conditionEquals(vpcId.value, \\"\\") }
     );
 
     const createSecurityGroup = new cdk.CfnCondition(
       this,
       \\"CreateSecurityGroup\\",
-      { expression: cdk.Fn.conditionEquals(securityGroupId.value as any, \\"\\") }
+      { expression: cdk.Fn.conditionEquals(securityGroupId.value, \\"\\") }
     );
 
     const createSecretsBucket = new cdk.CfnCondition(
       this,
       \\"CreateSecretsBucket\\",
-      { expression: cdk.Fn.conditionEquals(secretsBucket.value as any, \\"\\") }
+      { expression: cdk.Fn.conditionEquals(secretsBucket.value, \\"\\") }
     );
 
     const setInstanceRoleName = new cdk.CfnCondition(
@@ -2347,7 +3847,7 @@ export class BuildkiteStack extends cdk.Stack {
       \\"SetInstanceRoleName\\",
       {
         expression: cdk.Fn.conditionNot(
-          cdk.Fn.conditionEquals(instanceRoleName.value as any, \\"\\")
+          cdk.Fn.conditionEquals(instanceRoleName.value, \\"\\")
         )
       }
     );
@@ -2357,7 +3857,7 @@ export class BuildkiteStack extends cdk.Stack {
       \\"UseSpecifiedSecretsBucket\\",
       {
         expression: cdk.Fn.conditionNot(
-          cdk.Fn.conditionEquals(secretsBucket.value as any, \\"\\")
+          cdk.Fn.conditionEquals(secretsBucket.value, \\"\\")
         )
       }
     );
@@ -2367,10 +3867,7 @@ export class BuildkiteStack extends cdk.Stack {
       \\"UseSpecifiedAvailabilityZones\\",
       {
         expression: cdk.Fn.conditionNot(
-          cdk.Fn.conditionEquals(
-            cdk.Fn.join(\\"\\", availabilityZones.value as any),
-            \\"\\"
-          )
+          cdk.Fn.conditionEquals(cdk.Fn.join(\\"\\", availabilityZones.value), \\"\\")
         )
       }
     );
@@ -2380,13 +3877,13 @@ export class BuildkiteStack extends cdk.Stack {
       \\"UseArtifactsBucket\\",
       {
         expression: cdk.Fn.conditionNot(
-          cdk.Fn.conditionEquals(artifactsBucket.value as any, \\"\\")
+          cdk.Fn.conditionEquals(artifactsBucket.value, \\"\\")
         )
       }
     );
 
     const useDefaultAmi = new cdk.CfnCondition(this, \\"UseDefaultAMI\\", {
-      expression: cdk.Fn.conditionEquals(imageId.value as any, \\"\\")
+      expression: cdk.Fn.conditionEquals(imageId.value, \\"\\")
     });
 
     const useManagedPolicyArn = new cdk.CfnCondition(
@@ -2394,23 +3891,20 @@ export class BuildkiteStack extends cdk.Stack {
       \\"UseManagedPolicyARN\\",
       {
         expression: cdk.Fn.conditionNot(
-          cdk.Fn.conditionEquals(
-            cdk.Fn.join(\\"\\", managedPolicyArn.value as any),
-            \\"\\"
-          )
+          cdk.Fn.conditionEquals(cdk.Fn.join(\\"\\", managedPolicyArn.value), \\"\\")
         )
       }
     );
 
     const useEcr = new cdk.CfnCondition(this, \\"UseECR\\", {
       expression: cdk.Fn.conditionNot(
-        cdk.Fn.conditionEquals(ecrAccessPolicy.value as any, \\"none\\")
+        cdk.Fn.conditionEquals(ecrAccessPolicy.value, \\"none\\")
       )
     });
 
     const useAutoscaling = new cdk.CfnCondition(this, \\"UseAutoscaling\\", {
       expression: cdk.Fn.conditionNot(
-        cdk.Fn.conditionEquals(maxSize.value as any, minSize.value as any)
+        cdk.Fn.conditionEquals(maxSize.value, minSize.value)
       )
     });
 
@@ -2425,16 +3919,14 @@ export class BuildkiteStack extends cdk.Stack {
       \\"UseCostAllocationTags\\",
       {
         expression: cdk.Fn.conditionEquals(
-          enableCostAllocationTags.value as any,
+          enableCostAllocationTags.value,
           \\"true\\"
         )
       }
     );
 
     const hasKeyName = new cdk.CfnCondition(this, \\"HasKeyName\\", {
-      expression: cdk.Fn.conditionNot(
-        cdk.Fn.conditionEquals(keyName.value as any, \\"\\")
-      )
+      expression: cdk.Fn.conditionNot(cdk.Fn.conditionEquals(keyName.value, \\"\\"))
     });
 
     const enableSshIngress = new cdk.CfnCondition(this, \\"EnableSshIngress\\", {
@@ -2443,7 +3935,7 @@ export class BuildkiteStack extends cdk.Stack {
         cdk.Fn.conditionOr(
           hasKeyName,
           cdk.Fn.conditionNot(
-            cdk.Fn.conditionEquals(authorizedUsersUrl.value as any, \\"\\")
+            cdk.Fn.conditionEquals(authorizedUsersUrl.value, \\"\\")
           )
         )
       )
@@ -2514,8 +4006,8 @@ export class BuildkiteStack extends cdk.Stack {
         memorySize: 128,
         environment: {
           variables: {
-            BUILDKITE_AGENT_TOKEN: buildkiteAgentToken.value as any,
-            BUILDKITE_QUEUE: buildkiteQueue.value as any,
+            BUILDKITE_AGENT_TOKEN: buildkiteAgentToken.value,
+            BUILDKITE_QUEUE: buildkiteQueue.value,
             AWS_STACK_ID: cdk.Aws.STACK_ID,
             AWS_STACK_NAME: cdk.Aws.STACK_NAME,
             AWS_ACCOUNT_ID: cdk.Aws.ACCOUNT_ID
@@ -2577,7 +4069,7 @@ export class BuildkiteStack extends cdk.Stack {
     const iamRole = new iam.CfnRole(this, \\"IAMRole\\", {
       roleName: cdk.Fn.conditionIf(
         \\"SetInstanceRoleName\\",
-        instanceRoleName.value as any,
+        instanceRoleName.value,
         cdk.Fn.sub(\\"\${AWS::StackName}-Role\\")
       ),
       managedPolicyArns: cdk.Fn.conditionIf(
@@ -2589,14 +4081,14 @@ export class BuildkiteStack extends cdk.Stack {
               \\"UseECR\\",
               cdk.Fn.findInMap(
                 \\"ECRManagedPolicy\\",
-                ecrAccessPolicy.value as any,
+                ecrAccessPolicy.value,
                 \\"Policy\\"
               ),
               cdk.Aws.NO_VALUE
             ),
             cdk.Fn.conditionIf(
               \\"UseManagedPolicyARN\\",
-              cdk.Fn.join(\\",\\", managedPolicyArn.value as any),
+              cdk.Fn.join(\\",\\", managedPolicyArn.value),
               cdk.Aws.NO_VALUE
             )
           ])
@@ -2632,11 +4124,7 @@ export class BuildkiteStack extends cdk.Stack {
 
     const securityGroup = new ec2.CfnSecurityGroup(this, \\"SecurityGroup\\", {
       groupDescription: \\"Enable access to agents\\",
-      vpcId: cdk.Fn.conditionIf(
-        \\"CreateVpcResources\\",
-        vpc.ref,
-        vpcId.value as any
-      ),
+      vpcId: cdk.Fn.conditionIf(\\"CreateVpcResources\\", vpc.ref, vpcId.value),
       tags: [{ key: \\"Name\\", value: cdk.Aws.STACK_NAME }]
     });
     securityGroup.cfnOptions.condition = createSecurityGroup;
@@ -2645,35 +4133,35 @@ export class BuildkiteStack extends cdk.Stack {
       this,
       \\"AgentLaunchConfiguration\\",
       {
-        associatePublicIpAddress: associatePublicIpAddress.value as any,
+        associatePublicIpAddress: associatePublicIpAddress.value,
         securityGroups: [
           cdk.Fn.conditionIf(
             \\"CreateSecurityGroup\\",
             securityGroup.ref,
-            securityGroupId.value as any
+            securityGroupId.value
           )
         ],
         keyName: cdk.Fn.conditionIf(
           \\"HasKeyName\\",
-          keyName.value as any,
+          keyName.value,
           cdk.Aws.NO_VALUE
         ),
         iamInstanceProfile: iamInstanceProfile.ref,
-        instanceType: instanceType.value as any,
+        instanceType: instanceType.value,
         spotPrice: cdk.Fn.conditionIf(
           \\"UseSpotInstances\\",
-          spotPrice.value as any,
+          spotPrice.value,
           cdk.Aws.NO_VALUE
         ),
         imageId: cdk.Fn.conditionIf(
           \\"UseDefaultAMI\\",
           cdk.Fn.findInMap(\\"AWSRegion2AMI\\", cdk.Aws.REGION, \\"AMI\\"),
-          imageId.value as any
+          imageId.value
         ),
         blockDeviceMappings: [
           {
             deviceName: \\"/dev/xvda\\",
-            ebs: { volumeSize: rootVolumeSize.value as any, volumeType: \\"gp2\\" }
+            ebs: { volumeSize: rootVolumeSize.value, volumeType: \\"gp2\\" }
           }
         ],
         userData: cdk.Fn.base64(
@@ -2683,7 +4171,7 @@ export class BuildkiteStack extends cdk.Stack {
               LocalSecretsBucket: cdk.Fn.conditionIf(
                 \\"CreateSecretsBucket\\",
                 managedSecretsBucket.ref,
-                secretsBucket.value as any
+                secretsBucket.value
               )
             }
           )
@@ -2694,7 +4182,7 @@ export class BuildkiteStack extends cdk.Stack {
     const subnet1 = new ec2.CfnSubnet(this, \\"Subnet1\\", {
       availabilityZone: cdk.Fn.conditionIf(
         \\"UseSpecifiedAvailabilityZones\\",
-        cdk.Fn.select(1, availabilityZones.value as any),
+        cdk.Fn.select(1, availabilityZones.value),
         cdk.Fn.select(1, cdk.Fn.getAzs(\\"\\"))
       ),
       cidrBlock: \\"10.0.2.0/24\\",
@@ -2706,7 +4194,7 @@ export class BuildkiteStack extends cdk.Stack {
     const subnet0 = new ec2.CfnSubnet(this, \\"Subnet0\\", {
       availabilityZone: cdk.Fn.conditionIf(
         \\"UseSpecifiedAvailabilityZones\\",
-        cdk.Fn.select(0, availabilityZones.value as any),
+        cdk.Fn.select(0, availabilityZones.value),
         cdk.Fn.select(0, cdk.Fn.getAzs(\\"\\"))
       ),
       cidrBlock: \\"10.0.1.0/24\\",
@@ -2722,11 +4210,11 @@ export class BuildkiteStack extends cdk.Stack {
         vpcZoneIdentifier: cdk.Fn.conditionIf(
           \\"CreateVpcResources\\",
           [subnet0.ref, subnet1.ref],
-          subnets.value as any
+          subnets.value
         ),
         launchConfigurationName: agentLaunchConfiguration.ref,
-        minSize: minSize.value as any,
-        maxSize: maxSize.value as any,
+        minSize: minSize.value,
+        maxSize: maxSize.value,
         metricsCollection: [
           {
             granularity: \\"1Minute\\",
@@ -2748,12 +4236,12 @@ export class BuildkiteStack extends cdk.Stack {
           { key: \\"Name\\", value: \\"buildkite-agent\\", propagateAtLaunch: true },
           {
             key: \\"BuildkiteAgentRelease\\",
-            value: buildkiteAgentRelease.value as any,
+            value: buildkiteAgentRelease.value,
             propagateAtLaunch: true
           },
           {
             key: \\"BuildkiteQueue\\",
-            value: buildkiteQueue.value as any,
+            value: buildkiteQueue.value,
             propagateAtLaunch: true
           }
         ]
@@ -2761,8 +4249,8 @@ export class BuildkiteStack extends cdk.Stack {
     );
     agentAutoScaleGroup.cfnOptions.creationPolicy = {
       resourceSignal: {
-        timeout: instanceCreationTimeout.value as any,
-        count: minSize.value as any
+        timeout: instanceCreationTimeout.value,
+        count: minSize.value
       }
     };
     agentAutoScaleGroup.cfnOptions.updatePolicy = {
@@ -2776,7 +4264,7 @@ export class BuildkiteStack extends cdk.Stack {
         adjustmentType: \\"ChangeInCapacity\\",
         autoScalingGroupName: agentAutoScaleGroup.ref,
         cooldown: \\"300\\",
-        scalingAdjustment: scaleDownAdjustment.value as any
+        scalingAdjustment: scaleDownAdjustment.value
       }
     );
     agentScaleDownPolicy.cfnOptions.condition = useAutoscaling;
@@ -2789,11 +4277,11 @@ export class BuildkiteStack extends cdk.Stack {
         metricName: \\"UnfinishedJobsCount\\",
         namespace: \\"Buildkite\\",
         statistic: \\"Maximum\\",
-        period: scaleDownPeriod.value as any,
+        period: scaleDownPeriod.value,
         evaluationPeriods: 1,
         threshold: 0,
         alarmActions: [agentScaleDownPolicy.ref],
-        dimensions: [{ name: \\"Queue\\", value: buildkiteQueue.value as any }],
+        dimensions: [{ name: \\"Queue\\", value: buildkiteQueue.value }],
         comparisonOperator: \\"LessThanOrEqualToThreshold\\"
       }
     );
@@ -2806,7 +4294,7 @@ export class BuildkiteStack extends cdk.Stack {
         adjustmentType: \\"ChangeInCapacity\\",
         autoScalingGroupName: agentAutoScaleGroup.ref,
         cooldown: \\"300\\",
-        scalingAdjustment: scaleUpAdjustment.value as any
+        scalingAdjustment: scaleUpAdjustment.value
       }
     );
     agentScaleUpPolicy.cfnOptions.condition = useAutoscaling;
@@ -2823,7 +4311,7 @@ export class BuildkiteStack extends cdk.Stack {
         evaluationPeriods: 1,
         threshold: 0,
         alarmActions: [agentScaleUpPolicy.ref],
-        dimensions: [{ name: \\"Queue\\", value: buildkiteQueue.value as any }],
+        dimensions: [{ name: \\"Queue\\", value: buildkiteQueue.value }],
         comparisonOperator: \\"GreaterThanThreshold\\"
       }
     );
@@ -3036,7 +4524,7 @@ export class BuildkiteStack extends cdk.Stack {
     routeDefault.cfnOptions.condition = createVpcResources;
     routeDefault.addDependsOn(gatewayAttachment);
 
-    new cdk.CfnOutput(this, \\"ManagedSecretsBucket\\", {
+    new cdk.CfnOutput(this, \\"ManagedSecretsBucketName\\", {
       value: cdk.Fn.conditionIf(
         \\"CreateSecretsBucket\\",
         managedSecretsBucket.ref,
@@ -3044,7 +4532,7 @@ export class BuildkiteStack extends cdk.Stack {
       )
     });
 
-    new cdk.CfnOutput(this, \\"ManagedSecretsLoggingBucket\\", {
+    new cdk.CfnOutput(this, \\"ManagedSecretsLoggingBucketName\\", {
       value: cdk.Fn.conditionIf(
         \\"CreateSecretsBucket\\",
         managedSecretsLoggingBucket.ref,
@@ -3056,175 +4544,7 @@ export class BuildkiteStack extends cdk.Stack {
       value: agentAutoScaleGroup.ref
     });
 
-    new cdk.CfnOutput(this, \\"InstanceRoleName\\", { value: iamRole.ref });
-  }
-}
-"
-`;
-
-exports[`Stack ./examples/buildkiteasg.json compiles to ./examples/tmp/buildkiteasg.ts 1`] = `
-"import * as cdk from \\"@aws-cdk/core\\";
-import * as autoscaling from \\"@aws-cdk/aws-autoscaling\\";
-
-export class BuildkiteasgStack extends cdk.Stack {
-  constructor(parent: cdk.App, id: string, props?: cdk.StackProps) {
-    super(parent, id, props);
-
-    const subnets = new cdk.CfnParameter(this, \\"Subnets\\", {
-      type: \\"CommaDelimitedList\\",
-      description:
-        \\"Optional - Comma separated list of two existing VPC subnet ids where EC2 instances will run. Required if setting VpcId.\\",
-      default: \\"\\"
-    });
-
-    const maxSize = new cdk.CfnParameter(this, \\"MaxSize\\", {
-      description: \\"Maximum number of instances\\",
-      type: \\"Number\\",
-      default: 10,
-      minValue: 1
-    });
-
-    const minSize = new cdk.CfnParameter(this, \\"MinSize\\", {
-      description: \\"Minimum number of instances\\",
-      type: \\"Number\\",
-      default: 0
-    });
-
-    const buildkiteAgentRelease = new cdk.CfnParameter(
-      this,
-      \\"BuildkiteAgentRelease\\",
-      {
-        type: \\"String\\",
-        allowedValues: [\\"stable\\", \\"beta\\", \\"edge\\"],
-        default: \\"stable\\"
-      }
-    );
-
-    const buildkiteQueue = new cdk.CfnParameter(this, \\"BuildkiteQueue\\", {
-      description:
-        'Queue name that agents will use, targeted in pipeline steps using \\"queue={value}\\"',
-      type: \\"String\\",
-      default: \\"default\\",
-      minLength: 1
-    });
-
-    const costAllocationTagName = new cdk.CfnParameter(
-      this,
-      \\"CostAllocationTagName\\",
-      {
-        type: \\"String\\",
-        description:
-          \\"The name of the Cost Allocation Tag used for billing purposes\\",
-        default: \\"aws:createdBy\\"
-      }
-    );
-
-    const costAllocationTagValue = new cdk.CfnParameter(
-      this,
-      \\"CostAllocationTagValue\\",
-      {
-        type: \\"String\\",
-        description:
-          \\"The value of the Cost Allocation Tag used for billing purposes\\",
-        default: \\"buildkite-elastic-ci-stack-for-aws\\"
-      }
-    );
-
-    const instanceCreationTimeout = new cdk.CfnParameter(
-      this,
-      \\"InstanceCreationTimeout\\",
-      {
-        description: \\"Timeout period for Autoscaling Group Creation Policy\\",
-        type: \\"String\\",
-        default: \\"PT5M\\"
-      }
-    );
-
-    const agentLaunchConfiguration = new autoscaling.CfnLaunchConfiguration(
-      this,
-      \\"AgentLaunchConfiguration\\",
-      { imageId: \\"ami-fff\\", instanceType: \\"m4.large\\" }
-    );
-
-    const agentAutoScaleGroup = new autoscaling.CfnAutoScalingGroup(
-      this,
-      \\"AgentAutoScaleGroup\\",
-      {
-        vpcZoneIdentifier: [subnets.value as any],
-        launchConfigurationName: agentLaunchConfiguration.ref,
-        minSize: minSize.value as any,
-        maxSize: maxSize.value as any,
-        metricsCollection: [
-          {
-            granularity: \\"1Minute\\",
-            metrics: [
-              \\"GroupMinSize\\",
-              \\"GroupMaxSize\\",
-              \\"GroupInServiceInstances\\",
-              \\"GroupTerminatingInstances\\",
-              \\"GroupPendingInstances\\"
-            ]
-          }
-        ],
-        terminationPolicies: [
-          \\"OldestLaunchConfiguration\\",
-          \\"ClosestToNextInstanceHour\\"
-        ],
-        tags: [
-          { key: \\"Role\\", value: \\"buildkite-agent\\", propagateAtLaunch: true },
-          { key: \\"Name\\", value: \\"buildkite-agent\\", propagateAtLaunch: true },
-          {
-            key: \\"BuildkiteAgentRelease\\",
-            value: buildkiteAgentRelease.value as any,
-            propagateAtLaunch: true
-          },
-          {
-            key: \\"BuildkiteQueue\\",
-            value: buildkiteQueue.value as any,
-            propagateAtLaunch: true
-          }
-        ]
-      }
-    );
-    agentAutoScaleGroup.cfnOptions.creationPolicy = {
-      resourceSignal: {
-        timeout: instanceCreationTimeout.value as any,
-        count: minSize.value as any
-      }
-    };
-    agentAutoScaleGroup.cfnOptions.updatePolicy = {
-      autoScalingReplacingUpdate: { willReplace: true }
-    };
-  }
-}
-"
-`;
-
-exports[`Stack ./examples/cloudtrail.json compiles to ./examples/tmp/cloudtrail.ts 1`] = `
-"import * as cdk from \\"@aws-cdk/core\\";
-import * as cloudtrail from \\"@aws-cdk/aws-cloudtrail\\";
-
-export class CloudtrailStack extends cdk.Stack {
-  constructor(parent: cdk.App, id: string, props?: cdk.StackProps) {
-    super(parent, id, props);
-
-    const loggingBucket = new cdk.CfnParameter(this, \\"LoggingBucket\\", {
-      description: \\"The name of the bucket to send cloudtrail logs to\\",
-      type: \\"String\\"
-    });
-
-    const unused = new cdk.CfnParameter(this, \\"Unused\\", {
-      description: \\"An unused parameter to test ref checks\\",
-      type: \\"String\\"
-    });
-
-    const cloudTrail = new cloudtrail.CfnTrail(this, \\"CloudTrail\\", {
-      isLogging: true,
-      isMultiRegionTrail: true,
-      includeGlobalServiceEvents: true,
-      s3BucketName: loggingBucket.value as any,
-      s3KeyPrefix: \\"cloudtrails\\"
-    });
+    new cdk.CfnOutput(this, \\"InstanceRoleNameOutput\\", { value: iamRole.ref });
   }
 }
 "

@@ -313,7 +313,7 @@
     }
   },
   "Outputs": {
-    "ManagedSecretsBucket": {
+    "ManagedSecretsBucketName": {
       "Value": {
         "Fn::If": [
           "CreateSecretsBucket",
@@ -324,7 +324,7 @@
         ]
       }
     },
-    "ManagedSecretsLoggingBucket": {
+    "ManagedSecretsLoggingBucketName": {
       "Value": {
         "Fn::If": [
           "CreateSecretsBucket",
@@ -340,7 +340,7 @@
         "Ref": "AgentAutoScaleGroup"
       }
     },
-    "InstanceRoleName": {
+    "InstanceRoleNameOutput": {
       "Value": {
         "Ref": "IAMRole"
       }

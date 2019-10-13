@@ -4,22 +4,17 @@ import codemaker = require("codemaker");
 import testUtil = require("@aws-cdk/core/test/util");
 import * as ts from "typescript";
 
-const integrationExamples = [
-  "buildkite",
-  "cloudtrail",
-  "buildkiteasg",
-  "WordPress_Multi_AZ"
-];
+const integrationExamples = ["buildkite", "WordPress_Multi_AZ"];
 
 function rmF(filename: string) {
   if (fs.existsSync(filename)) fs.unlinkSync(filename);
 }
 
 for (let stack of integrationExamples) {
-  const cfnSrc = `./examples/${stack}.json`;
-  const tsOutput = `./examples/tmp/${stack}.ts`;
-  const jsOutput = `./examples/tmp/${stack}.js`;
-  const jsonOutput = `./examples/tmp/${stack}.json`;
+  const cfnSrc = `./__fixtures__/${stack}.json`;
+  const tsOutput = `./tmp/${stack}.ts`;
+  const jsOutput = `./tmp/${stack}.js`;
+  const jsonOutput = `./tmp/${stack}.json`;
 
   test(`Stack ${cfnSrc} compiles to ${tsOutput}`, () => {
     const cfn = fs.readFileSync(cfnSrc).toString();
