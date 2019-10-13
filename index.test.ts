@@ -1,4 +1,4 @@
-import CdkToCFN from "./index";
+import Stack from "./lib/stack";
 import fs = require("fs");
 import testUtil = require("@aws-cdk/core/test/util");
 import * as ts from "typescript";
@@ -21,7 +21,7 @@ for (let stack of integrationExamples) {
     });
 
     // Compile our CFN to CDK TS
-    const cdk = new CdkToCFN(stack, cfn).compile();
+    const cdk = new Stack(stack, cfn).compile();
     fs.writeFileSync(tsOutput, cdk);
 
     // Transpile TS to JS, without type checks

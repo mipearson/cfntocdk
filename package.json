@@ -2,7 +2,7 @@
   "name": "cfntocdk",
   "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "bin/cfntocdk.ts",
   "dependencies": {
     "lodash.camelcase": "^4.3.0",
     "lodash.snakecase": "^4.1.1",

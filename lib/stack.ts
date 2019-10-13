@@ -1,11 +1,11 @@
 import prettier = require("prettier");
-import Parameter from "./lib/parameter";
-import Condition from "./lib/condition";
-import Output from "./lib/output";
-import { JSONResource, JSONMap, JSONNode } from "./lib/types";
-import Resource from "./lib/resource";
+import Parameter from "./parameter";
+import Condition from "./condition";
+import Output from "./output";
+import { JSONResource, JSONMap, JSONNode } from "./types";
+import Resource from "./resource";
 import toposort = require("toposort");
-import { toCamel, toPascal } from "./lib/util";
+import { toCamel, toPascal } from "./util";
 
 interface CfnSource {
   Parameters?: { [key: string]: JSONMap };
@@ -16,7 +16,7 @@ interface CfnSource {
   [key: string]: unknown;
 }
 
-export default class CfnToCDK {
+export default class Stack {
   public stackName: string;
   private parameters: Array<Parameter>;
   private resources: Array<Resource>;
