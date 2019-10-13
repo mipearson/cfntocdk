@@ -10,18 +10,18 @@
     "toposort": "^2.0.2"
   },
   "devDependencies": {
-    "@types/lodash.camelcase": "^4.3.6",
-    "@types/lodash.snakecase": "^4.1.6",
-    "@types/node": "^10.14.21",
-    "@types/toposort": "^2.0.3",
     "@aws-cdk/aws-autoscaling": "^1.12.0",
     "@aws-cdk/aws-cloudtrail": "^1.12.0",
     "@aws-cdk/aws-rds": "^1.12.0",
     "@aws-cdk/core": "^1.12.0",
     "@types/jest": "^23.3.14",
+    "@types/lodash.camelcase": "^4.3.6",
+    "@types/lodash.snakecase": "^4.1.6",
+    "@types/node": "^10.14.21",
     "@types/prettier": "^1.18.3",
+    "@types/toposort": "^2.0.3",
     "fsevents": "^2.1.0",
-    "jest": "^23.6.0",
+    "jest": "^25.0.0",
     "ts-jest": "^23.10.5",
     "typescript": "^3.6.4"
   },
