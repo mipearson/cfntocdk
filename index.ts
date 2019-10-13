@@ -2,12 +2,12 @@ import prettier = require("prettier");
 import Parameter from "./lib/parameter";
 import Condition from "./lib/condition";
 import Output from "./lib/output";
-import { JSONResource, JSONMap, Construct } from "./lib/types";
+import { JSONResource, JSONMap, JSONNode } from "./lib/types";
 import Resource from "./lib/resource";
 import toposort = require("toposort");
 import { toCamel, toPascal } from "./lib/util";
 
-interface JSONCfn {
+interface CfnSource {
   Parameters?: { [key: string]: JSONMap };
   Outputs?: { [key: string]: JSONMap };
   Conditions?: { [key: string]: JSONMap };
@@ -16,24 +16,17 @@ interface JSONCfn {
   [key: string]: unknown;
 }
 
-interface Option {
-  name: string;
-  value: string;
-}
-
 export default class CfnToCDK {
   stackName: string;
   parameters: Array<Parameter>;
   resources: Array<Resource>;
   conditions: Array<Condition>;
   outputs: Array<Output>;
-  cfn: JSONCfn;
-
-  // outputs: Array<string>;
+  cfn: CfnSource;
 
   constructor(name: string, json: string) {
     this.stackName = name;
-    this.cfn = JSON.parse(json) as JSONCfn;
+    this.cfn = JSON.parse(json) as CfnSource;
 
     this.parameters = [];
     this.conditions = [];

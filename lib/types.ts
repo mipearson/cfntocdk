@@ -1,5 +1,5 @@
 export interface JSONMap {
-  [key: string]: any;
+  [k: string]: JSONNode;
 }
 
 export interface JSONResource {
@@ -9,7 +9,7 @@ export interface JSONResource {
   UpdatePolicy?: JSONMap | string;
   DeletionPolicy?: JSONMap | string;
   Condition?: string;
-  DependsOn?: string | Array<string>;
+  DependsOn?: string | string[];
   Metadata?: unknown;
 }
 
@@ -17,3 +17,7 @@ export interface Construct {
   name: string;
   compile: () => string;
 }
+
+export interface JSONArray extends Array<JSONNode> {}
+
+export type JSONNode = null | undefined | JSONArray | JSONMap | string | number;

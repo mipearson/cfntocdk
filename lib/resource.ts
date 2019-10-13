@@ -3,40 +3,54 @@ import Options from "./options";
 import { toCamel, toConstant } from "./util";
 
 export default class Resource implements Construct {
-  data: JSONResource;
-  name: string;
-  module: string;
-  type: string;
-  references: Array<string>;
-  properties: Options;
-  private varName: string;
-  private compiled: string;
+  public readonly data: JSONResource;
+  public readonly name: string;
+  public readonly module: string;
+  public readonly type: string;
+  public readonly references: string[];
+  public readonly properties: Options;
+  private readonly dependsOn: string[];
+  private readonly varName: string;
 
-  constructor(name: string, data: JSONResource) {
+  public constructor(name: string, data: JSONResource) {
     this.data = data;
     this.name = name;
     this.properties = new Options(data.Properties);
-    this.references = this.properties.references;
+    this.references = [...this.properties.references];
     this.varName = toCamel(this.name);
 
     const splitType = data.Type.split("::", 3);
     this.module = splitType[1].toLowerCase();
     this.type = splitType[2];
 
-    this.compiled = `const ${this.varName} = new ${this.module}.Cfn${
+    if (this.data.Condition) {
+      this.references.push(this.data.Condition);
+    }
+    this.dependsOn = [];
+    if (this.data.DependsOn) {
+      this.dependsOn =
+        this.data.DependsOn instanceof Array
+          ? this.data.DependsOn
+          : [this.data.DependsOn];
+      this.references.push(...this.dependsOn);
+    }
+  }
+
+  public compile(): string {
+    let buffer = `const ${this.varName} = new ${this.module}.Cfn${
       this.type
     }(this, "${this.name}",
       ${this.properties.compile()}
     );`;
 
     if (this.data.CreationPolicy) {
-      this.addOption(
+      buffer += this.option(
         "creationPolicy",
         new Options(this.data.CreationPolicy).compile()
       );
     }
     if (this.data.UpdatePolicy) {
-      this.addOption(
+      buffer += this.option(
         "updatePolicy",
         new Options(this.data.UpdatePolicy).compile()
       );
@@ -48,32 +62,24 @@ export default class Resource implements Construct {
           ? `cdk.CfnDeletionPolicy.${toConstant(this.data.DeletionPolicy)}`
           : new Options(this.data.DeletionPolicy).compile();
 
-      this.addOption("deletionPolicy", policy);
+      buffer += this.option("deletionPolicy", policy);
     }
     if (this.data.Condition) {
-      this.addOption("condition", toCamel(this.data.Condition));
-      this.references.push(this.data.Condition);
+      buffer += this.option("condition", toCamel(this.data.Condition));
     }
-    if (this.data.DependsOn) {
-      let val = this.data.DependsOn;
-      val = val instanceof Array ? val : [val];
-      val.forEach(v => {
-        this.compiled += `\n${this.varName}.addDependsOn(${toCamel(v)});`;
-        this.references.push(v);
+    if (this.dependsOn) {
+      this.dependsOn.forEach(v => {
+        buffer += `\n${this.varName}.addDependsOn(${toCamel(v)});`;
       });
     }
     if (this.data.Metadata) {
-      this.addOption("metadata", JSON.stringify(this.data.Metadata));
+      buffer += this.option("metadata", JSON.stringify(this.data.Metadata));
     }
 
-    this.compiled += "\n\n";
+    return buffer + "\n\n";
   }
 
-  compile(): string {
-    return this.compiled;
-  }
-
-  private addOption(name: string, value: string) {
-    this.compiled += `\n${this.varName}.cfnOptions.${name} = ${value};`;
+  private option(name: string, value: string): string {
+    return `\n${this.varName}.cfnOptions.${name} = ${value};`;
   }
 }

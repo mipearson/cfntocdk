@@ -1,37 +1,39 @@
-import { JSONMap } from "./types";
+import { JSONNode, JSONMap } from "./types";
 import Parameter from "./parameter";
 import { toConstant, toCamel, toPascal } from "./util";
 
-interface FoundKey {
-  name: string;
-  value: any;
-}
-
-const DISABLE_CAMEL_FOR = ["AssumeRolePolicyDocument", "PolicyDocument"];
+const CONDITIONALS = [
+  "If",
+  "EachMemberEquals",
+  "EachMemberIn",
+  "Equals",
+  "Not",
+  "And",
+  "Or"
+];
 
 export default class Options {
-  data: JSONMap | string;
+  data: JSONNode;
   references: Array<string>;
-  compiled: string;
 
   private noCamelCase = false;
 
-  constructor(data: JSONMap | string | undefined) {
+  constructor(data: JSONNode) {
     this.data = data ? data : {};
     this.references = [];
-    this.compiled = this.render(this.data);
   }
 
   compile(): string {
-    return this.compiled;
-  }
-
-  render(data: JSONMap | string): string {
     this.noCamelCase = false;
-    return this.renderInner(data, true);
+    return this.renderInner(this.data);
   }
 
-  private findFnKey(data: any): FoundKey | null {
+  private findFnKey(
+    data: JSONMap
+  ): {
+    name: string;
+    value: JSONNode;
+  } | null {
     const fnFunc = Object.keys(data).find(
       k => k.startsWith("Fn::") || k.startsWith("!")
     );
@@ -53,8 +55,8 @@ export default class Options {
     return ret;
   }
 
-  private renderInner(data: any, scalarNeeded = false): string {
-    if (data === null) {
+  private renderInner(data: JSONNode): string {
+    if (data === null || data === undefined) {
       return "new cdk.AwsNoValue()";
     }
 
@@ -64,7 +66,7 @@ export default class Options {
     }
 
     if (data instanceof Object) {
-      if (data.Ref) {
+      if ("Ref" in data && typeof data.Ref == "string") {
         if (data.Ref.startsWith("AWS::")) {
           const func = data.Ref.replace("AWS::", "");
           return `cdk.Aws.${toConstant(func)}`;
@@ -79,7 +81,7 @@ export default class Options {
         return `${toCamel(data.Ref)}.ref`;
       }
 
-      if (data.Condition) {
+      if ("Condition" in data && typeof data.Condition == "string") {
         return toCamel(data.Condition);
       }
 
@@ -87,29 +89,19 @@ export default class Options {
 
       if (fnKey) {
         let name = fnKey.name;
-        if (
-          [
-            "If",
-            "EachMemberEquals",
-            "EachMemberIn",
-            "Equals",
-            "Not",
-            "And",
-            "Or"
-          ].includes(name)
-        ) {
+        const value =
+          fnKey.value instanceof Array ? fnKey.value : [fnKey.value];
+        if (CONDITIONALS.includes(name)) {
           name = `condition${name}`;
         } else if (name == "GetAZs") {
           name = "getAzs";
         } else if (name == "GetAtt") {
-          const [ref, att] = fnKey.value;
+          const [ref, att] = value as string[];
           this.references.push(ref);
           return `${toCamel(ref)}.attr${toPascal(att)}`;
         } else {
           name = toCamel(name);
         }
-        const value =
-          fnKey.value instanceof Array ? fnKey.value : [fnKey.value];
 
         const items = this.noCamel(() =>
           value.map(i => this.renderInner(i)).join(", ")
