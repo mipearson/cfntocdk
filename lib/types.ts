@@ -10,6 +10,7 @@ export interface JSONResource {
   DeletionPolicy?: JSONMap | string;
   Condition?: string;
   DependsOn?: string | Array<string>;
+  Metadata?: unknown;
 }
 
 export interface Construct {

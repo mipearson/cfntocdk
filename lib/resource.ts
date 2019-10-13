@@ -66,6 +66,9 @@ export default class Resource implements Construct {
         this.references.push(v);
       });
     }
+    if (this.data.Metadata) {
+      this.addOption("metadata", JSON.stringify(this.data.Metadata));
+    }
 
     this.compiled += "\n\n";
   }

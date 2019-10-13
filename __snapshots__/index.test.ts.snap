@@ -1,6 +1,998 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`CDK JS ./examples/tmp/buildkiteasg.js renders to CFN ./examples/tmp/buildkiteasg.json 1`] = `
+exports[`CDK JS ./examples/tmp/WordPress_Multi_AZ.js renders to CFN ./examples/tmp/WordPress_Multi_AZ.json and matches original stack ./examples/WordPress_Multi_AZ.json 1`] = `
+Object {
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "AWS CloudFormation Sample Template WordPress_Multi_AZ: WordPress is web software you can use to create a beautiful website or blog. This template installs a highly-available, scalable WordPress deployment using a multi-az Amazon RDS database instance for storage. It demonstrates using the AWS CloudFormation bootstrap scripts to deploy WordPress. **WARNING** This template creates an Amazon EC2 instance, an Application Load Balancer and an Amazon RDS database instance. You will be billed for the AWS resources used if you create a stack from this template.",
+  "Mappings": Object {
+    "AWSInstanceType2Arch": Object {
+      "c1.medium": Object {
+        "Arch": "HVM64",
+      },
+      "c1.xlarge": Object {
+        "Arch": "HVM64",
+      },
+      "c3.2xlarge": Object {
+        "Arch": "HVM64",
+      },
+      "c3.4xlarge": Object {
+        "Arch": "HVM64",
+      },
+      "c3.8xlarge": Object {
+        "Arch": "HVM64",
+      },
+      "c3.large": Object {
+        "Arch": "HVM64",
+      },
+      "c3.xlarge": Object {
+        "Arch": "HVM64",
+      },
+      "c4.2xlarge": Object {
+        "Arch": "HVM64",
+      },
+      "c4.4xlarge": Object {
+        "Arch": "HVM64",
+      },
+      "c4.8xlarge": Object {
+        "Arch": "HVM64",
+      },
+      "c4.large": Object {
+        "Arch": "HVM64",
+      },
+      "c4.xlarge": Object {
+        "Arch": "HVM64",
+      },
+      "cc2.8xlarge": Object {
+        "Arch": "HVM64",
+      },
+      "cr1.8xlarge": Object {
+        "Arch": "HVM64",
+      },
+      "d2.2xlarge": Object {
+        "Arch": "HVM64",
+      },
+      "d2.4xlarge": Object {
+        "Arch": "HVM64",
+      },
+      "d2.8xlarge": Object {
+        "Arch": "HVM64",
+      },
+      "d2.xlarge": Object {
+        "Arch": "HVM64",
+      },
+      "g2.2xlarge": Object {
+        "Arch": "HVMG2",
+      },
+      "g2.8xlarge": Object {
+        "Arch": "HVMG2",
+      },
+      "hi1.4xlarge": Object {
+        "Arch": "HVM64",
+      },
+      "hs1.8xlarge": Object {
+        "Arch": "HVM64",
+      },
+      "i2.2xlarge": Object {
+        "Arch": "HVM64",
+      },
+      "i2.4xlarge": Object {
+        "Arch": "HVM64",
+      },
+      "i2.8xlarge": Object {
+        "Arch": "HVM64",
+      },
+      "i2.xlarge": Object {
+        "Arch": "HVM64",
+      },
+      "m1.large": Object {
+        "Arch": "HVM64",
+      },
+      "m1.medium": Object {
+        "Arch": "HVM64",
+      },
+      "m1.small": Object {
+        "Arch": "HVM64",
+      },
+      "m1.xlarge": Object {
+        "Arch": "HVM64",
+      },
+      "m2.2xlarge": Object {
+        "Arch": "HVM64",
+      },
+      "m2.4xlarge": Object {
+        "Arch": "HVM64",
+      },
+      "m2.xlarge": Object {
+        "Arch": "HVM64",
+      },
+      "m3.2xlarge": Object {
+        "Arch": "HVM64",
+      },
+      "m3.large": Object {
+        "Arch": "HVM64",
+      },
+      "m3.medium": Object {
+        "Arch": "HVM64",
+      },
+      "m3.xlarge": Object {
+        "Arch": "HVM64",
+      },
+      "m4.10xlarge": Object {
+        "Arch": "HVM64",
+      },
+      "m4.2xlarge": Object {
+        "Arch": "HVM64",
+      },
+      "m4.4xlarge": Object {
+        "Arch": "HVM64",
+      },
+      "m4.large": Object {
+        "Arch": "HVM64",
+      },
+      "m4.xlarge": Object {
+        "Arch": "HVM64",
+      },
+      "r3.2xlarge": Object {
+        "Arch": "HVM64",
+      },
+      "r3.4xlarge": Object {
+        "Arch": "HVM64",
+      },
+      "r3.8xlarge": Object {
+        "Arch": "HVM64",
+      },
+      "r3.large": Object {
+        "Arch": "HVM64",
+      },
+      "r3.xlarge": Object {
+        "Arch": "HVM64",
+      },
+      "t1.micro": Object {
+        "Arch": "HVM64",
+      },
+      "t2.large": Object {
+        "Arch": "HVM64",
+      },
+      "t2.medium": Object {
+        "Arch": "HVM64",
+      },
+      "t2.micro": Object {
+        "Arch": "HVM64",
+      },
+      "t2.nano": Object {
+        "Arch": "HVM64",
+      },
+      "t2.small": Object {
+        "Arch": "HVM64",
+      },
+    },
+    "AWSInstanceType2NATArch": Object {
+      "c1.medium": Object {
+        "Arch": "NATHVM64",
+      },
+      "c1.xlarge": Object {
+        "Arch": "NATHVM64",
+      },
+      "c3.2xlarge": Object {
+        "Arch": "NATHVM64",
+      },
+      "c3.4xlarge": Object {
+        "Arch": "NATHVM64",
+      },
+      "c3.8xlarge": Object {
+        "Arch": "NATHVM64",
+      },
+      "c3.large": Object {
+        "Arch": "NATHVM64",
+      },
+      "c3.xlarge": Object {
+        "Arch": "NATHVM64",
+      },
+      "c4.2xlarge": Object {
+        "Arch": "NATHVM64",
+      },
+      "c4.4xlarge": Object {
+        "Arch": "NATHVM64",
+      },
+      "c4.8xlarge": Object {
+        "Arch": "NATHVM64",
+      },
+      "c4.large": Object {
+        "Arch": "NATHVM64",
+      },
+      "c4.xlarge": Object {
+        "Arch": "NATHVM64",
+      },
+      "cc2.8xlarge": Object {
+        "Arch": "NATHVM64",
+      },
+      "cr1.8xlarge": Object {
+        "Arch": "NATHVM64",
+      },
+      "d2.2xlarge": Object {
+        "Arch": "NATHVM64",
+      },
+      "d2.4xlarge": Object {
+        "Arch": "NATHVM64",
+      },
+      "d2.8xlarge": Object {
+        "Arch": "NATHVM64",
+      },
+      "d2.xlarge": Object {
+        "Arch": "NATHVM64",
+      },
+      "g2.2xlarge": Object {
+        "Arch": "NATHVMG2",
+      },
+      "g2.8xlarge": Object {
+        "Arch": "NATHVMG2",
+      },
+      "hi1.4xlarge": Object {
+        "Arch": "NATHVM64",
+      },
+      "hs1.8xlarge": Object {
+        "Arch": "NATHVM64",
+      },
+      "i2.2xlarge": Object {
+        "Arch": "NATHVM64",
+      },
+      "i2.4xlarge": Object {
+        "Arch": "NATHVM64",
+      },
+      "i2.8xlarge": Object {
+        "Arch": "NATHVM64",
+      },
+      "i2.xlarge": Object {
+        "Arch": "NATHVM64",
+      },
+      "m1.large": Object {
+        "Arch": "NATHVM64",
+      },
+      "m1.medium": Object {
+        "Arch": "NATHVM64",
+      },
+      "m1.small": Object {
+        "Arch": "NATHVM64",
+      },
+      "m1.xlarge": Object {
+        "Arch": "NATHVM64",
+      },
+      "m2.2xlarge": Object {
+        "Arch": "NATHVM64",
+      },
+      "m2.4xlarge": Object {
+        "Arch": "NATHVM64",
+      },
+      "m2.xlarge": Object {
+        "Arch": "NATHVM64",
+      },
+      "m3.2xlarge": Object {
+        "Arch": "NATHVM64",
+      },
+      "m3.large": Object {
+        "Arch": "NATHVM64",
+      },
+      "m3.medium": Object {
+        "Arch": "NATHVM64",
+      },
+      "m3.xlarge": Object {
+        "Arch": "NATHVM64",
+      },
+      "m4.10xlarge": Object {
+        "Arch": "NATHVM64",
+      },
+      "m4.2xlarge": Object {
+        "Arch": "NATHVM64",
+      },
+      "m4.4xlarge": Object {
+        "Arch": "NATHVM64",
+      },
+      "m4.large": Object {
+        "Arch": "NATHVM64",
+      },
+      "m4.xlarge": Object {
+        "Arch": "NATHVM64",
+      },
+      "r3.2xlarge": Object {
+        "Arch": "NATHVM64",
+      },
+      "r3.4xlarge": Object {
+        "Arch": "NATHVM64",
+      },
+      "r3.8xlarge": Object {
+        "Arch": "NATHVM64",
+      },
+      "r3.large": Object {
+        "Arch": "NATHVM64",
+      },
+      "r3.xlarge": Object {
+        "Arch": "NATHVM64",
+      },
+      "t1.micro": Object {
+        "Arch": "NATHVM64",
+      },
+      "t2.large": Object {
+        "Arch": "NATHVM64",
+      },
+      "t2.medium": Object {
+        "Arch": "NATHVM64",
+      },
+      "t2.micro": Object {
+        "Arch": "NATHVM64",
+      },
+      "t2.nano": Object {
+        "Arch": "NATHVM64",
+      },
+      "t2.small": Object {
+        "Arch": "NATHVM64",
+      },
+    },
+    "AWSRegionArch2AMI": Object {
+      "ap-northeast-1": Object {
+        "HVM64": "ami-00a5245b4816c38e6",
+        "HVMG2": "ami-09d0e0e099ecabba2",
+      },
+      "ap-northeast-2": Object {
+        "HVM64": "ami-00dc207f8ba6dc919",
+        "HVMG2": "NOT_SUPPORTED",
+      },
+      "ap-northeast-3": Object {
+        "HVM64": "ami-0b65f69a5c11f3522",
+        "HVMG2": "NOT_SUPPORTED",
+      },
+      "ap-south-1": Object {
+        "HVM64": "ami-0ad42f4f66f6c1cc9",
+        "HVMG2": "ami-0244c1d42815af84a",
+      },
+      "ap-southeast-1": Object {
+        "HVM64": "ami-05b3bcf7f311194b3",
+        "HVMG2": "ami-0e46ce0d6a87dc979",
+      },
+      "ap-southeast-2": Object {
+        "HVM64": "ami-02fd0b06f06d93dfc",
+        "HVMG2": "ami-0c0ab057a101d8ff2",
+      },
+      "ca-central-1": Object {
+        "HVM64": "ami-07423fb63ea0a0930",
+        "HVMG2": "NOT_SUPPORTED",
+      },
+      "cn-north-1": Object {
+        "HVM64": "ami-053617c9d818c1189",
+        "HVMG2": "NOT_SUPPORTED",
+      },
+      "cn-northwest-1": Object {
+        "HVM64": "ami-0f7937761741dc640",
+        "HVMG2": "NOT_SUPPORTED",
+      },
+      "eu-central-1": Object {
+        "HVM64": "ami-0cfbf4f6db41068ac",
+        "HVMG2": "ami-0aa1822e3eb913a11",
+      },
+      "eu-north-1": Object {
+        "HVM64": "ami-86fe70f8",
+        "HVMG2": "ami-32d55b4c",
+      },
+      "eu-west-1": Object {
+        "HVM64": "ami-08935252a36e25f85",
+        "HVMG2": "ami-0d5299b1c6112c3c7",
+      },
+      "eu-west-2": Object {
+        "HVM64": "ami-01419b804382064e4",
+        "HVMG2": "NOT_SUPPORTED",
+      },
+      "eu-west-3": Object {
+        "HVM64": "ami-0dd7e7ed60da8fb83",
+        "HVMG2": "NOT_SUPPORTED",
+      },
+      "sa-east-1": Object {
+        "HVM64": "ami-05145e0b28ad8e0b2",
+        "HVMG2": "NOT_SUPPORTED",
+      },
+      "us-east-1": Object {
+        "HVM64": "ami-0080e4c5bc078760e",
+        "HVMG2": "ami-0aeb704d503081ea6",
+      },
+      "us-east-2": Object {
+        "HVM64": "ami-0cd3dfa4e37921605",
+        "HVMG2": "NOT_SUPPORTED",
+      },
+      "us-west-1": Object {
+        "HVM64": "ami-0ec6517f6edbf8044",
+        "HVMG2": "ami-0a7fc72dc0e51aa77",
+      },
+      "us-west-2": Object {
+        "HVM64": "ami-01e24be29428c15b2",
+        "HVMG2": "ami-0fe84a5b4563d8f27",
+      },
+    },
+  },
+  "Outputs": Object {
+    "WebsiteURL": Object {
+      "Description": "WordPress Website",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "http://",
+            "/wordpress",
+          ],
+        ],
+      },
+    },
+  },
+  "Parameters": Object {
+    "DBAllocatedStorage": Object {
+      "ConstraintDescription": "must be between 5 and 1024Gb.",
+      "Default": "5",
+      "Description": "The size of the database (Gb)",
+      "MaxValue": "1024",
+      "MinValue": "5",
+      "Type": "Number",
+    },
+    "DBClass": Object {
+      "AllowedValues": Array [
+        "db.t1.micro",
+        "db.m1.small",
+        "db.m1.medium",
+        "db.m1.large",
+        "db.m1.xlarge",
+        "db.m2.xlarge",
+        "db.m2.2xlarge",
+        "db.m2.4xlarge",
+        "db.m3.medium",
+        "db.m3.large",
+        "db.m3.xlarge",
+        "db.m3.2xlarge",
+        "db.m4.large",
+        "db.m4.xlarge",
+        "db.m4.2xlarge",
+        "db.m4.4xlarge",
+        "db.m4.10xlarge",
+        "db.r3.large",
+        "db.r3.xlarge",
+        "db.r3.2xlarge",
+        "db.r3.4xlarge",
+        "db.r3.8xlarge",
+        "db.m2.xlarge",
+        "db.m2.2xlarge",
+        "db.m2.4xlarge",
+        "db.cr1.8xlarge",
+        "db.t2.micro",
+        "db.t2.small",
+        "db.t2.medium",
+        "db.t2.large",
+      ],
+      "ConstraintDescription": "must select a valid database instance type.",
+      "Default": "db.t2.small",
+      "Description": "Database instance class",
+      "Type": "String",
+    },
+    "DBName": Object {
+      "AllowedPattern": "[a-zA-Z][a-zA-Z0-9]*",
+      "ConstraintDescription": "must begin with a letter and contain only alphanumeric characters.",
+      "Default": "wordpressdb",
+      "Description": "The WordPress database name",
+      "MaxLength": "64",
+      "MinLength": "1",
+      "Type": "String",
+    },
+    "DBPassword": Object {
+      "AllowedPattern": "[a-zA-Z0-9]*",
+      "ConstraintDescription": "must contain only alphanumeric characters.",
+      "Description": "The WordPress database admin account password",
+      "MaxLength": "41",
+      "MinLength": "8",
+      "NoEcho": "true",
+      "Type": "String",
+    },
+    "DBUser": Object {
+      "AllowedPattern": "[a-zA-Z][a-zA-Z0-9]*",
+      "ConstraintDescription": "must begin with a letter and contain only alphanumeric characters.",
+      "Description": "The WordPress database admin account username",
+      "MaxLength": "16",
+      "MinLength": "1",
+      "NoEcho": "true",
+      "Type": "String",
+    },
+    "InstanceType": Object {
+      "AllowedValues": Array [
+        "t1.micro",
+        "t2.nano",
+        "t2.micro",
+        "t2.small",
+        "t2.medium",
+        "t2.large",
+        "m1.small",
+        "m1.medium",
+        "m1.large",
+        "m1.xlarge",
+        "m2.xlarge",
+        "m2.2xlarge",
+        "m2.4xlarge",
+        "m3.medium",
+        "m3.large",
+        "m3.xlarge",
+        "m3.2xlarge",
+        "m4.large",
+        "m4.xlarge",
+        "m4.2xlarge",
+        "m4.4xlarge",
+        "m4.10xlarge",
+        "c1.medium",
+        "c1.xlarge",
+        "c3.large",
+        "c3.xlarge",
+        "c3.2xlarge",
+        "c3.4xlarge",
+        "c3.8xlarge",
+        "c4.large",
+        "c4.xlarge",
+        "c4.2xlarge",
+        "c4.4xlarge",
+        "c4.8xlarge",
+        "g2.2xlarge",
+        "g2.8xlarge",
+        "r3.large",
+        "r3.xlarge",
+        "r3.2xlarge",
+        "r3.4xlarge",
+        "r3.8xlarge",
+        "i2.xlarge",
+        "i2.2xlarge",
+        "i2.4xlarge",
+        "i2.8xlarge",
+        "d2.xlarge",
+        "d2.2xlarge",
+        "d2.4xlarge",
+        "d2.8xlarge",
+        "hi1.4xlarge",
+        "hs1.8xlarge",
+        "cr1.8xlarge",
+        "cc2.8xlarge",
+        "cg1.4xlarge",
+      ],
+      "ConstraintDescription": "must be a valid EC2 instance type.",
+      "Default": "t2.small",
+      "Description": "WebServer EC2 instance type",
+      "Type": "String",
+    },
+    "KeyName": Object {
+      "ConstraintDescription": "must be the name of an existing EC2 KeyPair.",
+      "Description": "Name of an existing EC2 KeyPair to enable SSH access to the instances",
+      "Type": "AWS::EC2::KeyPair::KeyName",
+    },
+    "MultiAZDatabase": Object {
+      "AllowedValues": Array [
+        "true",
+        "false",
+      ],
+      "ConstraintDescription": "must be either true or false.",
+      "Default": "false",
+      "Description": "Create a Multi-AZ MySQL Amazon RDS database instance",
+      "Type": "String",
+    },
+    "SSHLocation": Object {
+      "AllowedPattern": "(\\\\d{1,3})\\\\.(\\\\d{1,3})\\\\.(\\\\d{1,3})\\\\.(\\\\d{1,3})/(\\\\d{1,2})",
+      "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x.",
+      "Default": "0.0.0.0/0",
+      "Description": "The IP address range that can be used to SSH to the EC2 instances",
+      "MaxLength": "18",
+      "MinLength": "9",
+      "Type": "String",
+    },
+    "Subnets": Object {
+      "ConstraintDescription": "must be a list of at least two existing subnets associated with at least two different availability zones. They should be residing in the selected Virtual Private Cloud.",
+      "Description": "The list of SubnetIds in your Virtual Private Cloud (VPC)",
+      "Type": "List<AWS::EC2::Subnet::Id>",
+    },
+    "VpcId": Object {
+      "ConstraintDescription": "must be the VPC Id of an existing Virtual Private Cloud.",
+      "Description": "VpcId of your existing Virtual Private Cloud (VPC)",
+      "Type": "AWS::EC2::VPC::Id",
+    },
+    "WebServerCapacity": Object {
+      "ConstraintDescription": "must be between 1 and 5 EC2 instances.",
+      "Default": "1",
+      "Description": "The initial number of WebServer instances",
+      "MaxValue": "5",
+      "MinValue": "1",
+      "Type": "Number",
+    },
+  },
+  "Resources": Object {
+    "ALBListener": Object {
+      "Properties": Object {
+        "DefaultActions": Array [
+          Object {
+            "TargetGroupArn": Object {
+              "Ref": "ALBTargetGroup",
+            },
+            "Type": "forward",
+          },
+        ],
+        "LoadBalancerArn": Object {
+          "Ref": "ApplicationLoadBalancer",
+        },
+        "Port": 80,
+        "Protocol": "HTTP",
+      },
+      "Type": "AWS::ElasticLoadBalancingV2::Listener",
+    },
+    "ALBTargetGroup": Object {
+      "Properties": Object {
+        "HealthCheckIntervalSeconds": 10,
+        "HealthCheckPath": "/wordpress/wp-admin/install.php",
+        "HealthCheckTimeoutSeconds": 5,
+        "HealthyThresholdCount": 2,
+        "Port": 80,
+        "Protocol": "HTTP",
+        "TargetGroupAttributes": Array [
+          Object {
+            "Key": "stickiness.enabled",
+            "Value": "true",
+          },
+          Object {
+            "Key": "stickiness.type",
+            "Value": "lb_cookie",
+          },
+          Object {
+            "Key": "stickiness.lb_cookie.duration_seconds",
+            "Value": "30",
+          },
+        ],
+        "UnhealthyThresholdCount": 5,
+        "VpcId": Object {
+          "Ref": "VpcId",
+        },
+      },
+      "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+    },
+    "ApplicationLoadBalancer": Object {
+      "Properties": Object {
+        "Subnets": Object {
+          "Ref": "Subnets",
+        },
+      },
+      "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+    },
+    "DBEC2SecurityGroup": Object {
+      "Properties": Object {
+        "GroupDescription": "Open database for access",
+        "SecurityGroupIngress": Array [
+          Object {
+            "FromPort": 3306,
+            "IpProtocol": "tcp",
+            "SourceSecurityGroupId": Object {
+              "Ref": "WebServerSecurityGroup",
+            },
+            "ToPort": 3306,
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "VpcId",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "DBInstance": Object {
+      "Properties": Object {
+        "AllocatedStorage": Object {
+          "Ref": "DBAllocatedStorage",
+        },
+        "DBInstanceClass": Object {
+          "Ref": "DBClass",
+        },
+        "DBName": Object {
+          "Ref": "DBName",
+        },
+        "Engine": "MySQL",
+        "MasterUserPassword": Object {
+          "Ref": "DBPassword",
+        },
+        "MasterUsername": Object {
+          "Ref": "DBUser",
+        },
+        "MultiAZ": Object {
+          "Ref": "MultiAZDatabase",
+        },
+        "VPCSecurityGroups": Array [
+          Object {
+            "Fn::GetAtt": Array [
+              "DBEC2SecurityGroup",
+              "GroupId",
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::RDS::DBInstance",
+    },
+    "LaunchConfig": Object {
+      "Metadata": Object {
+        "AWS::CloudFormation::Init": Object {
+          "configSets": Object {
+            "wordpress_install": Array [
+              "install_cfn",
+              "install_wordpress",
+            ],
+          },
+          "install_cfn": Object {
+            "files": Object {
+              "/etc/cfn/cfn-hup.conf": Object {
+                "content": Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "[main]
+",
+                      "stack=",
+                      Object {
+                        "Ref": "AWS::StackId",
+                      },
+                      "
+",
+                      "region=",
+                      Object {
+                        "Ref": "AWS::Region",
+                      },
+                      "
+",
+                    ],
+                  ],
+                },
+                "group": "root",
+                "mode": "000400",
+                "owner": "root",
+              },
+              "/etc/cfn/hooks.d/cfn-auto-reloader.conf": Object {
+                "content": Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "[cfn-auto-reloader-hook]
+",
+                      "triggers=post.update
+",
+                      "path=Resources.LaunchConfig.Metadata.AWS::CloudFormation::Init
+",
+                      "action=/opt/aws/bin/cfn-init -v ",
+                      "         --stack ",
+                      Object {
+                        "Ref": "AWS::StackName",
+                      },
+                      "         --resource LaunchConfig ",
+                      "         --configsets wordpress_install ",
+                      "         --region ",
+                      Object {
+                        "Ref": "AWS::Region",
+                      },
+                      "
+",
+                    ],
+                  ],
+                },
+                "group": "root",
+                "mode": "000400",
+                "owner": "root",
+              },
+            },
+            "services": Object {
+              "sysvinit": Object {
+                "cfn-hup": Object {
+                  "enabled": "true",
+                  "ensureRunning": "true",
+                  "files": Array [
+                    "/etc/cfn/cfn-hup.conf",
+                    "/etc/cfn/hooks.d/cfn-auto-reloader.conf",
+                  ],
+                },
+              },
+            },
+          },
+          "install_wordpress": Object {
+            "commands": Object {
+              "01_configure_wordpress": Object {
+                "command": "/tmp/create-wp-config",
+                "cwd": "/var/www/html/wordpress",
+              },
+            },
+            "files": Object {
+              "/tmp/create-wp-config": Object {
+                "content": Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "#!/bin/bash
+",
+                      "cp /var/www/html/wordpress/wp-config-sample.php /var/www/html/wordpress/wp-config.php
+",
+                      "sed -i \\"s/'database_name_here'/'",
+                      Object {
+                        "Ref": "DBName",
+                      },
+                      "'/g\\" wp-config.php
+",
+                      "sed -i \\"s/'username_here'/'",
+                      Object {
+                        "Ref": "DBUser",
+                      },
+                      "'/g\\" wp-config.php
+",
+                      "sed -i \\"s/'password_here'/'",
+                      Object {
+                        "Ref": "DBPassword",
+                      },
+                      "'/g\\" wp-config.php
+",
+                      "sed -i \\"s/'localhost'/'",
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "DBInstance",
+                          "Endpoint.Address",
+                        ],
+                      },
+                      "'/g\\" wp-config.php
+",
+                    ],
+                  ],
+                },
+                "group": "root",
+                "mode": "000500",
+                "owner": "root",
+              },
+            },
+            "packages": Object {
+              "yum": Object {
+                "httpd": Array [],
+                "mysql": Array [],
+                "php": Array [],
+                "php-mysql": Array [],
+              },
+            },
+            "services": Object {
+              "sysvinit": Object {
+                "httpd": Object {
+                  "enabled": "true",
+                  "ensureRunning": "true",
+                },
+              },
+            },
+            "sources": Object {
+              "/var/www/html": "http://wordpress.org/latest.tar.gz",
+            },
+          },
+        },
+      },
+      "Properties": Object {
+        "ImageId": Object {
+          "Fn::FindInMap": Array [
+            "AWSRegionArch2AMI",
+            Object {
+              "Ref": "AWS::Region",
+            },
+            Object {
+              "Fn::FindInMap": Array [
+                "AWSInstanceType2Arch",
+                Object {
+                  "Ref": "InstanceType",
+                },
+                "Arch",
+              ],
+            },
+          ],
+        },
+        "InstanceType": Object {
+          "Ref": "InstanceType",
+        },
+        "KeyName": Object {
+          "Ref": "KeyName",
+        },
+        "SecurityGroups": Array [
+          Object {
+            "Ref": "WebServerSecurityGroup",
+          },
+        ],
+        "UserData": Object {
+          "Fn::Base64": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "#!/bin/bash -xe
+yum update -y aws-cfn-bootstrap
+/opt/aws/bin/cfn-init -v          --stack ",
+                Object {
+                  "Ref": "AWS::StackName",
+                },
+                "         --resource LaunchConfig          --configsets wordpress_install          --region ",
+                Object {
+                  "Ref": "AWS::Region",
+                },
+                "
+/opt/aws/bin/cfn-signal -e $?          --stack ",
+                Object {
+                  "Ref": "AWS::StackName",
+                },
+                "         --resource WebServerGroup          --region ",
+                Object {
+                  "Ref": "AWS::Region",
+                },
+                "
+",
+              ],
+            ],
+          },
+        },
+      },
+      "Type": "AWS::AutoScaling::LaunchConfiguration",
+    },
+    "WebServerGroup": Object {
+      "CreationPolicy": Object {
+        "ResourceSignal": Object {
+          "Timeout": "PT15M",
+        },
+      },
+      "Properties": Object {
+        "DesiredCapacity": Object {
+          "Ref": "WebServerCapacity",
+        },
+        "LaunchConfigurationName": Object {
+          "Ref": "LaunchConfig",
+        },
+        "MaxSize": "5",
+        "MinSize": "1",
+        "VPCZoneIdentifier": Object {
+          "Ref": "Subnets",
+        },
+      },
+      "Type": "AWS::AutoScaling::AutoScalingGroup",
+      "UpdatePolicy": Object {
+        "AutoScalingRollingUpdate": Object {
+          "MaxBatchSize": "1",
+          "MinInstancesInService": "1",
+          "PauseTime": "PT15M",
+          "WaitOnResourceSignals": "true",
+        },
+      },
+    },
+    "WebServerSecurityGroup": Object {
+      "Properties": Object {
+        "GroupDescription": "Enable HTTP access via port 80 locked down to the load balancer + SSH access",
+        "SecurityGroupIngress": Array [
+          Object {
+            "FromPort": 80,
+            "IpProtocol": "tcp",
+            "SourceSecurityGroupId": Object {
+              "Fn::Select": Array [
+                0,
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ApplicationLoadBalancer",
+                    "SecurityGroups",
+                  ],
+                },
+              ],
+            },
+            "ToPort": 80,
+          },
+          Object {
+            "CidrIp": Object {
+              "Ref": "SSHLocation",
+            },
+            "FromPort": 22,
+            "IpProtocol": "tcp",
+            "ToPort": 22,
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "VpcId",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+  },
+}
+`;
+
+exports[`CDK JS ./examples/tmp/buildkiteasg.js renders to CFN ./examples/tmp/buildkiteasg.json and matches original stack ./examples/buildkiteasg.json 1`] = `
 Object {
   "Parameters": Object {
     "BuildkiteAgentRelease": Object {
@@ -138,8 +1130,16 @@ Object {
 }
 `;
 
-exports[`CDK JS ./examples/tmp/cloudtrail.js renders to CFN ./examples/tmp/cloudtrail.json 1`] = `
+exports[`CDK JS ./examples/tmp/cloudtrail.js renders to CFN ./examples/tmp/cloudtrail.json and matches original stack ./examples/cloudtrail.json 1`] = `
 Object {
+  "Outputs": Object {
+    "CloudTrailOutput": Object {
+      "Description": "Test that we munge output names if they duplicate resource names, which is supported in CFN but not in CDK",
+      "Value": Object {
+        "Ref": "CloudTrail",
+      },
+    },
+  },
   "Parameters": Object {
     "LoggingBucket": Object {
       "Description": "The name of the bucket to send cloudtrail logs to",
@@ -165,6 +1165,676 @@ Object {
     },
   },
 }
+`;
+
+exports[`Stack ./examples/WordPress_Multi_AZ.json compiles to ./examples/tmp/WordPress_Multi_AZ.ts 1`] = `
+"import * as cdk from \\"@aws-cdk/core\\";
+import * as elasticloadbalancingv2 from \\"@aws-cdk/aws-elasticloadbalancingv2\\";
+import * as ec2 from \\"@aws-cdk/aws-ec2\\";
+import * as autoscaling from \\"@aws-cdk/aws-autoscaling\\";
+import * as rds from \\"@aws-cdk/aws-rds\\";
+
+export class WordPressMultiAzStack extends cdk.Stack {
+  constructor(parent: cdk.App, id: string, props?: cdk.StackProps) {
+    super(parent, id, props);
+
+    this.templateOptions.templateFormatVersion = \\"2010-09-09\\";
+    this.templateOptions.description =
+      \\"AWS CloudFormation Sample Template WordPress_Multi_AZ: WordPress is web software you can use to create a beautiful website or blog. This template installs a highly-available, scalable WordPress deployment using a multi-az Amazon RDS database instance for storage. It demonstrates using the AWS CloudFormation bootstrap scripts to deploy WordPress. **WARNING** This template creates an Amazon EC2 instance, an Application Load Balancer and an Amazon RDS database instance. You will be billed for the AWS resources used if you create a stack from this template.\\";
+
+    const vpcId = new cdk.CfnParameter(this, \\"VpcId\\", {
+      type: \\"AWS::EC2::VPC::Id\\",
+      description: \\"VpcId of your existing Virtual Private Cloud (VPC)\\",
+      constraintDescription:
+        \\"must be the VPC Id of an existing Virtual Private Cloud.\\"
+    });
+
+    const subnets = new cdk.CfnParameter(this, \\"Subnets\\", {
+      type: \\"List<AWS::EC2::Subnet::Id>\\",
+      description: \\"The list of SubnetIds in your Virtual Private Cloud (VPC)\\",
+      constraintDescription:
+        \\"must be a list of at least two existing subnets associated with at least two different availability zones. They should be residing in the selected Virtual Private Cloud.\\"
+    });
+
+    const keyName = new cdk.CfnParameter(this, \\"KeyName\\", {
+      description:
+        \\"Name of an existing EC2 KeyPair to enable SSH access to the instances\\",
+      type: \\"AWS::EC2::KeyPair::KeyName\\",
+      constraintDescription: \\"must be the name of an existing EC2 KeyPair.\\"
+    });
+
+    const instanceType = new cdk.CfnParameter(this, \\"InstanceType\\", {
+      description: \\"WebServer EC2 instance type\\",
+      type: \\"String\\",
+      default: \\"t2.small\\",
+      allowedValues: [
+        \\"t1.micro\\",
+        \\"t2.nano\\",
+        \\"t2.micro\\",
+        \\"t2.small\\",
+        \\"t2.medium\\",
+        \\"t2.large\\",
+        \\"m1.small\\",
+        \\"m1.medium\\",
+        \\"m1.large\\",
+        \\"m1.xlarge\\",
+        \\"m2.xlarge\\",
+        \\"m2.2xlarge\\",
+        \\"m2.4xlarge\\",
+        \\"m3.medium\\",
+        \\"m3.large\\",
+        \\"m3.xlarge\\",
+        \\"m3.2xlarge\\",
+        \\"m4.large\\",
+        \\"m4.xlarge\\",
+        \\"m4.2xlarge\\",
+        \\"m4.4xlarge\\",
+        \\"m4.10xlarge\\",
+        \\"c1.medium\\",
+        \\"c1.xlarge\\",
+        \\"c3.large\\",
+        \\"c3.xlarge\\",
+        \\"c3.2xlarge\\",
+        \\"c3.4xlarge\\",
+        \\"c3.8xlarge\\",
+        \\"c4.large\\",
+        \\"c4.xlarge\\",
+        \\"c4.2xlarge\\",
+        \\"c4.4xlarge\\",
+        \\"c4.8xlarge\\",
+        \\"g2.2xlarge\\",
+        \\"g2.8xlarge\\",
+        \\"r3.large\\",
+        \\"r3.xlarge\\",
+        \\"r3.2xlarge\\",
+        \\"r3.4xlarge\\",
+        \\"r3.8xlarge\\",
+        \\"i2.xlarge\\",
+        \\"i2.2xlarge\\",
+        \\"i2.4xlarge\\",
+        \\"i2.8xlarge\\",
+        \\"d2.xlarge\\",
+        \\"d2.2xlarge\\",
+        \\"d2.4xlarge\\",
+        \\"d2.8xlarge\\",
+        \\"hi1.4xlarge\\",
+        \\"hs1.8xlarge\\",
+        \\"cr1.8xlarge\\",
+        \\"cc2.8xlarge\\",
+        \\"cg1.4xlarge\\"
+      ],
+      constraintDescription: \\"must be a valid EC2 instance type.\\"
+    });
+
+    const sshLocation = new cdk.CfnParameter(this, \\"SSHLocation\\", {
+      description:
+        \\"The IP address range that can be used to SSH to the EC2 instances\\",
+      type: \\"String\\",
+      minLength: \\"9\\",
+      maxLength: \\"18\\",
+      default: \\"0.0.0.0/0\\",
+      allowedPattern:
+        \\"(\\\\\\\\d{1,3})\\\\\\\\.(\\\\\\\\d{1,3})\\\\\\\\.(\\\\\\\\d{1,3})\\\\\\\\.(\\\\\\\\d{1,3})/(\\\\\\\\d{1,2})\\",
+      constraintDescription:
+        \\"must be a valid IP CIDR range of the form x.x.x.x/x.\\"
+    });
+
+    const dbClass = new cdk.CfnParameter(this, \\"DBClass\\", {
+      description: \\"Database instance class\\",
+      type: \\"String\\",
+      default: \\"db.t2.small\\",
+      allowedValues: [
+        \\"db.t1.micro\\",
+        \\"db.m1.small\\",
+        \\"db.m1.medium\\",
+        \\"db.m1.large\\",
+        \\"db.m1.xlarge\\",
+        \\"db.m2.xlarge\\",
+        \\"db.m2.2xlarge\\",
+        \\"db.m2.4xlarge\\",
+        \\"db.m3.medium\\",
+        \\"db.m3.large\\",
+        \\"db.m3.xlarge\\",
+        \\"db.m3.2xlarge\\",
+        \\"db.m4.large\\",
+        \\"db.m4.xlarge\\",
+        \\"db.m4.2xlarge\\",
+        \\"db.m4.4xlarge\\",
+        \\"db.m4.10xlarge\\",
+        \\"db.r3.large\\",
+        \\"db.r3.xlarge\\",
+        \\"db.r3.2xlarge\\",
+        \\"db.r3.4xlarge\\",
+        \\"db.r3.8xlarge\\",
+        \\"db.m2.xlarge\\",
+        \\"db.m2.2xlarge\\",
+        \\"db.m2.4xlarge\\",
+        \\"db.cr1.8xlarge\\",
+        \\"db.t2.micro\\",
+        \\"db.t2.small\\",
+        \\"db.t2.medium\\",
+        \\"db.t2.large\\"
+      ],
+      constraintDescription: \\"must select a valid database instance type.\\"
+    });
+
+    const dbName = new cdk.CfnParameter(this, \\"DBName\\", {
+      default: \\"wordpressdb\\",
+      description: \\"The WordPress database name\\",
+      type: \\"String\\",
+      minLength: \\"1\\",
+      maxLength: \\"64\\",
+      allowedPattern: \\"[a-zA-Z][a-zA-Z0-9]*\\",
+      constraintDescription:
+        \\"must begin with a letter and contain only alphanumeric characters.\\"
+    });
+
+    const dbUser = new cdk.CfnParameter(this, \\"DBUser\\", {
+      noEcho: \\"true\\",
+      description: \\"The WordPress database admin account username\\",
+      type: \\"String\\",
+      minLength: \\"1\\",
+      maxLength: \\"16\\",
+      allowedPattern: \\"[a-zA-Z][a-zA-Z0-9]*\\",
+      constraintDescription:
+        \\"must begin with a letter and contain only alphanumeric characters.\\"
+    });
+
+    const dbPassword = new cdk.CfnParameter(this, \\"DBPassword\\", {
+      noEcho: \\"true\\",
+      description: \\"The WordPress database admin account password\\",
+      type: \\"String\\",
+      minLength: \\"8\\",
+      maxLength: \\"41\\",
+      allowedPattern: \\"[a-zA-Z0-9]*\\",
+      constraintDescription: \\"must contain only alphanumeric characters.\\"
+    });
+
+    const multiAzDatabase = new cdk.CfnParameter(this, \\"MultiAZDatabase\\", {
+      default: \\"false\\",
+      description: \\"Create a Multi-AZ MySQL Amazon RDS database instance\\",
+      type: \\"String\\",
+      allowedValues: [\\"true\\", \\"false\\"],
+      constraintDescription: \\"must be either true or false.\\"
+    });
+
+    const webServerCapacity = new cdk.CfnParameter(this, \\"WebServerCapacity\\", {
+      default: \\"1\\",
+      description: \\"The initial number of WebServer instances\\",
+      type: \\"Number\\",
+      minValue: \\"1\\",
+      maxValue: \\"5\\",
+      constraintDescription: \\"must be between 1 and 5 EC2 instances.\\"
+    });
+
+    const dbAllocatedStorage = new cdk.CfnParameter(
+      this,
+      \\"DBAllocatedStorage\\",
+      {
+        default: \\"5\\",
+        description: \\"The size of the database (Gb)\\",
+        type: \\"Number\\",
+        minValue: \\"5\\",
+        maxValue: \\"1024\\",
+        constraintDescription: \\"must be between 5 and 1024Gb.\\"
+      }
+    );
+
+    new cdk.CfnMapping(this, \\"AWSInstanceType2Arch\\", {
+      mapping: {
+        \\"t1.micro\\": { Arch: \\"HVM64\\" },
+        \\"t2.nano\\": { Arch: \\"HVM64\\" },
+        \\"t2.micro\\": { Arch: \\"HVM64\\" },
+        \\"t2.small\\": { Arch: \\"HVM64\\" },
+        \\"t2.medium\\": { Arch: \\"HVM64\\" },
+        \\"t2.large\\": { Arch: \\"HVM64\\" },
+        \\"m1.small\\": { Arch: \\"HVM64\\" },
+        \\"m1.medium\\": { Arch: \\"HVM64\\" },
+        \\"m1.large\\": { Arch: \\"HVM64\\" },
+        \\"m1.xlarge\\": { Arch: \\"HVM64\\" },
+        \\"m2.xlarge\\": { Arch: \\"HVM64\\" },
+        \\"m2.2xlarge\\": { Arch: \\"HVM64\\" },
+        \\"m2.4xlarge\\": { Arch: \\"HVM64\\" },
+        \\"m3.medium\\": { Arch: \\"HVM64\\" },
+        \\"m3.large\\": { Arch: \\"HVM64\\" },
+        \\"m3.xlarge\\": { Arch: \\"HVM64\\" },
+        \\"m3.2xlarge\\": { Arch: \\"HVM64\\" },
+        \\"m4.large\\": { Arch: \\"HVM64\\" },
+        \\"m4.xlarge\\": { Arch: \\"HVM64\\" },
+        \\"m4.2xlarge\\": { Arch: \\"HVM64\\" },
+        \\"m4.4xlarge\\": { Arch: \\"HVM64\\" },
+        \\"m4.10xlarge\\": { Arch: \\"HVM64\\" },
+        \\"c1.medium\\": { Arch: \\"HVM64\\" },
+        \\"c1.xlarge\\": { Arch: \\"HVM64\\" },
+        \\"c3.large\\": { Arch: \\"HVM64\\" },
+        \\"c3.xlarge\\": { Arch: \\"HVM64\\" },
+        \\"c3.2xlarge\\": { Arch: \\"HVM64\\" },
+        \\"c3.4xlarge\\": { Arch: \\"HVM64\\" },
+        \\"c3.8xlarge\\": { Arch: \\"HVM64\\" },
+        \\"c4.large\\": { Arch: \\"HVM64\\" },
+        \\"c4.xlarge\\": { Arch: \\"HVM64\\" },
+        \\"c4.2xlarge\\": { Arch: \\"HVM64\\" },
+        \\"c4.4xlarge\\": { Arch: \\"HVM64\\" },
+        \\"c4.8xlarge\\": { Arch: \\"HVM64\\" },
+        \\"g2.2xlarge\\": { Arch: \\"HVMG2\\" },
+        \\"g2.8xlarge\\": { Arch: \\"HVMG2\\" },
+        \\"r3.large\\": { Arch: \\"HVM64\\" },
+        \\"r3.xlarge\\": { Arch: \\"HVM64\\" },
+        \\"r3.2xlarge\\": { Arch: \\"HVM64\\" },
+        \\"r3.4xlarge\\": { Arch: \\"HVM64\\" },
+        \\"r3.8xlarge\\": { Arch: \\"HVM64\\" },
+        \\"i2.xlarge\\": { Arch: \\"HVM64\\" },
+        \\"i2.2xlarge\\": { Arch: \\"HVM64\\" },
+        \\"i2.4xlarge\\": { Arch: \\"HVM64\\" },
+        \\"i2.8xlarge\\": { Arch: \\"HVM64\\" },
+        \\"d2.xlarge\\": { Arch: \\"HVM64\\" },
+        \\"d2.2xlarge\\": { Arch: \\"HVM64\\" },
+        \\"d2.4xlarge\\": { Arch: \\"HVM64\\" },
+        \\"d2.8xlarge\\": { Arch: \\"HVM64\\" },
+        \\"hi1.4xlarge\\": { Arch: \\"HVM64\\" },
+        \\"hs1.8xlarge\\": { Arch: \\"HVM64\\" },
+        \\"cr1.8xlarge\\": { Arch: \\"HVM64\\" },
+        \\"cc2.8xlarge\\": { Arch: \\"HVM64\\" }
+      }
+    });
+
+    new cdk.CfnMapping(this, \\"AWSInstanceType2NATArch\\", {
+      mapping: {
+        \\"t1.micro\\": { Arch: \\"NATHVM64\\" },
+        \\"t2.nano\\": { Arch: \\"NATHVM64\\" },
+        \\"t2.micro\\": { Arch: \\"NATHVM64\\" },
+        \\"t2.small\\": { Arch: \\"NATHVM64\\" },
+        \\"t2.medium\\": { Arch: \\"NATHVM64\\" },
+        \\"t2.large\\": { Arch: \\"NATHVM64\\" },
+        \\"m1.small\\": { Arch: \\"NATHVM64\\" },
+        \\"m1.medium\\": { Arch: \\"NATHVM64\\" },
+        \\"m1.large\\": { Arch: \\"NATHVM64\\" },
+        \\"m1.xlarge\\": { Arch: \\"NATHVM64\\" },
+        \\"m2.xlarge\\": { Arch: \\"NATHVM64\\" },
+        \\"m2.2xlarge\\": { Arch: \\"NATHVM64\\" },
+        \\"m2.4xlarge\\": { Arch: \\"NATHVM64\\" },
+        \\"m3.medium\\": { Arch: \\"NATHVM64\\" },
+        \\"m3.large\\": { Arch: \\"NATHVM64\\" },
+        \\"m3.xlarge\\": { Arch: \\"NATHVM64\\" },
+        \\"m3.2xlarge\\": { Arch: \\"NATHVM64\\" },
+        \\"m4.large\\": { Arch: \\"NATHVM64\\" },
+        \\"m4.xlarge\\": { Arch: \\"NATHVM64\\" },
+        \\"m4.2xlarge\\": { Arch: \\"NATHVM64\\" },
+        \\"m4.4xlarge\\": { Arch: \\"NATHVM64\\" },
+        \\"m4.10xlarge\\": { Arch: \\"NATHVM64\\" },
+        \\"c1.medium\\": { Arch: \\"NATHVM64\\" },
+        \\"c1.xlarge\\": { Arch: \\"NATHVM64\\" },
+        \\"c3.large\\": { Arch: \\"NATHVM64\\" },
+        \\"c3.xlarge\\": { Arch: \\"NATHVM64\\" },
+        \\"c3.2xlarge\\": { Arch: \\"NATHVM64\\" },
+        \\"c3.4xlarge\\": { Arch: \\"NATHVM64\\" },
+        \\"c3.8xlarge\\": { Arch: \\"NATHVM64\\" },
+        \\"c4.large\\": { Arch: \\"NATHVM64\\" },
+        \\"c4.xlarge\\": { Arch: \\"NATHVM64\\" },
+        \\"c4.2xlarge\\": { Arch: \\"NATHVM64\\" },
+        \\"c4.4xlarge\\": { Arch: \\"NATHVM64\\" },
+        \\"c4.8xlarge\\": { Arch: \\"NATHVM64\\" },
+        \\"g2.2xlarge\\": { Arch: \\"NATHVMG2\\" },
+        \\"g2.8xlarge\\": { Arch: \\"NATHVMG2\\" },
+        \\"r3.large\\": { Arch: \\"NATHVM64\\" },
+        \\"r3.xlarge\\": { Arch: \\"NATHVM64\\" },
+        \\"r3.2xlarge\\": { Arch: \\"NATHVM64\\" },
+        \\"r3.4xlarge\\": { Arch: \\"NATHVM64\\" },
+        \\"r3.8xlarge\\": { Arch: \\"NATHVM64\\" },
+        \\"i2.xlarge\\": { Arch: \\"NATHVM64\\" },
+        \\"i2.2xlarge\\": { Arch: \\"NATHVM64\\" },
+        \\"i2.4xlarge\\": { Arch: \\"NATHVM64\\" },
+        \\"i2.8xlarge\\": { Arch: \\"NATHVM64\\" },
+        \\"d2.xlarge\\": { Arch: \\"NATHVM64\\" },
+        \\"d2.2xlarge\\": { Arch: \\"NATHVM64\\" },
+        \\"d2.4xlarge\\": { Arch: \\"NATHVM64\\" },
+        \\"d2.8xlarge\\": { Arch: \\"NATHVM64\\" },
+        \\"hi1.4xlarge\\": { Arch: \\"NATHVM64\\" },
+        \\"hs1.8xlarge\\": { Arch: \\"NATHVM64\\" },
+        \\"cr1.8xlarge\\": { Arch: \\"NATHVM64\\" },
+        \\"cc2.8xlarge\\": { Arch: \\"NATHVM64\\" }
+      }
+    });
+
+    new cdk.CfnMapping(this, \\"AWSRegionArch2AMI\\", {
+      mapping: {
+        \\"us-east-1\\": {
+          HVM64: \\"ami-0080e4c5bc078760e\\",
+          HVMG2: \\"ami-0aeb704d503081ea6\\"
+        },
+        \\"us-west-2\\": {
+          HVM64: \\"ami-01e24be29428c15b2\\",
+          HVMG2: \\"ami-0fe84a5b4563d8f27\\"
+        },
+        \\"us-west-1\\": {
+          HVM64: \\"ami-0ec6517f6edbf8044\\",
+          HVMG2: \\"ami-0a7fc72dc0e51aa77\\"
+        },
+        \\"eu-west-1\\": {
+          HVM64: \\"ami-08935252a36e25f85\\",
+          HVMG2: \\"ami-0d5299b1c6112c3c7\\"
+        },
+        \\"eu-west-2\\": { HVM64: \\"ami-01419b804382064e4\\", HVMG2: \\"NOT_SUPPORTED\\" },
+        \\"eu-west-3\\": { HVM64: \\"ami-0dd7e7ed60da8fb83\\", HVMG2: \\"NOT_SUPPORTED\\" },
+        \\"eu-central-1\\": {
+          HVM64: \\"ami-0cfbf4f6db41068ac\\",
+          HVMG2: \\"ami-0aa1822e3eb913a11\\"
+        },
+        \\"eu-north-1\\": { HVM64: \\"ami-86fe70f8\\", HVMG2: \\"ami-32d55b4c\\" },
+        \\"ap-northeast-1\\": {
+          HVM64: \\"ami-00a5245b4816c38e6\\",
+          HVMG2: \\"ami-09d0e0e099ecabba2\\"
+        },
+        \\"ap-northeast-2\\": {
+          HVM64: \\"ami-00dc207f8ba6dc919\\",
+          HVMG2: \\"NOT_SUPPORTED\\"
+        },
+        \\"ap-northeast-3\\": {
+          HVM64: \\"ami-0b65f69a5c11f3522\\",
+          HVMG2: \\"NOT_SUPPORTED\\"
+        },
+        \\"ap-southeast-1\\": {
+          HVM64: \\"ami-05b3bcf7f311194b3\\",
+          HVMG2: \\"ami-0e46ce0d6a87dc979\\"
+        },
+        \\"ap-southeast-2\\": {
+          HVM64: \\"ami-02fd0b06f06d93dfc\\",
+          HVMG2: \\"ami-0c0ab057a101d8ff2\\"
+        },
+        \\"ap-south-1\\": {
+          HVM64: \\"ami-0ad42f4f66f6c1cc9\\",
+          HVMG2: \\"ami-0244c1d42815af84a\\"
+        },
+        \\"us-east-2\\": { HVM64: \\"ami-0cd3dfa4e37921605\\", HVMG2: \\"NOT_SUPPORTED\\" },
+        \\"ca-central-1\\": {
+          HVM64: \\"ami-07423fb63ea0a0930\\",
+          HVMG2: \\"NOT_SUPPORTED\\"
+        },
+        \\"sa-east-1\\": { HVM64: \\"ami-05145e0b28ad8e0b2\\", HVMG2: \\"NOT_SUPPORTED\\" },
+        \\"cn-north-1\\": {
+          HVM64: \\"ami-053617c9d818c1189\\",
+          HVMG2: \\"NOT_SUPPORTED\\"
+        },
+        \\"cn-northwest-1\\": {
+          HVM64: \\"ami-0f7937761741dc640\\",
+          HVMG2: \\"NOT_SUPPORTED\\"
+        }
+      }
+    });
+
+    const applicationLoadBalancer = new elasticloadbalancingv2.CfnLoadBalancer(
+      this,
+      \\"ApplicationLoadBalancer\\",
+      { subnets: subnets.value as any }
+    );
+
+    const webServerSecurityGroup = new ec2.CfnSecurityGroup(
+      this,
+      \\"WebServerSecurityGroup\\",
+      {
+        groupDescription:
+          \\"Enable HTTP access via port 80 locked down to the load balancer + SSH access\\",
+        securityGroupIngress: [
+          {
+            ipProtocol: \\"tcp\\",
+            fromPort: 80,
+            toPort: 80,
+            sourceSecurityGroupId: cdk.Fn.select(
+              0,
+              applicationLoadBalancer.attrSecurityGroups
+            )
+          },
+          {
+            ipProtocol: \\"tcp\\",
+            fromPort: 22,
+            toPort: 22,
+            cidrIp: sshLocation.value as any
+          }
+        ],
+        vpcId: vpcId.value as any
+      }
+    );
+
+    const dbec2SecurityGroup = new ec2.CfnSecurityGroup(
+      this,
+      \\"DBEC2SecurityGroup\\",
+      {
+        groupDescription: \\"Open database for access\\",
+        securityGroupIngress: [
+          {
+            ipProtocol: \\"tcp\\",
+            fromPort: 3306,
+            toPort: 3306,
+            sourceSecurityGroupId: webServerSecurityGroup.ref
+          }
+        ],
+        vpcId: vpcId.value as any
+      }
+    );
+
+    const dbInstance = new rds.CfnDBInstance(this, \\"DBInstance\\", {
+      dbName: dbName.value as any,
+      engine: \\"MySQL\\",
+      multiAz: multiAzDatabase.value as any,
+      masterUsername: dbUser.value as any,
+      masterUserPassword: dbPassword.value as any,
+      dbInstanceClass: dbClass.value as any,
+      allocatedStorage: dbAllocatedStorage.value as any,
+      vpcSecurityGroups: [dbec2SecurityGroup.attrGroupId]
+    });
+
+    const launchConfig = new autoscaling.CfnLaunchConfiguration(
+      this,
+      \\"LaunchConfig\\",
+      {
+        imageId: cdk.Fn.findInMap(
+          \\"AWSRegionArch2AMI\\",
+          cdk.Aws.REGION,
+          cdk.Fn.findInMap(
+            \\"AWSInstanceType2Arch\\",
+            instanceType.value as any,
+            \\"Arch\\"
+          )
+        ),
+        instanceType: instanceType.value as any,
+        securityGroups: [webServerSecurityGroup.ref],
+        keyName: keyName.value as any,
+        userData: cdk.Fn.base64(
+          cdk.Fn.join(\\"\\", [
+            \\"#!/bin/bash -xe\\\\n\\",
+            \\"yum update -y aws-cfn-bootstrap\\\\n\\",
+            \\"/opt/aws/bin/cfn-init -v \\",
+            \\"         --stack \\",
+            cdk.Aws.STACK_NAME,
+            \\"         --resource LaunchConfig \\",
+            \\"         --configsets wordpress_install \\",
+            \\"         --region \\",
+            cdk.Aws.REGION,
+            \\"\\\\n\\",
+            \\"/opt/aws/bin/cfn-signal -e $? \\",
+            \\"         --stack \\",
+            cdk.Aws.STACK_NAME,
+            \\"         --resource WebServerGroup \\",
+            \\"         --region \\",
+            cdk.Aws.REGION,
+            \\"\\\\n\\"
+          ])
+        )
+      }
+    );
+    launchConfig.cfnOptions.metadata = {
+      \\"AWS::CloudFormation::Init\\": {
+        configSets: { wordpress_install: [\\"install_cfn\\", \\"install_wordpress\\"] },
+        install_cfn: {
+          files: {
+            \\"/etc/cfn/cfn-hup.conf\\": {
+              content: {
+                \\"Fn::Join\\": [
+                  \\"\\",
+                  [
+                    \\"[main]\\\\n\\",
+                    \\"stack=\\",
+                    { Ref: \\"AWS::StackId\\" },
+                    \\"\\\\n\\",
+                    \\"region=\\",
+                    { Ref: \\"AWS::Region\\" },
+                    \\"\\\\n\\"
+                  ]
+                ]
+              },
+              mode: \\"000400\\",
+              owner: \\"root\\",
+              group: \\"root\\"
+            },
+            \\"/etc/cfn/hooks.d/cfn-auto-reloader.conf\\": {
+              content: {
+                \\"Fn::Join\\": [
+                  \\"\\",
+                  [
+                    \\"[cfn-auto-reloader-hook]\\\\n\\",
+                    \\"triggers=post.update\\\\n\\",
+                    \\"path=Resources.LaunchConfig.Metadata.AWS::CloudFormation::Init\\\\n\\",
+                    \\"action=/opt/aws/bin/cfn-init -v \\",
+                    \\"         --stack \\",
+                    { Ref: \\"AWS::StackName\\" },
+                    \\"         --resource LaunchConfig \\",
+                    \\"         --configsets wordpress_install \\",
+                    \\"         --region \\",
+                    { Ref: \\"AWS::Region\\" },
+                    \\"\\\\n\\"
+                  ]
+                ]
+              },
+              mode: \\"000400\\",
+              owner: \\"root\\",
+              group: \\"root\\"
+            }
+          },
+          services: {
+            sysvinit: {
+              \\"cfn-hup\\": {
+                enabled: \\"true\\",
+                ensureRunning: \\"true\\",
+                files: [
+                  \\"/etc/cfn/cfn-hup.conf\\",
+                  \\"/etc/cfn/hooks.d/cfn-auto-reloader.conf\\"
+                ]
+              }
+            }
+          }
+        },
+        install_wordpress: {
+          packages: { yum: { php: [], \\"php-mysql\\": [], mysql: [], httpd: [] } },
+          sources: { \\"/var/www/html\\": \\"http://wordpress.org/latest.tar.gz\\" },
+          files: {
+            \\"/tmp/create-wp-config\\": {
+              content: {
+                \\"Fn::Join\\": [
+                  \\"\\",
+                  [
+                    \\"#!/bin/bash\\\\n\\",
+                    \\"cp /var/www/html/wordpress/wp-config-sample.php /var/www/html/wordpress/wp-config.php\\\\n\\",
+                    \\"sed -i \\\\\\"s/'database_name_here'/'\\",
+                    { Ref: \\"DBName\\" },
+                    \\"'/g\\\\\\" wp-config.php\\\\n\\",
+                    \\"sed -i \\\\\\"s/'username_here'/'\\",
+                    { Ref: \\"DBUser\\" },
+                    \\"'/g\\\\\\" wp-config.php\\\\n\\",
+                    \\"sed -i \\\\\\"s/'password_here'/'\\",
+                    { Ref: \\"DBPassword\\" },
+                    \\"'/g\\\\\\" wp-config.php\\\\n\\",
+                    \\"sed -i \\\\\\"s/'localhost'/'\\",
+                    { \\"Fn::GetAtt\\": [\\"DBInstance\\", \\"Endpoint.Address\\"] },
+                    \\"'/g\\\\\\" wp-config.php\\\\n\\"
+                  ]
+                ]
+              },
+              mode: \\"000500\\",
+              owner: \\"root\\",
+              group: \\"root\\"
+            }
+          },
+          commands: {
+            \\"01_configure_wordpress\\": {
+              command: \\"/tmp/create-wp-config\\",
+              cwd: \\"/var/www/html/wordpress\\"
+            }
+          },
+          services: {
+            sysvinit: { httpd: { enabled: \\"true\\", ensureRunning: \\"true\\" } }
+          }
+        }
+      }
+    };
+
+    const albTargetGroup = new elasticloadbalancingv2.CfnTargetGroup(
+      this,
+      \\"ALBTargetGroup\\",
+      {
+        healthCheckPath: \\"/wordpress/wp-admin/install.php\\",
+        healthCheckIntervalSeconds: 10,
+        healthCheckTimeoutSeconds: 5,
+        healthyThresholdCount: 2,
+        port: 80,
+        protocol: \\"HTTP\\",
+        unhealthyThresholdCount: 5,
+        vpcId: vpcId.value as any,
+        targetGroupAttributes: [
+          { key: \\"stickiness.enabled\\", value: \\"true\\" },
+          { key: \\"stickiness.type\\", value: \\"lb_cookie\\" },
+          { key: \\"stickiness.lb_cookie.duration_seconds\\", value: \\"30\\" }
+        ]
+      }
+    );
+
+    const webServerGroup = new autoscaling.CfnAutoScalingGroup(
+      this,
+      \\"WebServerGroup\\",
+      {
+        vpcZoneIdentifier: subnets.value as any,
+        launchConfigurationName: launchConfig.ref,
+        minSize: \\"1\\",
+        maxSize: \\"5\\",
+        desiredCapacity: webServerCapacity.value as any,
+        targetGroupArNs: [albTargetGroup.ref]
+      }
+    );
+    webServerGroup.cfnOptions.creationPolicy = {
+      resourceSignal: { timeout: \\"PT15M\\" }
+    };
+    webServerGroup.cfnOptions.updatePolicy = {
+      autoScalingRollingUpdate: {
+        minInstancesInService: \\"1\\",
+        maxBatchSize: \\"1\\",
+        pauseTime: \\"PT15M\\",
+        waitOnResourceSignals: \\"true\\"
+      }
+    };
+
+    const albListener = new elasticloadbalancingv2.CfnListener(
+      this,
+      \\"ALBListener\\",
+      {
+        defaultActions: [
+          { type: \\"forward\\", targetGroupArn: albTargetGroup.ref }
+        ],
+        loadBalancerArn: applicationLoadBalancer.ref,
+        port: 80,
+        protocol: \\"HTTP\\"
+      }
+    );
+
+    new cdk.CfnOutput(this, \\"WebsiteURL\\", {
+      value: cdk.Fn.join(\\"\\", [
+        \\"http://\\",
+        applicationLoadBalancer.attrDNSName,
+        \\"/wordpress\\"
+      ]),
+      description: \\"WordPress Website\\"
+    });
+  }
+}
+"
 `;
 
 exports[`Stack ./examples/buildkite.json compiles to ./examples/tmp/buildkite.ts 1`] = `
@@ -1562,6 +3232,12 @@ export class CloudtrailStack extends cdk.Stack {
       includeGlobalServiceEvents: true,
       s3BucketName: loggingBucket.value as any,
       s3KeyPrefix: \\"cloudtrails\\"
+    });
+
+    new cdk.CfnOutput(this, \\"CloudTrailOutput\\", {
+      description:
+        \\"Test that we munge output names if they duplicate resource names, which is supported in CFN but not in CDK\\",
+      value: cloudTrail.ref
     });
   }
 }
