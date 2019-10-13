@@ -33,7 +33,7 @@
   "bin": {
     "cfntocdk": "bin/cfntocdk.js"
   },
-  "author": "",
+  "author": "Michael Pearson",
   "license": "MIT",
   "jest": {
     "testEnvironment": "node",
