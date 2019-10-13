@@ -1132,14 +1132,6 @@ Object {
 
 exports[`CDK JS ./examples/tmp/cloudtrail.js renders to CFN ./examples/tmp/cloudtrail.json and matches original stack ./examples/cloudtrail.json 1`] = `
 Object {
-  "Outputs": Object {
-    "CloudTrailOutput": Object {
-      "Description": "Test that we munge output names if they duplicate resource names, which is supported in CFN but not in CDK",
-      "Value": Object {
-        "Ref": "CloudTrail",
-      },
-    },
-  },
   "Parameters": Object {
     "LoggingBucket": Object {
       "Description": "The name of the bucket to send cloudtrail logs to",
@@ -3232,12 +3224,6 @@ export class CloudtrailStack extends cdk.Stack {
       includeGlobalServiceEvents: true,
       s3BucketName: loggingBucket.value as any,
       s3KeyPrefix: \\"cloudtrails\\"
-    });
-
-    new cdk.CfnOutput(this, \\"CloudTrailOutput\\", {
-      description:
-        \\"Test that we munge output names if they duplicate resource names, which is supported in CFN but not in CDK\\",
-      value: cloudTrail.ref
     });
   }
 }
