@@ -6,31 +6,25 @@ import { toPascal } from "./lib/util";
 
 const integrationExamples = ["buildkite", "WordPress_Multi_AZ"];
 
-function rmF(filename: string) {
-  if (fs.existsSync(filename)) fs.unlinkSync(filename);
-}
-
 for (let stack of integrationExamples) {
   const cfnSrc = `./__fixtures__/${stack}.json`;
   const tsOutput = `./tmp/${stack}.ts`;
   const jsOutput = `./tmp/${stack}.js`;
   const jsonOutput = `./tmp/${stack}.json`;
 
-  test(`Stack ${cfnSrc} compiles to ${tsOutput}`, () => {
+  test(`Fixture ${cfnSrc} -> CDK TypeScript -> Javascript -> JSON === Fixture`, () => {
     const cfn = fs.readFileSync(cfnSrc).toString();
-    rmF(tsOutput);
 
+    // Remove temporary output from our previous run
+    [tsOutput, jsOutput, jsonOutput].forEach(filename => {
+      if (fs.existsSync(filename)) fs.unlinkSync(filename);
+    });
+
+    // Compile our CFN to CDK TS
     const cdk = new CdkToCFN(stack, cfn).compile();
     fs.writeFileSync(tsOutput, cdk);
 
-    expect(fs.readFileSync(tsOutput).toString()).toMatchSnapshot();
-  });
-
-  test(`CDK TS ${tsOutput} transpiles to CDK JS ${jsOutput}`, () => {
-    if (!fs.existsSync(tsOutput)) return;
-    const cdk = fs.readFileSync(tsOutput).toString();
-    rmF(jsOutput);
-
+    // Transpile TS to JS, without type checks
     const js = ts.transpileModule(cdk, {
       reportDiagnostics: true,
       fileName: `${stack}.ts`,
@@ -42,19 +36,21 @@ for (let stack of integrationExamples) {
       }
     });
     fs.writeFileSync(jsOutput, js.outputText);
-  });
 
-  test(`CDK JS ${jsOutput} renders to CFN ${jsonOutput} and matches original stack ${cfnSrc}`, () => {
-    if (!fs.existsSync(jsOutput)) return;
+    // Load our JS, then synthesise a stack
     const cdkmodule = require(jsOutput);
-    rmF(jsonOutput);
     const cdkstack = new cdkmodule[`${toPascal(stack)}Stack`]();
     const output = testUtil.toCloudFormation(cdkstack);
-
     fs.writeFileSync(jsonOutput, JSON.stringify(output, null, 2));
-    expect(output).toMatchSnapshot();
 
-    const original = JSON.parse(fs.readFileSync(cfnSrc).toString());
-    expect(output).toEqual(original);
+    // Assert that what we just synthesised matched what we imported
+    expect(output).toEqual(JSON.parse(cfn));
+  });
+
+  test(`${tsOutput} matches snapshot`, () => {
+    // Seperate from the above test case as it's useful to see what's changed
+    // in the generated TypeScript without relying on a passing or failing
+    // comparison with the original.
+    expect(fs.readFileSync(tsOutput).toString()).toMatchSnapshot();
   });
 }
