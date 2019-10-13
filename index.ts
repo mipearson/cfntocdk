@@ -4,8 +4,8 @@ import Condition from "./lib/condition";
 import Output from "./lib/output";
 import { JSONResource, JSONMap, Construct } from "./lib/types";
 import Resource from "./lib/resource";
-import codemaker = require("codemaker");
 import toposort = require("toposort");
+import { toCamel, toPascal } from "./lib/util";
 
 interface JSONCfn {
   Parameters?: { [key: string]: JSONMap };
@@ -64,7 +64,7 @@ export default class CfnToCDK {
 
     this.resources.forEach(i => {
       if (i.module) {
-        imports[codemaker.toCamelCase(i.module)] = true;
+        imports[toCamel(i.module)] = true;
       }
     });
 
@@ -162,9 +162,7 @@ export default class CfnToCDK {
     import * as cdk from '@aws-cdk/core';
     ${this.compileImports()}
 
-    export class ${codemaker.toPascalCase(
-      this.stackName
-    )}Stack extends cdk.Stack {
+    export class ${toPascal(this.stackName)}Stack extends cdk.Stack {
       constructor(parent: cdk.App, id: string, props?: cdk.StackProps) {
         super(parent, id, props);
 

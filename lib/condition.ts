@@ -1,6 +1,6 @@
 import { JSONMap, Construct } from "./types";
 import Options from "./options";
-import codemaker = require("codemaker");
+import { toCamel } from "./util";
 
 export default class Condition implements Construct {
   data: JSONMap;
@@ -12,9 +12,9 @@ export default class Condition implements Construct {
   }
 
   compile(): string {
-    return `const ${codemaker.toCamelCase(
+    return `const ${toCamel(this.name)} = new cdk.CfnCondition(this, "${
       this.name
-    )} = new cdk.CfnCondition(this, "${this.name}",
+    }",
       ${new Options({ expression: this.data }).compile()}
     );
 

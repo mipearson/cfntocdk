@@ -1,6 +1,6 @@
 import { JSONResource, Construct, JSONMap } from "./types";
 import Options from "./options";
-import codemaker = require("codemaker");
+import { toCamel, toConstant } from "./util";
 
 export default class Resource implements Construct {
   data: JSONResource;
@@ -17,7 +17,7 @@ export default class Resource implements Construct {
     this.name = name;
     this.properties = new Options(data.Properties);
     this.references = this.properties.references;
-    this.varName = codemaker.toCamelCase(this.name);
+    this.varName = toCamel(this.name);
 
     const splitType = data.Type.split("::", 3);
     this.module = splitType[1].toLowerCase();
@@ -45,24 +45,20 @@ export default class Resource implements Construct {
     if (this.data.DeletionPolicy) {
       const policy =
         typeof this.data.DeletionPolicy === "string"
-          ? `cdk.CfnDeletionPolicy.${codemaker
-              .toSnakeCase(this.data.DeletionPolicy)
-              .toUpperCase()}`
+          ? `cdk.CfnDeletionPolicy.${toConstant(this.data.DeletionPolicy)}`
           : new Options(this.data.DeletionPolicy).compile();
 
       this.addOption("deletionPolicy", policy);
     }
     if (this.data.Condition) {
-      this.addOption("condition", codemaker.toCamelCase(this.data.Condition));
+      this.addOption("condition", toCamel(this.data.Condition));
       this.references.push(this.data.Condition);
     }
     if (this.data.DependsOn) {
       let val = this.data.DependsOn;
       val = val instanceof Array ? val : [val];
       val.forEach(v => {
-        this.compiled += `\n${
-          this.varName
-        }.addDependsOn(${codemaker.toCamelCase(v)});`;
+        this.compiled += `\n${this.varName}.addDependsOn(${toCamel(v)});`;
         this.references.push(v);
       });
     }

@@ -414,6 +414,12 @@ Object {
           "",
           Array [
             "http://",
+            Object {
+              "Fn::GetAtt": Array [
+                "ApplicationLoadBalancer",
+                "DNSName",
+              ],
+            },
             "/wordpress",
           ],
         ],
@@ -898,7 +904,7 @@ Object {
               Array [
                 "#!/bin/bash -xe
 yum update -y aws-cfn-bootstrap
-/opt/aws/bin/cfn-init -v          --stack ",
+         --stack ",
                 Object {
                   "Ref": "AWS::StackName",
                 },
@@ -939,6 +945,11 @@ yum update -y aws-cfn-bootstrap
         },
         "MaxSize": "5",
         "MinSize": "1",
+        "TargetGroupARNs": Array [
+          Object {
+            "Ref": "ALBTargetGroup",
+          },
+        ],
         "VPCZoneIdentifier": Object {
           "Ref": "Subnets",
         },
@@ -3133,21 +3144,13 @@ export class WordPressMultiAzStack extends cdk.Stack {
         keyName: keyName.value,
         userData: cdk.Fn.base64(
           cdk.Fn.join(\\"\\", [
-            \\"#!/bin/bash -xe\\\\n\\",
-            \\"yum update -y aws-cfn-bootstrap\\\\n\\",
-            \\"/opt/aws/bin/cfn-init -v \\",
-            \\"         --stack \\",
+            \\"#!/bin/bash -xe\\\\nyum update -y aws-cfn-bootstrap\\\\n         --stack \\",
             cdk.Aws.STACK_NAME,
-            \\"         --resource LaunchConfig \\",
-            \\"         --configsets wordpress_install \\",
-            \\"         --region \\",
+            \\"         --resource LaunchConfig          --configsets wordpress_install          --region \\",
             cdk.Aws.REGION,
-            \\"\\\\n\\",
-            \\"/opt/aws/bin/cfn-signal -e $? \\",
-            \\"         --stack \\",
+            \\"\\\\n/opt/aws/bin/cfn-signal -e $?          --stack \\",
             cdk.Aws.STACK_NAME,
-            \\"         --resource WebServerGroup \\",
-            \\"         --region \\",
+            \\"         --resource WebServerGroup          --region \\",
             cdk.Aws.REGION,
             \\"\\\\n\\"
           ])
@@ -3288,7 +3291,7 @@ export class WordPressMultiAzStack extends cdk.Stack {
         minSize: \\"1\\",
         maxSize: \\"5\\",
         desiredCapacity: webServerCapacity.value,
-        targetGroupArNs: [albTargetGroup.ref]
+        targetGroupArns: [albTargetGroup.ref]
       }
     );
     webServerGroup.cfnOptions.creationPolicy = {
@@ -3319,7 +3322,7 @@ export class WordPressMultiAzStack extends cdk.Stack {
     new cdk.CfnOutput(this, \\"WebsiteURL\\", {
       value: cdk.Fn.join(\\"\\", [
         \\"http://\\",
-        applicationLoadBalancer.attrDNSName,
+        applicationLoadBalancer.attrDnsName,
         \\"/wordpress\\"
       ]),
       description: \\"WordPress Website\\"

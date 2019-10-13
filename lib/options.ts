@@ -1,6 +1,6 @@
 import { JSONMap } from "./types";
 import Parameter from "./parameter";
-import codemaker = require("codemaker");
+import { toConstant, toCamel, toPascal } from "./util";
 
 interface FoundKey {
   name: string;
@@ -67,20 +67,20 @@ export default class Options {
       if (data.Ref) {
         if (data.Ref.startsWith("AWS::")) {
           const func = data.Ref.replace("AWS::", "");
-          return `cdk.Aws.${codemaker.toSnakeCase(func).toUpperCase()}`;
+          return `cdk.Aws.${toConstant(func)}`;
         }
         if (Parameter.isParameter(data.Ref)) {
           // TODO: Remember the type of parameter we received so that
           // we can use the correct .value method here
-          return `(${codemaker.toCamelCase(data.Ref)}.value)`;
+          return `(${toCamel(data.Ref)}.value)`;
         }
 
         this.references.push(data.Ref);
-        return `${codemaker.toCamelCase(data.Ref)}.ref`;
+        return `${toCamel(data.Ref)}.ref`;
       }
 
       if (data.Condition) {
-        return codemaker.toCamelCase(data.Condition);
+        return toCamel(data.Condition);
       }
 
       const fnKey = this.findFnKey(data);
@@ -104,9 +104,9 @@ export default class Options {
         } else if (name == "GetAtt") {
           const [ref, att] = fnKey.value;
           this.references.push(ref);
-          return `${codemaker.toCamelCase(ref)}.attr${att}`;
+          return `${toCamel(ref)}.attr${toPascal(att)}`;
         } else {
-          name = codemaker.toCamelCase(name);
+          name = toCamel(name);
         }
         const value =
           fnKey.value instanceof Array ? fnKey.value : [fnKey.value];
@@ -119,7 +119,7 @@ export default class Options {
       }
 
       const items = Object.keys(data).map(k => {
-        const key = this.noCamelCase ? k : codemaker.toCamelCase(k);
+        const key = this.noCamelCase ? k : toCamel(k);
 
         const val =
           k.endsWith("PolicyDocument") || k === "Variables"

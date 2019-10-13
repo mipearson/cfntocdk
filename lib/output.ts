@@ -1,6 +1,5 @@
 import { JSONMap, Construct } from "./types";
 import Options from "./options";
-import codemaker = require("codemaker");
 
 export default class Output implements Construct {
   data: JSONMap;

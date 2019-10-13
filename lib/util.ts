@@ -1,3 +1,6 @@
+import camelCase = require("lodash.camelcase");
+import snakeCase = require("lodash.snakecase");
+
 export function firstUpper(s: string): string {
   return s.charAt(0).toUpperCase() + s.substring(1);
 }
@@ -6,26 +9,22 @@ export function firstLower(s: string): string {
   return s.charAt(0).toLowerCase() + s.substring(1);
 }
 
-/**
- * Convert a CloudFormation name to a nice TypeScript name
- *
- * We use a library to camelcase, and fix up some things that translate incorrectly.
- *
- * For example, the library breaks when pluralizing an abbreviation, such as "ProviderARNs" -> "providerArNs".
- *
- * We currently recognize "ARNs", "MBs" and "AZs".
- */
-// export function cloudFormationToScriptName(name: string): string {
-//   if (name === 'VPCs') { return 'vpcs'; }
-//   const ret = codemaker.toCamelCase(name);
+// CDK wants "targetGroupArns", not "targetGroupARNs" or "targetGroupArNs".
+export function flattenCapitals(s: string): string {
+  return s.replace(
+    /([A-Z])([A-Z]+)(s?)$/,
+    (_, p1, p2, p3) => p1 + p2.toLowerCase() + p3
+  );
+}
 
-//   const suffixes: { [key: string]: string } = { ARNs: 'Arns', MBs: 'MBs', AZs: 'AZs' };
+export function toCamel(s: string): string {
+  return camelCase(flattenCapitals(s));
+}
 
-//   for (const suffix of Object.keys(suffixes)) {
-//     if (name.endsWith(suffix)) {
-//       return ret.substr(0, ret.length - suffix.length) + suffixes[suffix];
-//     }
-//   }
+export function toConstant(s: string): string {
+  return snakeCase(flattenCapitals(s)).toUpperCase();
+}
 
-//   return ret;
-// }
+export function toPascal(s: string): string {
+  return firstUpper(camelCase(flattenCapitals(s)));
+}

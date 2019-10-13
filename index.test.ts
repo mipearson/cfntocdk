@@ -1,8 +1,8 @@
 import CdkToCFN from "./index";
 import fs = require("fs");
-import codemaker = require("codemaker");
 import testUtil = require("@aws-cdk/core/test/util");
 import * as ts from "typescript";
+import { toPascal } from "./lib/util";
 
 const integrationExamples = ["buildkite", "WordPress_Multi_AZ"];
 
@@ -48,7 +48,7 @@ for (let stack of integrationExamples) {
     if (!fs.existsSync(jsOutput)) return;
     const cdkmodule = require(jsOutput);
     rmF(jsonOutput);
-    const cdkstack = new cdkmodule[`${codemaker.toPascalCase(stack)}Stack`]();
+    const cdkstack = new cdkmodule[`${toPascal(stack)}Stack`]();
     const output = testUtil.toCloudFormation(cdkstack);
 
     fs.writeFileSync(jsonOutput, JSON.stringify(output, null, 2));
