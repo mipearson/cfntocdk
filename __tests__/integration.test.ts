@@ -1,6 +1,7 @@
 import Stack from "../lib/stack";
 import fs = require("fs");
-import testUtil = require("@aws-cdk/core/test/util");
+import { SynthUtils } from "@aws-cdk/assert";
+
 import * as ts from "typescript";
 import { toPascal } from "../lib/util";
 import path = require("path");
@@ -17,7 +18,7 @@ for (let stack of integrationExamples) {
     const cfn = fs.readFileSync(cfnSrc).toString();
 
     // Remove temporary output from our previous run
-    [tsOutput, jsOutput, jsonOutput].forEach(filename => {
+    [tsOutput, jsOutput, jsonOutput].forEach((filename) => {
       if (fs.existsSync(filename)) fs.unlinkSync(filename);
     });
 
@@ -33,15 +34,15 @@ for (let stack of integrationExamples) {
         target: ts.ScriptTarget.ES2015,
         module: ts.ModuleKind.CommonJS,
         strict: true,
-        sourceMap: false
-      }
+        sourceMap: false,
+      },
     });
     fs.writeFileSync(jsOutput, js.outputText);
 
     // Load our JS, then synthesise a stack
     const cdkmodule = require(path.join(process.cwd(), jsOutput));
     const cdkstack = new cdkmodule[`${toPascal(stack)}Stack`]();
-    const output = testUtil.toCloudFormation(cdkstack);
+    const output = SynthUtils.toCloudFormation(cdkstack);
     fs.writeFileSync(jsonOutput, JSON.stringify(output, null, 2));
 
     // Assert that what we just synthesised matched what we imported
