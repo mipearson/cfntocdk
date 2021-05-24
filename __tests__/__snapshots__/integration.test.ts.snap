@@ -19,21 +19,21 @@ export class WordPressMultiAzStack extends cdk.Stack {
       type: \\"AWS::EC2::VPC::Id\\",
       description: \\"VpcId of your existing Virtual Private Cloud (VPC)\\",
       constraintDescription:
-        \\"must be the VPC Id of an existing Virtual Private Cloud.\\"
+        \\"must be the VPC Id of an existing Virtual Private Cloud.\\",
     });
 
     const subnets = new cdk.CfnParameter(this, \\"Subnets\\", {
       type: \\"List<AWS::EC2::Subnet::Id>\\",
       description: \\"The list of SubnetIds in your Virtual Private Cloud (VPC)\\",
       constraintDescription:
-        \\"must be a list of at least two existing subnets associated with at least two different availability zones. They should be residing in the selected Virtual Private Cloud.\\"
+        \\"must be a list of at least two existing subnets associated with at least two different availability zones. They should be residing in the selected Virtual Private Cloud.\\",
     });
 
     const keyName = new cdk.CfnParameter(this, \\"KeyName\\", {
       description:
         \\"Name of an existing EC2 KeyPair to enable SSH access to the instances\\",
       type: \\"AWS::EC2::KeyPair::KeyName\\",
-      constraintDescription: \\"must be the name of an existing EC2 KeyPair.\\"
+      constraintDescription: \\"must be the name of an existing EC2 KeyPair.\\",
     });
 
     const instanceType = new cdk.CfnParameter(this, \\"InstanceType\\", {
@@ -94,9 +94,9 @@ export class WordPressMultiAzStack extends cdk.Stack {
         \\"hs1.8xlarge\\",
         \\"cr1.8xlarge\\",
         \\"cc2.8xlarge\\",
-        \\"cg1.4xlarge\\"
+        \\"cg1.4xlarge\\",
       ],
-      constraintDescription: \\"must be a valid EC2 instance type.\\"
+      constraintDescription: \\"must be a valid EC2 instance type.\\",
     });
 
     const sshLocation = new cdk.CfnParameter(this, \\"SSHLocation\\", {
@@ -109,7 +109,7 @@ export class WordPressMultiAzStack extends cdk.Stack {
       allowedPattern:
         \\"(\\\\\\\\d{1,3})\\\\\\\\.(\\\\\\\\d{1,3})\\\\\\\\.(\\\\\\\\d{1,3})\\\\\\\\.(\\\\\\\\d{1,3})/(\\\\\\\\d{1,2})\\",
       constraintDescription:
-        \\"must be a valid IP CIDR range of the form x.x.x.x/x.\\"
+        \\"must be a valid IP CIDR range of the form x.x.x.x/x.\\",
     });
 
     const dbClass = new cdk.CfnParameter(this, \\"DBClass\\", {
@@ -146,9 +146,9 @@ export class WordPressMultiAzStack extends cdk.Stack {
         \\"db.t2.micro\\",
         \\"db.t2.small\\",
         \\"db.t2.medium\\",
-        \\"db.t2.large\\"
+        \\"db.t2.large\\",
       ],
-      constraintDescription: \\"must select a valid database instance type.\\"
+      constraintDescription: \\"must select a valid database instance type.\\",
     });
 
     const dbName = new cdk.CfnParameter(this, \\"DBName\\", {
@@ -159,7 +159,7 @@ export class WordPressMultiAzStack extends cdk.Stack {
       maxLength: \\"64\\",
       allowedPattern: \\"[a-zA-Z][a-zA-Z0-9]*\\",
       constraintDescription:
-        \\"must begin with a letter and contain only alphanumeric characters.\\"
+        \\"must begin with a letter and contain only alphanumeric characters.\\",
     });
 
     const dbUser = new cdk.CfnParameter(this, \\"DBUser\\", {
@@ -170,7 +170,7 @@ export class WordPressMultiAzStack extends cdk.Stack {
       maxLength: \\"16\\",
       allowedPattern: \\"[a-zA-Z][a-zA-Z0-9]*\\",
       constraintDescription:
-        \\"must begin with a letter and contain only alphanumeric characters.\\"
+        \\"must begin with a letter and contain only alphanumeric characters.\\",
     });
 
     const dbPassword = new cdk.CfnParameter(this, \\"DBPassword\\", {
@@ -180,7 +180,7 @@ export class WordPressMultiAzStack extends cdk.Stack {
       minLength: \\"8\\",
       maxLength: \\"41\\",
       allowedPattern: \\"[a-zA-Z0-9]*\\",
-      constraintDescription: \\"must contain only alphanumeric characters.\\"
+      constraintDescription: \\"must contain only alphanumeric characters.\\",
     });
 
     const multiAzDatabase = new cdk.CfnParameter(this, \\"MultiAZDatabase\\", {
@@ -188,7 +188,7 @@ export class WordPressMultiAzStack extends cdk.Stack {
       description: \\"Create a Multi-AZ MySQL Amazon RDS database instance\\",
       type: \\"String\\",
       allowedValues: [\\"true\\", \\"false\\"],
-      constraintDescription: \\"must be either true or false.\\"
+      constraintDescription: \\"must be either true or false.\\",
     });
 
     const webServerCapacity = new cdk.CfnParameter(this, \\"WebServerCapacity\\", {
@@ -197,7 +197,7 @@ export class WordPressMultiAzStack extends cdk.Stack {
       type: \\"Number\\",
       minValue: \\"1\\",
       maxValue: \\"5\\",
-      constraintDescription: \\"must be between 1 and 5 EC2 instances.\\"
+      constraintDescription: \\"must be between 1 and 5 EC2 instances.\\",
     });
 
     const dbAllocatedStorage = new cdk.CfnParameter(
@@ -209,7 +209,7 @@ export class WordPressMultiAzStack extends cdk.Stack {
         type: \\"Number\\",
         minValue: \\"5\\",
         maxValue: \\"1024\\",
-        constraintDescription: \\"must be between 5 and 1024Gb.\\"
+        constraintDescription: \\"must be between 5 and 1024Gb.\\",
       }
     );
 
@@ -267,8 +267,8 @@ export class WordPressMultiAzStack extends cdk.Stack {
         \\"hi1.4xlarge\\": { Arch: \\"HVM64\\" },
         \\"hs1.8xlarge\\": { Arch: \\"HVM64\\" },
         \\"cr1.8xlarge\\": { Arch: \\"HVM64\\" },
-        \\"cc2.8xlarge\\": { Arch: \\"HVM64\\" }
-      }
+        \\"cc2.8xlarge\\": { Arch: \\"HVM64\\" },
+      },
     });
 
     new cdk.CfnMapping(this, \\"AWSInstanceType2NATArch\\", {
@@ -325,74 +325,74 @@ export class WordPressMultiAzStack extends cdk.Stack {
         \\"hi1.4xlarge\\": { Arch: \\"NATHVM64\\" },
         \\"hs1.8xlarge\\": { Arch: \\"NATHVM64\\" },
         \\"cr1.8xlarge\\": { Arch: \\"NATHVM64\\" },
-        \\"cc2.8xlarge\\": { Arch: \\"NATHVM64\\" }
-      }
+        \\"cc2.8xlarge\\": { Arch: \\"NATHVM64\\" },
+      },
     });
 
     new cdk.CfnMapping(this, \\"AWSRegionArch2AMI\\", {
       mapping: {
         \\"us-east-1\\": {
           HVM64: \\"ami-0080e4c5bc078760e\\",
-          HVMG2: \\"ami-0aeb704d503081ea6\\"
+          HVMG2: \\"ami-0aeb704d503081ea6\\",
         },
         \\"us-west-2\\": {
           HVM64: \\"ami-01e24be29428c15b2\\",
-          HVMG2: \\"ami-0fe84a5b4563d8f27\\"
+          HVMG2: \\"ami-0fe84a5b4563d8f27\\",
         },
         \\"us-west-1\\": {
           HVM64: \\"ami-0ec6517f6edbf8044\\",
-          HVMG2: \\"ami-0a7fc72dc0e51aa77\\"
+          HVMG2: \\"ami-0a7fc72dc0e51aa77\\",
         },
         \\"eu-west-1\\": {
           HVM64: \\"ami-08935252a36e25f85\\",
-          HVMG2: \\"ami-0d5299b1c6112c3c7\\"
+          HVMG2: \\"ami-0d5299b1c6112c3c7\\",
         },
         \\"eu-west-2\\": { HVM64: \\"ami-01419b804382064e4\\", HVMG2: \\"NOT_SUPPORTED\\" },
         \\"eu-west-3\\": { HVM64: \\"ami-0dd7e7ed60da8fb83\\", HVMG2: \\"NOT_SUPPORTED\\" },
         \\"eu-central-1\\": {
           HVM64: \\"ami-0cfbf4f6db41068ac\\",
-          HVMG2: \\"ami-0aa1822e3eb913a11\\"
+          HVMG2: \\"ami-0aa1822e3eb913a11\\",
         },
         \\"eu-north-1\\": { HVM64: \\"ami-86fe70f8\\", HVMG2: \\"ami-32d55b4c\\" },
         \\"ap-northeast-1\\": {
           HVM64: \\"ami-00a5245b4816c38e6\\",
-          HVMG2: \\"ami-09d0e0e099ecabba2\\"
+          HVMG2: \\"ami-09d0e0e099ecabba2\\",
         },
         \\"ap-northeast-2\\": {
           HVM64: \\"ami-00dc207f8ba6dc919\\",
-          HVMG2: \\"NOT_SUPPORTED\\"
+          HVMG2: \\"NOT_SUPPORTED\\",
         },
         \\"ap-northeast-3\\": {
           HVM64: \\"ami-0b65f69a5c11f3522\\",
-          HVMG2: \\"NOT_SUPPORTED\\"
+          HVMG2: \\"NOT_SUPPORTED\\",
         },
         \\"ap-southeast-1\\": {
           HVM64: \\"ami-05b3bcf7f311194b3\\",
-          HVMG2: \\"ami-0e46ce0d6a87dc979\\"
+          HVMG2: \\"ami-0e46ce0d6a87dc979\\",
         },
         \\"ap-southeast-2\\": {
           HVM64: \\"ami-02fd0b06f06d93dfc\\",
-          HVMG2: \\"ami-0c0ab057a101d8ff2\\"
+          HVMG2: \\"ami-0c0ab057a101d8ff2\\",
         },
         \\"ap-south-1\\": {
           HVM64: \\"ami-0ad42f4f66f6c1cc9\\",
-          HVMG2: \\"ami-0244c1d42815af84a\\"
+          HVMG2: \\"ami-0244c1d42815af84a\\",
         },
         \\"us-east-2\\": { HVM64: \\"ami-0cd3dfa4e37921605\\", HVMG2: \\"NOT_SUPPORTED\\" },
         \\"ca-central-1\\": {
           HVM64: \\"ami-07423fb63ea0a0930\\",
-          HVMG2: \\"NOT_SUPPORTED\\"
+          HVMG2: \\"NOT_SUPPORTED\\",
         },
         \\"sa-east-1\\": { HVM64: \\"ami-05145e0b28ad8e0b2\\", HVMG2: \\"NOT_SUPPORTED\\" },
         \\"cn-north-1\\": {
           HVM64: \\"ami-053617c9d818c1189\\",
-          HVMG2: \\"NOT_SUPPORTED\\"
+          HVMG2: \\"NOT_SUPPORTED\\",
         },
         \\"cn-northwest-1\\": {
           HVM64: \\"ami-0f7937761741dc640\\",
-          HVMG2: \\"NOT_SUPPORTED\\"
-        }
-      }
+          HVMG2: \\"NOT_SUPPORTED\\",
+        },
+      },
     });
 
     const applicationLoadBalancer = new elasticloadbalancingv2.CfnLoadBalancer(
@@ -415,16 +415,16 @@ export class WordPressMultiAzStack extends cdk.Stack {
             sourceSecurityGroupId: cdk.Fn.select(
               0,
               applicationLoadBalancer.attrSecurityGroups
-            )
+            ),
           },
           {
             ipProtocol: \\"tcp\\",
             fromPort: 22,
             toPort: 22,
-            cidrIp: sshLocation.value
-          }
+            cidrIp: sshLocation.value,
+          },
         ],
-        vpcId: vpcId.value
+        vpcId: vpcId.value,
       }
     );
 
@@ -438,10 +438,10 @@ export class WordPressMultiAzStack extends cdk.Stack {
             ipProtocol: \\"tcp\\",
             fromPort: 3306,
             toPort: 3306,
-            sourceSecurityGroupId: webServerSecurityGroup.ref
-          }
+            sourceSecurityGroupId: webServerSecurityGroup.ref,
+          },
         ],
-        vpcId: vpcId.value
+        vpcId: vpcId.value,
       }
     );
 
@@ -453,7 +453,7 @@ export class WordPressMultiAzStack extends cdk.Stack {
       masterUserPassword: dbPassword.value,
       dbInstanceClass: dbClass.value,
       allocatedStorage: dbAllocatedStorage.value,
-      vpcSecurityGroups: [dbec2SecurityGroup.attrGroupId]
+      vpcSecurityGroups: [dbec2SecurityGroup.attrGroupId],
     });
 
     const launchConfig = new autoscaling.CfnLaunchConfiguration(
@@ -478,9 +478,9 @@ export class WordPressMultiAzStack extends cdk.Stack {
             cdk.Aws.STACK_NAME,
             \\"         --resource WebServerGroup          --region \\",
             cdk.Aws.REGION,
-            \\"\\\\n\\"
+            \\"\\\\n\\",
           ])
-        )
+        ),
       }
     );
     launchConfig.cfnOptions.metadata = {
@@ -499,13 +499,13 @@ export class WordPressMultiAzStack extends cdk.Stack {
                     \\"\\\\n\\",
                     \\"region=\\",
                     { Ref: \\"AWS::Region\\" },
-                    \\"\\\\n\\"
-                  ]
-                ]
+                    \\"\\\\n\\",
+                  ],
+                ],
               },
               mode: \\"000400\\",
               owner: \\"root\\",
-              group: \\"root\\"
+              group: \\"root\\",
             },
             \\"/etc/cfn/hooks.d/cfn-auto-reloader.conf\\": {
               content: {
@@ -522,14 +522,14 @@ export class WordPressMultiAzStack extends cdk.Stack {
                     \\"         --configsets wordpress_install \\",
                     \\"         --region \\",
                     { Ref: \\"AWS::Region\\" },
-                    \\"\\\\n\\"
-                  ]
-                ]
+                    \\"\\\\n\\",
+                  ],
+                ],
               },
               mode: \\"000400\\",
               owner: \\"root\\",
-              group: \\"root\\"
-            }
+              group: \\"root\\",
+            },
           },
           services: {
             sysvinit: {
@@ -538,11 +538,11 @@ export class WordPressMultiAzStack extends cdk.Stack {
                 ensureRunning: \\"true\\",
                 files: [
                   \\"/etc/cfn/cfn-hup.conf\\",
-                  \\"/etc/cfn/hooks.d/cfn-auto-reloader.conf\\"
-                ]
-              }
-            }
-          }
+                  \\"/etc/cfn/hooks.d/cfn-auto-reloader.conf\\",
+                ],
+              },
+            },
+          },
         },
         install_wordpress: {
           packages: { yum: { php: [], \\"php-mysql\\": [], mysql: [], httpd: [] } },
@@ -566,26 +566,26 @@ export class WordPressMultiAzStack extends cdk.Stack {
                     \\"'/g\\\\\\" wp-config.php\\\\n\\",
                     \\"sed -i \\\\\\"s/'localhost'/'\\",
                     { \\"Fn::GetAtt\\": [\\"DBInstance\\", \\"Endpoint.Address\\"] },
-                    \\"'/g\\\\\\" wp-config.php\\\\n\\"
-                  ]
-                ]
+                    \\"'/g\\\\\\" wp-config.php\\\\n\\",
+                  ],
+                ],
               },
               mode: \\"000500\\",
               owner: \\"root\\",
-              group: \\"root\\"
-            }
+              group: \\"root\\",
+            },
           },
           commands: {
             \\"01_configure_wordpress\\": {
               command: \\"/tmp/create-wp-config\\",
-              cwd: \\"/var/www/html/wordpress\\"
-            }
+              cwd: \\"/var/www/html/wordpress\\",
+            },
           },
           services: {
-            sysvinit: { httpd: { enabled: \\"true\\", ensureRunning: \\"true\\" } }
-          }
-        }
-      }
+            sysvinit: { httpd: { enabled: \\"true\\", ensureRunning: \\"true\\" } },
+          },
+        },
+      },
     };
 
     const albTargetGroup = new elasticloadbalancingv2.CfnTargetGroup(
@@ -603,8 +603,8 @@ export class WordPressMultiAzStack extends cdk.Stack {
         targetGroupAttributes: [
           { key: \\"stickiness.enabled\\", value: \\"true\\" },
           { key: \\"stickiness.type\\", value: \\"lb_cookie\\" },
-          { key: \\"stickiness.lb_cookie.duration_seconds\\", value: \\"30\\" }
-        ]
+          { key: \\"stickiness.lb_cookie.duration_seconds\\", value: \\"30\\" },
+        ],
       }
     );
 
@@ -617,19 +617,19 @@ export class WordPressMultiAzStack extends cdk.Stack {
         minSize: \\"1\\",
         maxSize: \\"5\\",
         desiredCapacity: webServerCapacity.value,
-        targetGroupArns: [albTargetGroup.ref]
+        targetGroupArns: [albTargetGroup.ref],
       }
     );
     webServerGroup.cfnOptions.creationPolicy = {
-      resourceSignal: { timeout: \\"PT15M\\" }
+      resourceSignal: { timeout: \\"PT15M\\" },
     };
     webServerGroup.cfnOptions.updatePolicy = {
       autoScalingRollingUpdate: {
         minInstancesInService: \\"1\\",
         maxBatchSize: \\"1\\",
         pauseTime: \\"PT15M\\",
-        waitOnResourceSignals: \\"true\\"
-      }
+        waitOnResourceSignals: \\"true\\",
+      },
     };
 
     const albListener = new elasticloadbalancingv2.CfnListener(
@@ -637,11 +637,11 @@ export class WordPressMultiAzStack extends cdk.Stack {
       \\"ALBListener\\",
       {
         defaultActions: [
-          { type: \\"forward\\", targetGroupArn: albTargetGroup.ref }
+          { type: \\"forward\\", targetGroupArn: albTargetGroup.ref },
         ],
         loadBalancerArn: applicationLoadBalancer.ref,
         port: 80,
-        protocol: \\"HTTP\\"
+        protocol: \\"HTTP\\",
       }
     );
 
@@ -649,9 +649,9 @@ export class WordPressMultiAzStack extends cdk.Stack {
       value: cdk.Fn.join(\\"\\", [
         \\"http://\\",
         applicationLoadBalancer.attrDnsName,
-        \\"/wordpress\\"
+        \\"/wordpress\\",
       ]),
-      description: \\"WordPress Website\\"
+      description: \\"WordPress Website\\",
     });
   }
 }
@@ -680,7 +680,7 @@ export class BuildkiteStack extends cdk.Stack {
         ParameterGroups: [
           {
             Label: { default: \\"Buildkite Configuration\\" },
-            Parameters: [\\"BuildkiteAgentToken\\", \\"BuildkiteQueue\\"]
+            Parameters: [\\"BuildkiteAgentToken\\", \\"BuildkiteQueue\\"],
           },
           {
             Label: { default: \\"Advanced Buildkite Configuration\\" },
@@ -688,8 +688,8 @@ export class BuildkiteStack extends cdk.Stack {
               \\"BuildkiteAgentRelease\\",
               \\"BuildkiteAgentTags\\",
               \\"BuildkiteAgentTimestampLines\\",
-              \\"BuildkiteAgentExperiments\\"
-            ]
+              \\"BuildkiteAgentExperiments\\",
+            ],
           },
           {
             Label: { default: \\"Network Configuration\\" },
@@ -698,8 +698,8 @@ export class BuildkiteStack extends cdk.Stack {
               \\"Subnets\\",
               \\"AvailabilityZones\\",
               \\"SecurityGroupId\\",
-              \\"AssociatePublicIpAddress\\"
-            ]
+              \\"AssociatePublicIpAddress\\",
+            ],
           },
           {
             Label: { default: \\"Instance Configuration\\" },
@@ -715,8 +715,8 @@ export class BuildkiteStack extends cdk.Stack {
               \\"BootstrapScriptUrl\\",
               \\"RootVolumeSize\\",
               \\"ManagedPolicyARN\\",
-              \\"InstanceRoleName\\"
-            ]
+              \\"InstanceRoleName\\",
+            ],
           },
           {
             Label: { default: \\"Auto-scaling Configuration\\" },
@@ -726,45 +726,45 @@ export class BuildkiteStack extends cdk.Stack {
               \\"ScaleUpAdjustment\\",
               \\"ScaleDownAdjustment\\",
               \\"ScaleDownPeriod\\",
-              \\"InstanceCreationTimeout\\"
-            ]
+              \\"InstanceCreationTimeout\\",
+            ],
           },
           {
             Label: { default: \\"Cost Allocation Configuration\\" },
             Parameters: [
               \\"EnableCostAllocationTags\\",
               \\"CostAllocationTagName\\",
-              \\"CostAllocationTagValue\\"
-            ]
+              \\"CostAllocationTagValue\\",
+            ],
           },
           {
             Label: { default: \\"Docker Daemon Configuration\\" },
             Parameters: [
               \\"EnableDockerUserNamespaceRemap\\",
-              \\"EnableDockerExperimental\\"
-            ]
+              \\"EnableDockerExperimental\\",
+            ],
           },
           {
             Label: { default: \\"Docker Registry Configuration\\" },
-            Parameters: [\\"ECRAccessPolicy\\"]
+            Parameters: [\\"ECRAccessPolicy\\"],
           },
           {
             Label: { default: \\"Plugin Configuration\\" },
             Parameters: [
               \\"EnableSecretsPlugin\\",
               \\"EnableECRPlugin\\",
-              \\"EnableDockerLoginPlugin\\"
-            ]
-          }
-        ]
-      }
+              \\"EnableDockerLoginPlugin\\",
+            ],
+          },
+        ],
+      },
     };
 
     const keyName = new cdk.CfnParameter(this, \\"KeyName\\", {
       description:
         \\"Optional - SSH keypair used to access the buildkite instances, setting this will enable SSH ingress\\",
       type: \\"String\\",
-      default: \\"\\"
+      default: \\"\\",
     });
 
     const buildkiteAgentRelease = new cdk.CfnParameter(
@@ -773,7 +773,7 @@ export class BuildkiteStack extends cdk.Stack {
       {
         type: \\"String\\",
         allowedValues: [\\"stable\\", \\"beta\\", \\"edge\\"],
-        default: \\"stable\\"
+        default: \\"stable\\",
       }
     );
 
@@ -784,7 +784,7 @@ export class BuildkiteStack extends cdk.Stack {
         description: \\"Buildkite agent registration token\\",
         type: \\"String\\",
         noEcho: true,
-        minLength: 1
+        minLength: 1,
       }
     );
 
@@ -795,7 +795,7 @@ export class BuildkiteStack extends cdk.Stack {
         description:
           \\"Additional tags seperated by commas to provide to the agent. E.g os=linux,llamas=always\\",
         type: \\"String\\",
-        default: \\"\\"
+        default: \\"\\",
       }
     );
 
@@ -807,7 +807,7 @@ export class BuildkiteStack extends cdk.Stack {
           \\"Set to true to prepend timestamps to every line of output\\",
         type: \\"String\\",
         allowedValues: [\\"true\\", \\"false\\"],
-        default: \\"false\\"
+        default: \\"false\\",
       }
     );
 
@@ -818,7 +818,7 @@ export class BuildkiteStack extends cdk.Stack {
         description:
           \\"Agent experiments to enable, comma delimited. See https://github.com/buildkite/agent/blob/master/EXPERIMENTS.md.\\",
         type: \\"String\\",
-        default: \\"\\"
+        default: \\"\\",
       }
     );
 
@@ -827,28 +827,28 @@ export class BuildkiteStack extends cdk.Stack {
         'Queue name that agents will use, targeted in pipeline steps using \\"queue={value}\\"',
       type: \\"String\\",
       default: \\"default\\",
-      minLength: 1
+      minLength: 1,
     });
 
     const agentsPerInstance = new cdk.CfnParameter(this, \\"AgentsPerInstance\\", {
       description: \\"Number of Buildkite agents to run on each instance\\",
       type: \\"Number\\",
       default: 1,
-      minValue: 1
+      minValue: 1,
     });
 
     const secretsBucket = new cdk.CfnParameter(this, \\"SecretsBucket\\", {
       description:
         \\"Optional - Name of an existing S3 bucket containing pipeline secrets (Created if left blank)\\",
       type: \\"String\\",
-      default: \\"\\"
+      default: \\"\\",
     });
 
     const artifactsBucket = new cdk.CfnParameter(this, \\"ArtifactsBucket\\", {
       description:
         \\"Optional - Name of an existing S3 bucket for build artifact storage\\",
       type: \\"String\\",
-      default: \\"\\"
+      default: \\"\\",
     });
 
     const bootstrapScriptUrl = new cdk.CfnParameter(
@@ -858,7 +858,7 @@ export class BuildkiteStack extends cdk.Stack {
         description:
           \\"Optional - HTTPS or S3 URL to run on each instance during boot\\",
         type: \\"String\\",
-        default: \\"\\"
+        default: \\"\\",
       }
     );
 
@@ -869,7 +869,7 @@ export class BuildkiteStack extends cdk.Stack {
         description:
           \\"Optional - HTTPS or S3 URL to periodically download ssh authorized_keys from, setting this will enable SSH ingress\\",
         type: \\"String\\",
-        default: \\"\\"
+        default: \\"\\",
       }
     );
 
@@ -877,48 +877,48 @@ export class BuildkiteStack extends cdk.Stack {
       type: \\"String\\",
       description:
         \\"Optional - Id of an existing VPC to launch instances into. Leave blank to have a new VPC created\\",
-      default: \\"\\"
+      default: \\"\\",
     });
 
     const subnets = new cdk.CfnParameter(this, \\"Subnets\\", {
       type: \\"CommaDelimitedList\\",
       description:
         \\"Optional - Comma separated list of two existing VPC subnet ids where EC2 instances will run. Required if setting VpcId.\\",
-      default: \\"\\"
+      default: \\"\\",
     });
 
     const availabilityZones = new cdk.CfnParameter(this, \\"AvailabilityZones\\", {
       type: \\"CommaDelimitedList\\",
       description:
         \\"Optional - Comma separated list of AZs that subnets are created in (if Subnets parameter is not specified)\\",
-      default: \\"\\"
+      default: \\"\\",
     });
 
     const instanceType = new cdk.CfnParameter(this, \\"InstanceType\\", {
       description: \\"Instance type\\",
       type: \\"String\\",
       default: \\"t2.nano\\",
-      minLength: 1
+      minLength: 1,
     });
 
     const spotPrice = new cdk.CfnParameter(this, \\"SpotPrice\\", {
       description:
         \\"Spot bid price to use for the instances. 0 means normal (non-spot) instances\\",
       type: \\"String\\",
-      default: 0
+      default: 0,
     });
 
     const maxSize = new cdk.CfnParameter(this, \\"MaxSize\\", {
       description: \\"Maximum number of instances\\",
       type: \\"Number\\",
       default: 10,
-      minValue: 1
+      minValue: 1,
     });
 
     const minSize = new cdk.CfnParameter(this, \\"MinSize\\", {
       description: \\"Minimum number of instances\\",
       type: \\"Number\\",
-      default: 0
+      default: 0,
     });
 
     const scaleUpAdjustment = new cdk.CfnParameter(this, \\"ScaleUpAdjustment\\", {
@@ -926,7 +926,7 @@ export class BuildkiteStack extends cdk.Stack {
         \\"Number of instances to add on scale up events (ScheduledJobsCount > 0 for 1 min)\\",
       type: \\"Number\\",
       default: 5,
-      minValue: 0
+      minValue: 0,
     });
 
     const scaleDownAdjustment = new cdk.CfnParameter(
@@ -937,7 +937,7 @@ export class BuildkiteStack extends cdk.Stack {
           \\"Number of instances to remove on scale down events (UnfinishedJobs == 0 for ScaleDownPeriod)\\",
         type: \\"Number\\",
         default: -1,
-        maxValue: 0
+        maxValue: 0,
       }
     );
 
@@ -945,7 +945,7 @@ export class BuildkiteStack extends cdk.Stack {
       description:
         \\"Number of seconds UnfinishedJobs must equal 0 before scale down\\",
       type: \\"Number\\",
-      default: 1800
+      default: 1800,
     });
 
     const instanceCreationTimeout = new cdk.CfnParameter(
@@ -954,7 +954,7 @@ export class BuildkiteStack extends cdk.Stack {
       {
         description: \\"Timeout period for Autoscaling Group Creation Policy\\",
         type: \\"String\\",
-        default: \\"PT5M\\"
+        default: \\"PT5M\\",
       }
     );
 
@@ -962,41 +962,41 @@ export class BuildkiteStack extends cdk.Stack {
       description: \\"Size of each instance's root EBS volume (in GB)\\",
       type: \\"Number\\",
       default: 250,
-      minValue: 10
+      minValue: 10,
     });
 
     const securityGroupId = new cdk.CfnParameter(this, \\"SecurityGroupId\\", {
       type: \\"String\\",
       description: \\"Optional - Security group id to assign to instances\\",
-      default: \\"\\"
+      default: \\"\\",
     });
 
     const imageId = new cdk.CfnParameter(this, \\"ImageId\\", {
       type: \\"String\\",
       description:
         \\"Optional - Custom AMI to use for instances (must be based on the stack's AMI)\\",
-      default: \\"\\"
+      default: \\"\\",
     });
 
     const managedPolicyArn = new cdk.CfnParameter(this, \\"ManagedPolicyARN\\", {
       type: \\"CommaDelimitedList\\",
       description:
         \\"Optional - Comma separated list of managed IAM policy ARNs to attach to the instance role\\",
-      default: \\"\\"
+      default: \\"\\",
     });
 
     const instanceRoleName = new cdk.CfnParameter(this, \\"InstanceRoleName\\", {
       type: \\"String\\",
       description:
         \\"Optional - A name for the IAM Role attached to the Instance Profile\\",
-      default: \\"\\"
+      default: \\"\\",
     });
 
     const ecrAccessPolicy = new cdk.CfnParameter(this, \\"ECRAccessPolicy\\", {
       type: \\"String\\",
       description: \\"ECR access policy to give container instances\\",
       allowedValues: [\\"none\\", \\"readonly\\", \\"poweruser\\", \\"full\\"],
-      default: \\"none\\"
+      default: \\"none\\",
     });
 
     const associatePublicIpAddress = new cdk.CfnParameter(
@@ -1006,7 +1006,7 @@ export class BuildkiteStack extends cdk.Stack {
         type: \\"String\\",
         description: \\"Associate instances with public IP addresses\\",
         allowedValues: [\\"true\\", \\"false\\"],
-        default: \\"true\\"
+        default: \\"true\\",
       }
     );
 
@@ -1017,7 +1017,7 @@ export class BuildkiteStack extends cdk.Stack {
         type: \\"String\\",
         description: \\"Enables s3-secrets plugin for all pipelines\\",
         allowedValues: [\\"true\\", \\"false\\"],
-        default: \\"true\\"
+        default: \\"true\\",
       }
     );
 
@@ -1025,7 +1025,7 @@ export class BuildkiteStack extends cdk.Stack {
       type: \\"String\\",
       description: \\"Enables ecr plugin for all pipelines\\",
       allowedValues: [\\"true\\", \\"false\\"],
-      default: \\"true\\"
+      default: \\"true\\",
     });
 
     const enableDockerLoginPlugin = new cdk.CfnParameter(
@@ -1035,7 +1035,7 @@ export class BuildkiteStack extends cdk.Stack {
         type: \\"String\\",
         description: \\"Enables docker-login plugin for all pipelines\\",
         allowedValues: [\\"true\\", \\"false\\"],
-        default: \\"true\\"
+        default: \\"true\\",
       }
     );
 
@@ -1047,7 +1047,7 @@ export class BuildkiteStack extends cdk.Stack {
         description:
           \\"Enables Docker user namespace remapping so docker runs as buildkite-agent\\",
         allowedValues: [\\"true\\", \\"false\\"],
-        default: \\"true\\"
+        default: \\"true\\",
       }
     );
 
@@ -1058,7 +1058,7 @@ export class BuildkiteStack extends cdk.Stack {
         type: \\"String\\",
         description: \\"Enables Docker experimental features\\",
         allowedValues: [\\"true\\", \\"false\\"],
-        default: \\"false\\"
+        default: \\"false\\",
       }
     );
 
@@ -1070,7 +1070,7 @@ export class BuildkiteStack extends cdk.Stack {
         description:
           \\"Enables AWS Cost Allocation tags for all resources in the stack. See https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/cost-alloc-tags.html\\",
         allowedValues: [\\"true\\", \\"false\\"],
-        default: \\"false\\"
+        default: \\"false\\",
       }
     );
 
@@ -1081,7 +1081,7 @@ export class BuildkiteStack extends cdk.Stack {
         type: \\"String\\",
         description:
           \\"The name of the Cost Allocation Tag used for billing purposes\\",
-        default: \\"aws:createdBy\\"
+        default: \\"aws:createdBy\\",
       }
     );
 
@@ -1092,7 +1092,7 @@ export class BuildkiteStack extends cdk.Stack {
         type: \\"String\\",
         description:
           \\"The value of the Cost Allocation Tag used for billing purposes\\",
-        default: \\"buildkite-elastic-ci-stack-for-aws\\"
+        default: \\"buildkite-elastic-ci-stack-for-aws\\",
       }
     );
 
@@ -1100,15 +1100,16 @@ export class BuildkiteStack extends cdk.Stack {
       mapping: {
         none: { Policy: \\"\\" },
         readonly: {
-          Policy: \\"arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly\\"
+          Policy: \\"arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly\\",
         },
         poweruser: {
-          Policy: \\"arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser\\"
+          Policy: \\"arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser\\",
         },
         full: {
-          Policy: \\"arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess\\"
-        }
-      }
+          Policy:
+            \\"arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess\\",
+        },
+      },
     });
 
     new cdk.CfnMapping(this, \\"MetricsLambdaBucket\\", {
@@ -1125,8 +1126,8 @@ export class BuildkiteStack extends cdk.Stack {
         \\"ap-southeast-1\\": { Bucket: \\"buildkite-metrics-ap-southeast-1\\" },
         \\"ap-southeast-2\\": { Bucket: \\"buildkite-metrics-ap-southeast-2\\" },
         \\"ap-south-1\\": { Bucket: \\"buildkite-metrics-ap-south-1\\" },
-        \\"sa-east-1\\": { Bucket: \\"buildkite-metrics-sa-east-1\\" }
-      }
+        \\"sa-east-1\\": { Bucket: \\"buildkite-metrics-sa-east-1\\" },
+      },
     });
 
     new cdk.CfnMapping(this, \\"AWSRegion2AMI\\", {
@@ -1143,14 +1144,14 @@ export class BuildkiteStack extends cdk.Stack {
         \\"ap-southeast-1\\": { AMI: \\"ami-0a298ef89b00a97b9\\" },
         \\"ap-southeast-2\\": { AMI: \\"ami-0a541d0604bff3890\\" },
         \\"ap-south-1\\": { AMI: \\"ami-0283d0ab170de1f81\\" },
-        \\"sa-east-1\\": { AMI: \\"ami-06e329498e6ae405b\\" }
-      }
+        \\"sa-east-1\\": { AMI: \\"ami-06e329498e6ae405b\\" },
+      },
     });
 
     const useSpotInstances = new cdk.CfnCondition(this, \\"UseSpotInstances\\", {
       expression: cdk.Fn.conditionNot(
         cdk.Fn.conditionEquals(spotPrice.value, 0)
-      )
+      ),
     });
 
     const createVpcResources = new cdk.CfnCondition(
@@ -1177,7 +1178,7 @@ export class BuildkiteStack extends cdk.Stack {
       {
         expression: cdk.Fn.conditionNot(
           cdk.Fn.conditionEquals(instanceRoleName.value, \\"\\")
-        )
+        ),
       }
     );
 
@@ -1187,7 +1188,7 @@ export class BuildkiteStack extends cdk.Stack {
       {
         expression: cdk.Fn.conditionNot(
           cdk.Fn.conditionEquals(secretsBucket.value, \\"\\")
-        )
+        ),
       }
     );
 
@@ -1197,7 +1198,7 @@ export class BuildkiteStack extends cdk.Stack {
       {
         expression: cdk.Fn.conditionNot(
           cdk.Fn.conditionEquals(cdk.Fn.join(\\"\\", availabilityZones.value), \\"\\")
-        )
+        ),
       }
     );
 
@@ -1207,12 +1208,12 @@ export class BuildkiteStack extends cdk.Stack {
       {
         expression: cdk.Fn.conditionNot(
           cdk.Fn.conditionEquals(artifactsBucket.value, \\"\\")
-        )
+        ),
       }
     );
 
     const useDefaultAmi = new cdk.CfnCondition(this, \\"UseDefaultAMI\\", {
-      expression: cdk.Fn.conditionEquals(imageId.value, \\"\\")
+      expression: cdk.Fn.conditionEquals(imageId.value, \\"\\"),
     });
 
     const useManagedPolicyArn = new cdk.CfnCondition(
@@ -1221,20 +1222,20 @@ export class BuildkiteStack extends cdk.Stack {
       {
         expression: cdk.Fn.conditionNot(
           cdk.Fn.conditionEquals(cdk.Fn.join(\\"\\", managedPolicyArn.value), \\"\\")
-        )
+        ),
       }
     );
 
     const useEcr = new cdk.CfnCondition(this, \\"UseECR\\", {
       expression: cdk.Fn.conditionNot(
         cdk.Fn.conditionEquals(ecrAccessPolicy.value, \\"none\\")
-      )
+      ),
     });
 
     const useAutoscaling = new cdk.CfnCondition(this, \\"UseAutoscaling\\", {
       expression: cdk.Fn.conditionNot(
         cdk.Fn.conditionEquals(maxSize.value, minSize.value)
-      )
+      ),
     });
 
     const createMetricsStack = new cdk.CfnCondition(
@@ -1250,12 +1251,14 @@ export class BuildkiteStack extends cdk.Stack {
         expression: cdk.Fn.conditionEquals(
           enableCostAllocationTags.value,
           \\"true\\"
-        )
+        ),
       }
     );
 
     const hasKeyName = new cdk.CfnCondition(this, \\"HasKeyName\\", {
-      expression: cdk.Fn.conditionNot(cdk.Fn.conditionEquals(keyName.value, \\"\\"))
+      expression: cdk.Fn.conditionNot(
+        cdk.Fn.conditionEquals(keyName.value, \\"\\")
+      ),
     });
 
     const enableSshIngress = new cdk.CfnCondition(this, \\"EnableSshIngress\\", {
@@ -1267,7 +1270,7 @@ export class BuildkiteStack extends cdk.Stack {
             cdk.Fn.conditionEquals(authorizedUsersUrl.value, \\"\\")
           )
         )
-      )
+      ),
     });
 
     const hasManagedPolicies = new cdk.CfnCondition(
@@ -1283,11 +1286,11 @@ export class BuildkiteStack extends cdk.Stack {
           {
             Effect: \\"Allow\\",
             Principal: { Service: [\\"lambda.amazonaws.com\\"] },
-            Action: [\\"sts:AssumeRole\\"]
-          }
-        ]
+            Action: [\\"sts:AssumeRole\\"],
+          },
+        ],
       },
-      path: \\"/\\"
+      path: \\"/\\",
     });
     lambdaExecutionRole.cfnOptions.condition = createMetricsStack;
 
@@ -1306,12 +1309,12 @@ export class BuildkiteStack extends cdk.Stack {
                 \\"logs:CreateLogGroup\\",
                 \\"logs:CreateLogStream\\",
                 \\"logs:PutLogEvents\\",
-                \\"cloudwatch:PutMetricData\\"
+                \\"cloudwatch:PutMetricData\\",
               ],
-              Resource: [\\"*\\"]
-            }
-          ]
-        }
+              Resource: [\\"*\\"],
+            },
+          ],
+        },
       }
     );
     lambdaExecutionPolicy.cfnOptions.condition = createMetricsStack;
@@ -1326,7 +1329,7 @@ export class BuildkiteStack extends cdk.Stack {
             cdk.Aws.REGION,
             \\"Bucket\\"
           ),
-          s3Key: \\"buildkite-metrics-v3.0.0-lambda.zip\\"
+          s3Key: \\"buildkite-metrics-v3.0.0-lambda.zip\\",
         },
         role: lambdaExecutionRole.attrArn,
         timeout: 120,
@@ -1339,9 +1342,9 @@ export class BuildkiteStack extends cdk.Stack {
             BUILDKITE_QUEUE: buildkiteQueue.value,
             AWS_STACK_ID: cdk.Aws.STACK_ID,
             AWS_STACK_NAME: cdk.Aws.STACK_NAME,
-            AWS_ACCOUNT_ID: cdk.Aws.ACCOUNT_ID
-          }
-        }
+            AWS_ACCOUNT_ID: cdk.Aws.ACCOUNT_ID,
+          },
+        },
       }
     );
     buildkiteMetricsFunction.cfnOptions.condition = createMetricsStack;
@@ -1354,9 +1357,9 @@ export class BuildkiteStack extends cdk.Stack {
       targets: [
         {
           arn: buildkiteMetricsFunction.attrArn,
-          id: \\"TargetBuildkiteMetricsFunction\\"
-        }
-      ]
+          id: \\"TargetBuildkiteMetricsFunction\\",
+        },
+      ],
     });
     scheduledRule.cfnOptions.condition = createMetricsStack;
 
@@ -1367,7 +1370,7 @@ export class BuildkiteStack extends cdk.Stack {
         functionName: buildkiteMetricsFunction.ref,
         action: \\"lambda:InvokeFunction\\",
         principal: \\"events.amazonaws.com\\",
-        sourceArn: scheduledRule.attrArn
+        sourceArn: scheduledRule.attrArn,
       }
     );
     permissionForEventsToInvokeLambda.cfnOptions.condition = createMetricsStack;
@@ -1386,9 +1389,9 @@ export class BuildkiteStack extends cdk.Stack {
       \\"ManagedSecretsBucket\\",
       {
         loggingConfiguration: {
-          destinationBucketName: managedSecretsLoggingBucket.ref
+          destinationBucketName: managedSecretsLoggingBucket.ref,
         },
-        versioningConfiguration: { status: \\"Enabled\\" }
+        versioningConfiguration: { status: \\"Enabled\\" },
       }
     );
     managedSecretsBucket.cfnOptions.deletionPolicy =
@@ -1419,7 +1422,7 @@ export class BuildkiteStack extends cdk.Stack {
               \\"UseManagedPolicyARN\\",
               cdk.Fn.join(\\",\\", managedPolicyArn.value),
               cdk.Aws.NO_VALUE
-            )
+            ),
           ])
         ),
         cdk.Aws.NO_VALUE
@@ -1429,13 +1432,13 @@ export class BuildkiteStack extends cdk.Stack {
           {
             Effect: \\"Allow\\",
             Principal: {
-              Service: [\\"autoscaling.amazonaws.com\\", \\"ec2.amazonaws.com\\"]
+              Service: [\\"autoscaling.amazonaws.com\\", \\"ec2.amazonaws.com\\"],
             },
-            Action: \\"sts:AssumeRole\\"
-          }
-        ]
+            Action: \\"sts:AssumeRole\\",
+          },
+        ],
       },
-      path: \\"/\\"
+      path: \\"/\\",
     });
 
     const iamInstanceProfile = new iam.CfnInstanceProfile(
@@ -1447,14 +1450,14 @@ export class BuildkiteStack extends cdk.Stack {
     const vpc = new ec2.CfnVPC(this, \\"Vpc\\", {
       cidrBlock: \\"10.0.0.0/16\\",
       instanceTenancy: \\"default\\",
-      tags: [{ key: \\"Name\\", value: cdk.Aws.STACK_NAME }]
+      tags: [{ key: \\"Name\\", value: cdk.Aws.STACK_NAME }],
     });
     vpc.cfnOptions.condition = createVpcResources;
 
     const securityGroup = new ec2.CfnSecurityGroup(this, \\"SecurityGroup\\", {
       groupDescription: \\"Enable access to agents\\",
       vpcId: cdk.Fn.conditionIf(\\"CreateVpcResources\\", vpc.ref, vpcId.value),
-      tags: [{ key: \\"Name\\", value: cdk.Aws.STACK_NAME }]
+      tags: [{ key: \\"Name\\", value: cdk.Aws.STACK_NAME }],
     });
     securityGroup.cfnOptions.condition = createSecurityGroup;
 
@@ -1468,7 +1471,7 @@ export class BuildkiteStack extends cdk.Stack {
             \\"CreateSecurityGroup\\",
             securityGroup.ref,
             securityGroupId.value
-          )
+          ),
         ],
         keyName: cdk.Fn.conditionIf(
           \\"HasKeyName\\",
@@ -1490,8 +1493,8 @@ export class BuildkiteStack extends cdk.Stack {
         blockDeviceMappings: [
           {
             deviceName: \\"/dev/xvda\\",
-            ebs: { volumeSize: rootVolumeSize.value, volumeType: \\"gp2\\" }
-          }
+            ebs: { volumeSize: rootVolumeSize.value, volumeType: \\"gp2\\" },
+          },
         ],
         userData: cdk.Fn.base64(
           cdk.Fn.sub(
@@ -1501,10 +1504,10 @@ export class BuildkiteStack extends cdk.Stack {
                 \\"CreateSecretsBucket\\",
                 managedSecretsBucket.ref,
                 secretsBucket.value
-              )
+              ),
             }
           )
-        )
+        ),
       }
     );
 
@@ -1516,7 +1519,7 @@ export class BuildkiteStack extends cdk.Stack {
       ),
       cidrBlock: \\"10.0.2.0/24\\",
       vpcId: vpc.ref,
-      tags: [{ key: \\"Name\\", value: cdk.Aws.STACK_NAME }]
+      tags: [{ key: \\"Name\\", value: cdk.Aws.STACK_NAME }],
     });
     subnet1.cfnOptions.condition = createVpcResources;
 
@@ -1528,7 +1531,7 @@ export class BuildkiteStack extends cdk.Stack {
       ),
       cidrBlock: \\"10.0.1.0/24\\",
       vpcId: vpc.ref,
-      tags: [{ key: \\"Name\\", value: cdk.Aws.STACK_NAME }]
+      tags: [{ key: \\"Name\\", value: cdk.Aws.STACK_NAME }],
     });
     subnet0.cfnOptions.condition = createVpcResources;
 
@@ -1552,38 +1555,38 @@ export class BuildkiteStack extends cdk.Stack {
               \\"GroupMaxSize\\",
               \\"GroupInServiceInstances\\",
               \\"GroupTerminatingInstances\\",
-              \\"GroupPendingInstances\\"
-            ]
-          }
+              \\"GroupPendingInstances\\",
+            ],
+          },
         ],
         terminationPolicies: [
           \\"OldestLaunchConfiguration\\",
-          \\"ClosestToNextInstanceHour\\"
+          \\"ClosestToNextInstanceHour\\",
         ],
         tags: [
-          { key: \\"Role\\", value: \\"buildkite-agent\\", propagateAtLaunch: true },
-          { key: \\"Name\\", value: \\"buildkite-agent\\", propagateAtLaunch: true },
           {
             key: \\"BuildkiteAgentRelease\\",
             value: buildkiteAgentRelease.value,
-            propagateAtLaunch: true
+            propagateAtLaunch: true,
           },
           {
             key: \\"BuildkiteQueue\\",
             value: buildkiteQueue.value,
-            propagateAtLaunch: true
-          }
-        ]
+            propagateAtLaunch: true,
+          },
+          { key: \\"Name\\", value: \\"buildkite-agent\\", propagateAtLaunch: true },
+          { key: \\"Role\\", value: \\"buildkite-agent\\", propagateAtLaunch: true },
+        ],
       }
     );
     agentAutoScaleGroup.cfnOptions.creationPolicy = {
       resourceSignal: {
         timeout: instanceCreationTimeout.value,
-        count: minSize.value
-      }
+        count: minSize.value,
+      },
     };
     agentAutoScaleGroup.cfnOptions.updatePolicy = {
-      autoScalingReplacingUpdate: { willReplace: true }
+      autoScalingReplacingUpdate: { willReplace: true },
     };
 
     const agentScaleDownPolicy = new autoscaling.CfnScalingPolicy(
@@ -1593,7 +1596,7 @@ export class BuildkiteStack extends cdk.Stack {
         adjustmentType: \\"ChangeInCapacity\\",
         autoScalingGroupName: agentAutoScaleGroup.ref,
         cooldown: \\"300\\",
-        scalingAdjustment: scaleDownAdjustment.value
+        scalingAdjustment: scaleDownAdjustment.value,
       }
     );
     agentScaleDownPolicy.cfnOptions.condition = useAutoscaling;
@@ -1611,7 +1614,7 @@ export class BuildkiteStack extends cdk.Stack {
         threshold: 0,
         alarmActions: [agentScaleDownPolicy.ref],
         dimensions: [{ name: \\"Queue\\", value: buildkiteQueue.value }],
-        comparisonOperator: \\"LessThanOrEqualToThreshold\\"
+        comparisonOperator: \\"LessThanOrEqualToThreshold\\",
       }
     );
     agentUtilizationAlarmLow.cfnOptions.condition = useAutoscaling;
@@ -1623,7 +1626,7 @@ export class BuildkiteStack extends cdk.Stack {
         adjustmentType: \\"ChangeInCapacity\\",
         autoScalingGroupName: agentAutoScaleGroup.ref,
         cooldown: \\"300\\",
-        scalingAdjustment: scaleUpAdjustment.value
+        scalingAdjustment: scaleUpAdjustment.value,
       }
     );
     agentScaleUpPolicy.cfnOptions.condition = useAutoscaling;
@@ -1641,7 +1644,7 @@ export class BuildkiteStack extends cdk.Stack {
         threshold: 0,
         alarmActions: [agentScaleUpPolicy.ref],
         dimensions: [{ name: \\"Queue\\", value: buildkiteQueue.value }],
-        comparisonOperator: \\"GreaterThanThreshold\\"
+        comparisonOperator: \\"GreaterThanThreshold\\",
       }
     );
     agentUtilizationAlarmHigh.cfnOptions.condition = useAutoscaling;
@@ -1654,7 +1657,7 @@ export class BuildkiteStack extends cdk.Stack {
         ipProtocol: \\"tcp\\",
         fromPort: 22,
         toPort: 22,
-        cidrIp: \\"0.0.0.0/0\\"
+        cidrIp: \\"0.0.0.0/0\\",
       }
     );
     securityGroupSshIngress.cfnOptions.condition = enableSshIngress;
@@ -1674,9 +1677,9 @@ export class BuildkiteStack extends cdk.Stack {
             {
               Effect: \\"Allow\\",
               Principal: { Service: [\\"autoscaling.amazonaws.com\\"] },
-              Action: \\"sts:AssumeRole\\"
-            }
-          ]
+              Action: \\"sts:AssumeRole\\",
+            },
+          ],
         },
         policies: [
           {
@@ -1686,13 +1689,13 @@ export class BuildkiteStack extends cdk.Stack {
                 {
                   Effect: \\"Allow\\",
                   Action: [\\"sns:Publish\\"],
-                  Resource: agentLifecycleTopic.ref
-                }
-              ]
-            }
-          }
+                  Resource: agentLifecycleTopic.ref,
+                },
+              ],
+            },
+          },
         ],
-        path: \\"/\\"
+        path: \\"/\\",
       }
     );
 
@@ -1705,7 +1708,7 @@ export class BuildkiteStack extends cdk.Stack {
         defaultResult: \\"CONTINUE\\",
         heartbeatTimeout: 120,
         notificationTargetArn: agentLifecycleTopic.ref,
-        roleArn: agentLifecycleHookRole.attrArn
+        roleArn: agentLifecycleHookRole.attrArn,
       }
     );
 
@@ -1721,12 +1724,12 @@ export class BuildkiteStack extends cdk.Stack {
               Action: [\\"s3:Put*\\", \\"s3:List*\\", \\"s3:Get*\\"],
               Resource: [
                 cdk.Fn.sub(\\"arn:aws:s3:::\${ArtifactsBucket}/*\\"),
-                cdk.Fn.sub(\\"arn:aws:s3:::\${ArtifactsBucket}\\")
-              ]
-            }
-          ]
+                cdk.Fn.sub(\\"arn:aws:s3:::\${ArtifactsBucket}\\"),
+              ],
+            },
+          ],
         },
-        roles: [iamRole.ref]
+        roles: [iamRole.ref],
       }
     );
     artifactsBucketPolicies.cfnOptions.condition = useArtifactsBucket;
@@ -1743,15 +1746,16 @@ export class BuildkiteStack extends cdk.Stack {
               Action: [\\"s3:Get*\\", \\"s3:Get\\", \\"s3:List*\\"],
               Resource: [
                 cdk.Fn.sub(\\"arn:aws:s3:::\${SecretsBucket}/*\\"),
-                cdk.Fn.sub(\\"arn:aws:s3:::\${SecretsBucket}\\")
-              ]
-            }
-          ]
+                cdk.Fn.sub(\\"arn:aws:s3:::\${SecretsBucket}\\"),
+              ],
+            },
+          ],
         },
-        roles: [iamRole.ref]
+        roles: [iamRole.ref],
       }
     );
-    unmanagedSecretsBucketPolicy.cfnOptions.condition = useSpecifiedSecretsBucket;
+    unmanagedSecretsBucketPolicy.cfnOptions.condition =
+      useSpecifiedSecretsBucket;
 
     const managedSecretsBucketPolicy = new iam.CfnPolicy(
       this,
@@ -1765,12 +1769,12 @@ export class BuildkiteStack extends cdk.Stack {
               Action: [\\"s3:Get*\\", \\"s3:Get\\", \\"s3:List*\\"],
               Resource: [
                 cdk.Fn.sub(\\"arn:aws:s3:::\${ManagedSecretsBucket}/*\\"),
-                cdk.Fn.sub(\\"arn:aws:s3:::\${ManagedSecretsBucket}\\")
-              ]
-            }
-          ]
+                cdk.Fn.sub(\\"arn:aws:s3:::\${ManagedSecretsBucket}\\"),
+              ],
+            },
+          ],
         },
-        roles: [iamRole.ref]
+        roles: [iamRole.ref],
       }
     );
     managedSecretsBucketPolicy.cfnOptions.condition = createSecretsBucket;
@@ -1789,9 +1793,9 @@ export class BuildkiteStack extends cdk.Stack {
               \\"autoscaling:DescribeLifecycleHooks\\",
               \\"autoscaling:RecordLifecycleActionHeartbeat\\",
               \\"autoscaling:CompleteLifecycleAction\\",
-              \\"autoscaling:SetInstanceHealth\\"
+              \\"autoscaling:SetInstanceHealth\\",
             ],
-            Resource: \\"*\\"
+            Resource: \\"*\\",
           },
           {
             Effect: \\"Allow\\",
@@ -1799,23 +1803,23 @@ export class BuildkiteStack extends cdk.Stack {
               \\"logs:CreateLogGroup\\",
               \\"logs:CreateLogStream\\",
               \\"logs:PutLogEvents\\",
-              \\"logs:DescribeLogStreams\\"
+              \\"logs:DescribeLogStreams\\",
             ],
-            Resource: \\"*\\"
+            Resource: \\"*\\",
           },
           {
             Effect: \\"Allow\\",
             Action: [\\"sqs:*\\", \\"sns:Unsubscribe\\", \\"sns:Subscribe\\"],
-            Resource: \\"*\\"
-          }
-        ]
+            Resource: \\"*\\",
+          },
+        ],
       },
-      roles: [iamRole.ref]
+      roles: [iamRole.ref],
     });
 
     const routes = new ec2.CfnRouteTable(this, \\"Routes\\", {
       vpcId: vpc.ref,
-      tags: [{ key: \\"Name\\", value: cdk.Aws.STACK_NAME }]
+      tags: [{ key: \\"Name\\", value: cdk.Aws.STACK_NAME }],
     });
     routes.cfnOptions.condition = createVpcResources;
 
@@ -1834,7 +1838,7 @@ export class BuildkiteStack extends cdk.Stack {
     subnet0Routes.cfnOptions.condition = createVpcResources;
 
     const gateway = new ec2.CfnInternetGateway(this, \\"Gateway\\", {
-      tags: [{ key: \\"Name\\", value: cdk.Aws.STACK_NAME }]
+      tags: [{ key: \\"Name\\", value: cdk.Aws.STACK_NAME }],
     });
     gateway.cfnOptions.condition = createVpcResources;
 
@@ -1848,7 +1852,7 @@ export class BuildkiteStack extends cdk.Stack {
     const routeDefault = new ec2.CfnRoute(this, \\"RouteDefault\\", {
       destinationCidrBlock: \\"0.0.0.0/0\\",
       gatewayId: gateway.ref,
-      routeTableId: routes.ref
+      routeTableId: routes.ref,
     });
     routeDefault.cfnOptions.condition = createVpcResources;
     routeDefault.addDependsOn(gatewayAttachment);
@@ -1858,7 +1862,7 @@ export class BuildkiteStack extends cdk.Stack {
         \\"CreateSecretsBucket\\",
         managedSecretsBucket.ref,
         \\"\\"
-      )
+      ),
     });
 
     new cdk.CfnOutput(this, \\"ManagedSecretsLoggingBucketName\\", {
@@ -1866,11 +1870,11 @@ export class BuildkiteStack extends cdk.Stack {
         \\"CreateSecretsBucket\\",
         managedSecretsLoggingBucket.ref,
         \\"\\"
-      )
+      ),
     });
 
     new cdk.CfnOutput(this, \\"AutoScalingGroupName\\", {
-      value: agentAutoScaleGroup.ref
+      value: agentAutoScaleGroup.ref,
     });
 
     new cdk.CfnOutput(this, \\"InstanceRoleNameOutput\\", { value: iamRole.ref });
