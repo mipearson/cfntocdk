@@ -49,7 +49,7 @@ export default class Stack {
   compileImports(): string {
     const imports: { [key: string]: boolean } = {};
 
-    this.resources.forEach(i => {
+    this.resources.forEach((i) => {
       if (i.module) {
         imports[toCamel(i.module)] = true;
       }
@@ -63,11 +63,11 @@ export default class Stack {
   }
 
   compileParameters(): string {
-    return this.parameters.map(a => a.compile()).join("");
+    return this.parameters.map((a) => a.compile()).join("");
   }
 
   compileConditions(): string {
-    return this.conditions.map(a => a.compile()).join("");
+    return this.conditions.map((a) => a.compile()).join("");
   }
 
   compileMappings(): string {
@@ -77,7 +77,7 @@ export default class Stack {
 
     return Object.keys(mappings)
       .map(
-        k => `new cdk.CfnMapping(this, ${JSON.stringify(
+        (k) => `new cdk.CfnMapping(this, ${JSON.stringify(
           k
         )}, {mapping: ${JSON.stringify(mappings[k])}});
 
@@ -90,12 +90,12 @@ export default class Stack {
     const graph: Array<[string, string]> = [];
 
     const compiledResources: { [k: string]: string } = {};
-    this.resources.forEach(r => {
+    this.resources.forEach((r) => {
       compiledResources[r.name] = r.compile();
     });
 
-    this.resources.forEach(r => {
-      r.references.forEach(ref => {
+    this.resources.forEach((r) => {
+      r.references.forEach((ref) => {
         graph.push([r.name, ref]);
       });
       graph.push([r.name, "nil"]);
@@ -105,27 +105,27 @@ export default class Stack {
 
     return ordered
       .reverse()
-      .map(name => compiledResources[name])
-      .filter(s => s)
+      .map((name) => compiledResources[name])
+      .filter((s) => s)
       .join("");
   }
 
   compileOutputs(): string {
-    return this.outputs.map(a => a.compile()).join("");
+    return this.outputs.map((a) => a.compile()).join("");
   }
 
   compileOptions(): string {
     const mappings = {
       templateFormatVersion: this.cfn.AWSTemplateFormatVersion,
       description: this.cfn.Description,
-      metadata: this.cfn.Metadata
+      metadata: this.cfn.Metadata,
     };
 
     return Object.entries(mappings)
       .map(([k, v]) =>
         v ? `this.templateOptions.${k} = ${JSON.stringify(v)};` : undefined
       )
-      .filter(v => v)
+      .filter((v) => v)
       .join("\n");
   }
 

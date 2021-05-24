@@ -1282,7 +1282,7 @@
             "Key": "Role",
             "Value": "buildkite-agent",
             "PropagateAtLaunch": true
-          }          
+          }
         ]
       },
       "CreationPolicy": {

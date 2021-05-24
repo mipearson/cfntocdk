@@ -28,6 +28,7 @@
   "scripts": {
     "build": "tsc",
     "test": "jest",
+    "prettier": "prettier --write .",
     "test-watch": "jest --watch"
   },
   "bin": {

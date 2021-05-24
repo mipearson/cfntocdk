@@ -59,7 +59,7 @@ export default class Resource implements Construct {
         this.data.DependsOn instanceof Array
           ? this.data.DependsOn
           : [this.data.DependsOn];
-      dependsOn.forEach(v => {
+      dependsOn.forEach((v) => {
         buffer += `\n${this.varName}.addDependsOn(${toCamel(v)});`;
       });
       this.references.push(...dependsOn);

@@ -9,7 +9,7 @@ export default class Parameter implements Construct {
   private static known: Array<string> = [];
 
   public static isParameter(name: string): boolean {
-    return this.known.findIndex(a => a === name) != -1;
+    return this.known.findIndex((a) => a === name) != -1;
   }
 
   public constructor(name: string, data: JSONMap) {

@@ -9,7 +9,7 @@ const CONDITIONALS = [
   "Equals",
   "Not",
   "And",
-  "Or"
+  "Or",
 ];
 
 export default class Options {
@@ -28,14 +28,12 @@ export default class Options {
     return this.renderInner(this.data);
   }
 
-  private findFnKey(
-    data: JSONMap
-  ): {
+  private findFnKey(data: JSONMap): {
     name: string;
     value: JSONNode;
   } | null {
     const fnFunc = Object.keys(data).find(
-      k => k.startsWith("Fn::") || k.startsWith("!")
+      (k) => k.startsWith("Fn::") || k.startsWith("!")
     );
     if (!fnFunc) {
       return null;
@@ -43,7 +41,7 @@ export default class Options {
 
     return {
       name: fnFunc.replace(/^(Fn::|!)/, ""),
-      value: data[fnFunc]
+      value: data[fnFunc],
     };
   }
 
@@ -61,7 +59,7 @@ export default class Options {
     }
 
     if (data instanceof Array) {
-      const items = data.map(i => this.renderInner(i));
+      const items = data.map((i) => this.renderInner(i));
       return `[ ${items.join(",\n")} ]`;
     }
 
@@ -104,13 +102,13 @@ export default class Options {
         }
 
         const items = this.noCamel(() =>
-          value.map(i => this.renderInner(i)).join(", ")
+          value.map((i) => this.renderInner(i)).join(", ")
         );
 
         return `cdk.Fn.${name}(${items})`;
       }
 
-      const items = Object.keys(data).map(k => {
+      const items = Object.keys(data).map((k) => {
         const key = this.noCamelCase ? k : toCamel(k);
 
         const val =
