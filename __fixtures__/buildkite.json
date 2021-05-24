@@ -1260,16 +1260,6 @@
         ],
         "Tags": [
           {
-            "Key": "Role",
-            "Value": "buildkite-agent",
-            "PropagateAtLaunch": true
-          },
-          {
-            "Key": "Name",
-            "Value": "buildkite-agent",
-            "PropagateAtLaunch": true
-          },
-          {
             "Key": "BuildkiteAgentRelease",
             "Value": {
               "Ref": "BuildkiteAgentRelease"
@@ -1282,7 +1272,17 @@
               "Ref": "BuildkiteQueue"
             },
             "PropagateAtLaunch": true
-          }
+          },
+          {
+            "Key": "Name",
+            "Value": "buildkite-agent",
+            "PropagateAtLaunch": true
+          },
+          {
+            "Key": "Role",
+            "Value": "buildkite-agent",
+            "PropagateAtLaunch": true
+          }          
         ]
       },
       "CreationPolicy": {
